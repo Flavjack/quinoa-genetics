@@ -1,0 +1,2 @@
+Number loci: 6046
+Number individuals: 65
