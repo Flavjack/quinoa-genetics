@@ -141,7 +141,7 @@ dist$layers[[1]] <- NULL
 dist$layers[[1]] <- NULL
 
 fig <- dist %>% 
-  ggsave2(filename = "manuscript/dist.jpg"
+  ggsave2(filename = "manuscript/SFigure-02.jpg"
           , units = "cm", width = 30, height = 15)
 
 fig %>% include_graphics()
@@ -176,7 +176,7 @@ bcftools query -l quinoa.vcf.gz > genotype_names.txt
 #| eval: false
 
 # local terminal to download file
-scp flaaw57@server231.ipsp.uni-hohenheim.de:/work/workspaces/flavio/quinoagenetics/genotype_names.txt quinoa4gwas
+scp flaaw57@server231.ipsp.uni-hohenheim.de:/work/workspaces/flavio/quinoagenetics/genotype_names.txt genetics
 ```
 
 ## Genotypes names to rename vcf file
@@ -184,7 +184,7 @@ scp flaaw57@server231.ipsp.uni-hohenheim.de:/work/workspaces/flavio/quinoageneti
 ```{r}
 #| eval: false
 
-vcf.names <- "quinoa4gwas/genotype_names.txt" %>% 
+vcf.names <- "genetics/genotype_names.txt" %>% 
   read.csv(header = F, col.names = "name_old") %>% 
   mutate(pmatch = toupper(name_old)) %>% 
   mutate(match = gsub(".*A(.+)_F.*", "\\1", pmatch)) %>% 
@@ -195,7 +195,7 @@ parents <- c("blanca de juli" = "BDJ"
              , "ayrampo" = "AYR"
              , "choclito" = "CHO")
 
-geno.names <- "quinoa4gwas/camacani_plots_cs-genotyping.xlsx" %>% 
+geno.names <- "genetics/camacani_plots_cs-genotyping.xlsx" %>% 
   readxl::read_xlsx() %>% 
   mutate(cross = recode(cross, !!!parents)) %>% 
   unite(match, c(plots, crossn, line), remove = F, sep = "_") %>% 
@@ -217,7 +217,7 @@ vcf.rename <- merge(vcf.names, geno.names, by = "match", all.x = T) %>%
 tab <- vcf.rename %>% 
   distinct(name_new) 
 
-vcf.rename %>% write_tsv("quinoa4gwas/vcf.rename.txt")
+vcf.rename %>% write_tsv("genetics/vcf.rename.txt")
 ```
 
 ## vcf.rename file to server
@@ -225,7 +225,7 @@ vcf.rename %>% write_tsv("quinoa4gwas/vcf.rename.txt")
 ```{bash}
 #| eval: false
 
-scp quinoa4gwas/vcf.rename.txt flaaw57@server231.ipsp.uni-hohenheim.de:/work/workspaces/flavio/quinoagenetics/
+scp genetics/vcf.rename.txt flaaw57@server231.ipsp.uni-hohenheim.de:/work/workspaces/flavio/quinoagenetics/
 ```
 
 ## Rename VCF file
@@ -265,7 +265,7 @@ bcftools view -S populations.txt quinoa_rhd.vcf.gz > quinoa_pops.vcf.gz
 
 #> local terminal and download vcf file
 
-scp flaaw57@server231.ipsp.uni-hohenheim.de:/work/workspaces/flavio/quinoagenetics/quinoa_pops.vcf.gz quinoa4gwas/
+scp flaaw57@server231.ipsp.uni-hohenheim.de:/work/workspaces/flavio/quinoagenetics/quinoa_pops.vcf.gz genetics/
 ```
 
 # snpR
@@ -275,7 +275,7 @@ scp flaaw57@server231.ipsp.uni-hohenheim.de:/work/workspaces/flavio/quinoageneti
 ```{r}
 # vcffile <- choose.files()
 
-vcfile <- "G:\\Mi unidad\\coding\\quinoa4gwas\\quinoa_pops.vcf.gz"
+vcfile <- "G:/Mi unidad/coding/quinoa4gwas/quinoa_pops.vcf.gz"
 
 snpdt <- snpR::read_vcf(file = vcfile)
 snpdt
@@ -329,7 +329,7 @@ vcfdt <- format_snps(x = snpdt_filt
                      , position = "position"
                      , facets = "pop"
                      , verbose = TRUE
-                     , outfile = "quinoa4gwas/pops/nam"
+                     , outfile = "genetics/pops/nam"
                      )
 
 snpR::citations(snpdt_filt)
@@ -340,7 +340,7 @@ vcfdt <- format_snps(x = snpdt_filt
                      , chr = "CHROM"
                      , position = "position"
                      , verbose = TRUE
-                     , outfile = "quinoa4gwas/pops/quinoa.vcf"
+                     , outfile = "genetics/pops/quinoa.vcf"
                      )
 ```
 
@@ -349,7 +349,6 @@ vcfdt <- format_snps(x = snpdt_filt
 ## (i) Assess the inter and intra-population genetic differentiation of the NAM populations
 
 - Fig 1: (a) PCA, (b) POPstructure, (c) FST,  and (d) LD by NAM pop
-  - SFig: PCA completo
 - Table with diversity value for NAM pop
 
 ### PCA
@@ -464,14 +463,11 @@ p1c
 ```{bash}
 #| eval: false
 
-"C:\ZSL\PopCluster1\vcf2dat.exe"
-quinoa4gwas\\pops\\nam_KAN.vcf
+echo 1 | "C:\ZSL\PopCluster1\vcf2dat.exe" genetics\\pops\\nam_KAN.vcf
 
-"C:\ZSL\PopCluster1\vcf2dat.exe"
-quinoa4gwas\\pops\\nam_SAL.vcf
+echo 1 | "C:\ZSL\PopCluster1\vcf2dat.exe" genetics\\pops\\nam_SAL.vcf
 
-"C:\ZSL\PopCluster1\vcf2dat.exe"
-quinoa4gwas\\pops\\quinoa.vcf
+echo 1 | "C:\ZSL\PopCluster1\vcf2dat.exe" genetics\\pops\\quinoa.vcf
 ```
 
 ## Clean data
@@ -479,7 +475,7 @@ quinoa4gwas\\pops\\quinoa.vcf
 ```{r}
 #| eval: false
 
-rm <- list.files(path = "quinoa4gwas/pops/"
+rm <- list.files(path = "genetics/pops/"
                  , full.names = T
                  , recursive = T
                  ) %>% 
@@ -497,11 +493,11 @@ open "C:\ZSL\PopCluster1\PopCluster.pdf"
 
 PopClusterWin -help
 
-PopClusterWin INP:quinoa4gwas\\pops\\KANpc.PcPjt MPI:1 OMP:1
+"C:\ZSL\PopCluster1\PopClusterWin.exe" INP:genetics\\pops\\KANpc.PcPjt MPI:20 OMP:1
 
-PopClusterWin INP:quinoa4gwas\\pops\\SALpc.PcPjt MPI:1 OMP:1
+"C:\ZSL\PopCluster1\PopClusterWin.exe" INP:genetics\\pops\\SALpc.PcPjt MPI:20 OMP:1
 
-PopClusterWin INP:quinoa4gwas\\pops\\quinoa.PcPjt MPI:1 OMP:1 
+"C:\ZSL\PopCluster1\PopClusterWin.exe" INP:genetics\\pops\\quinoa.PcPjt MPI:20 OMP:1 
 
 open "C:\ZSL\PopCluster1\PopCluster.exe"
 ```
@@ -509,7 +505,7 @@ open "C:\ZSL\PopCluster1\PopCluster.exe"
 ```{r}
 ktest <- 10
 
-kvalue <- read.table("quinoa4gwas/pops/quinoa.K", 
+kvalue <- read.table("genetics/pops/popcluster/quinoa.K", 
                              header = TRUE, 
                              nrows = ktest, 
                              stringsAsFactors = FALSE, 
@@ -533,22 +529,24 @@ plot
 ### LD decay
 
 ```{bash}
-VCF=quinoa4gwas/pops/nam_KAN.vcf
-RSL=quinoa4gwas/pops/ld_results_KAN
+VCF=genetics/pops/nam_KAN.vcf
+RSL=genetics/pops/ld_results_KAN
 
 plink1 --vcf $VCF --r2 --ld-window 99999 --ld-window-kb 300 --ld-window-r2 0 --allow-extra-chr --out $RSL
 
-VCF=quinoa4gwas/pops/nam_SAL.vcf
-RSL=quinoa4gwas/pops/ld_results_SAL
+VCF=genetics/pops/nam_SAL.vcf
+RSL=genetics/pops/ld_results_SAL
 
 plink1 --vcf $VCF --r2 --ld-window 99999 --ld-window-kb 300 --ld-window-r2 0 --allow-extra-chr --out $RSL
 ```
 
 ```{r}
+#| eval: false
+
 # Cargar los datos y calcular distancia
-ld_data_KAN <- read.table("quinoa4gwas/pops/ld_results_KAN.ld", header = TRUE) %>% 
+ld_data_KAN <- read.table("genetics/pops/ld_results_KAN.ld", header = TRUE) %>% 
   mutate(pop = "KAN") 
-ld_data_SAL <- read.table("quinoa4gwas/pops/ld_results_SAL.ld", header = TRUE) %>% 
+ld_data_SAL <- read.table("genetics/pops/ld_results_SAL.ld", header = TRUE) %>% 
   mutate(pop = "SAL")
 
 ld_data <- list(ld_data_KAN, ld_data_SAL) %>%
@@ -569,7 +567,6 @@ ggplot(ld_data, aes(x = distance_kb, y = R2, color = pop)) +
   ) +
   theme(legend.position = "top")
 ```
-
 
 ```{r}
 fig1 <- list(p1a, p1b, p1c) %>% 
@@ -602,9 +599,8 @@ tab %>%
 
 snpdt_filt <- calc_genetic_distances(snpdt_filt, "cross")
 get.snpR.stats(snpdt_filt, "cross", "genetic_distance")
+
 ```
-
-
 
 ## (ii) Map and characterize QTL to elucidate their roles in yield architecture and cross-reference them with prior genomic findings in quinoa
 
@@ -627,15 +623,15 @@ library(rMVP)
 pheno <- fb %>% 
   filter(grepl("SALx", line)) %>%
   dplyr::select(!c(pop, cross, nline)) %>%
-  write_csv("quinoa4gwas//mlt-sal.csv")
+  write_csv("genetics//mlt-sal.csv")
 
-MVP.Data(fileVCF = "quinoa4gwas/pop_SAL.vcf"
-         , filePhe = "quinoa4gwas/mlt-sal.csv"
+MVP.Data(fileVCF = "genetics/pops/nam_SAL.vcf"
+         , filePhe = "genetics/mlt-sal.csv"
          , sep.phe = ","
          , priority = "speed"
          , fileKin = FALSE
          , filePC = FALSE
-         , out = "quinoa4gwas/rmvp/dt_sal"
+         , out = "genetics/rmvp/dt_sal"
          , ncpus = ncores
          )
 ```
@@ -644,17 +640,17 @@ MVP.Data(fileVCF = "quinoa4gwas/pop_SAL.vcf"
 
 ```{r}
 MVP.Data.Kin(fileKin = TRUE
-             , mvp_prefix = 'quinoa4gwas/rmvp/dt_sal'
-             , out = 'quinoa4gwas/rmvp/kin_sal')
+             , mvp_prefix = 'genetics/rmvp/dt_sal'
+             , out = 'genetics/rmvp/kin_sal')
 ```
 
 ## Data input
 
 ```{r}
-genotype <- attach.big.matrix("quinoa4gwas/rmvp/dt_sal.geno.desc")
-phenotype <- read.table("quinoa4gwas/rmvp/dt_sal.phe", head = TRUE)
-mapping <- read.table("quinoa4gwas/rmvp/dt_sal.geno.map", head = TRUE)
-kinship <- attach.big.matrix("quinoa4gwas/rmvp/kin_sal.kin.desc")
+genotype <- attach.big.matrix("genetics/rmvp/dt_sal.geno.desc")
+phenotype <- read.table("genetics/rmvp/dt_sal.phe", head = TRUE)
+mapping <- read.table("genetics/rmvp/dt_sal.geno.map", head = TRUE)
+kinship <- attach.big.matrix("genetics/rmvp/kin_sal.kin.desc")
 ```
 
 ##  GWAS
@@ -671,7 +667,7 @@ mvp <- 2:length(phenotype) %>% map(\(x) {
     , vc.method = "EMMA"
     , method = c("FarmCPU")
     , maxLoop = 20
-    , outpath = "quinoa4gwas/gwas/"
+    , outpath = "genetics/gwas/"
     , file.output = FALSE
     , file.type = "csv"
     , ncpus = ncores
@@ -700,15 +696,15 @@ gwas_sal <- 1:length(mvp) %>% map(\(x) {
 pheno <- fb %>% 
   filter(grepl("xKAN", line)) %>% 
   dplyr::select(!c(pop, cross, nline)) %>%
-  write_csv("quinoa4gwas//mlt-kan.csv")
+  write_csv("genetics//mlt-kan.csv")
 
-MVP.Data(fileVCF = "quinoa4gwas/pop_KAN.vcf"
-         , filePhe = "quinoa4gwas/mlt-kan.csv"
+MVP.Data(fileVCF = "genetics/pops/nam_KAN.vcf"
+         , filePhe = "genetics/mlt-kan.csv"
          , sep.phe = ","
          , priority = "speed"
          , fileKin = FALSE
          , filePC = FALSE
-         , out = "quinoa4gwas/rmvp/dt_kan"
+         , out = "genetics/rmvp/dt_kan"
          , ncpus = ncores
          )
 ```
@@ -717,17 +713,17 @@ MVP.Data(fileVCF = "quinoa4gwas/pop_KAN.vcf"
 
 ```{r}
 MVP.Data.Kin(fileKin = TRUE
-             , mvp_prefix = 'quinoa4gwas/rmvp/dt_kan'
-             , out = 'quinoa4gwas/rmvp/kin_kan')
+             , mvp_prefix = 'genetics/rmvp/dt_kan'
+             , out = 'genetics/rmvp/kin_kan')
 ```
 
 ## Data input
 
 ```{r}
-genotype <- attach.big.matrix("quinoa4gwas/rmvp/dt_kan.geno.desc")
-phenotype <- read.table("quinoa4gwas/rmvp/dt_kan.phe", head = TRUE)
-mapping <- read.table("quinoa4gwas/rmvp/dt_kan.geno.map", head = TRUE)
-kinship <- attach.big.matrix("quinoa4gwas/rmvp/kin_kan.kin.desc")
+genotype <- attach.big.matrix("genetics/rmvp/dt_kan.geno.desc")
+phenotype <- read.table("genetics/rmvp/dt_kan.phe", head = TRUE)
+mapping <- read.table("genetics/rmvp/dt_kan.geno.map", head = TRUE)
+kinship <- attach.big.matrix("genetics/rmvp/kin_kan.kin.desc")
 ```
 
 ##  GWAS
@@ -744,7 +740,7 @@ mvp <- 2:length(phenotype) %>% map(\(x) {
     , vc.method = "EMMA"
     , method = c("FarmCPU")
     , maxLoop = 20
-    , outpath = "quinoa4gwas/gwas/"
+    , outpath = "genetics/gwas/"
     , file.output = FALSE
     , file.type = "csv"
     , ncpus = ncores
@@ -791,7 +787,7 @@ dsp <- ~ {
 
 dsp %>% 
   plot_grid(plotlist = .) %>% 
-  ggsave2(filename = "quinoa4gwas/gwas/density-plot.jpg"
+  ggsave2(filename = "manuscript/SFigure-03.jpg"
          , width = 20
          , height = 20
          , units = "cm"
@@ -834,7 +830,7 @@ plot_mh <- 5:16 %>% map(\(x) {
 
 plot_mh %>% 
   plot_grid(plotlist = ., ncol = 4, labels = "auto") %>% 
-  ggsave2(filename = "quinoa4gwas/gwas/manhatan_rmvp.jpg"
+  ggsave2(filename = "manuscript/Figure-02.jpg"
          , width = 65
          , height = 35
          , units = "cm"
@@ -871,7 +867,7 @@ plot_qq <- 5:16 %>% map(\(x) {
 
 plot_qq %>% 
   plot_grid(plotlist = ., ncol = 4, labels = "auto") %>% 
-  ggsave2(filename = "quinoa4gwas/gwas/qqplot_rmvp.jpg"
+  ggsave2(filename = "manuscript/SFigure-04.jpg"
          , width = 60
          , height = 40
          , units = "cm"
@@ -888,7 +884,7 @@ plot_qq %>%
 pheno <- fb %>% 
   filter(grepl("SALx", line))
 
-vcfdt  <- "quinoa4gwas/pop_SAL.vcf" %>% 
+vcfdt  <- "genetics/pops/nam_SAL.vcf" %>% 
   vcfR::read.vcfR()
 
 info <- vcfdt %>% 
@@ -960,7 +956,7 @@ gwas_sal_nam <- rsl %>%
 pheno <- fb %>% 
   filter(grepl("xKAN", line))
 
-vcfdt  <- "quinoa4gwas/pop_KAN.vcf" %>% 
+vcfdt  <- "genetics/pops/nam_KAN.vcf" %>% 
   vcfR::read.vcfR()
 
 info <- vcfdt %>% 
@@ -1073,7 +1069,7 @@ plot_mh <- 4:15 %>% map(\(x) {
 
 plot_mh %>% 
   plot_grid(plotlist = ., ncol = 4, labels = "auto") %>% 
-  ggsave2(filename = "quinoa4gwas/gwas/manhatan_nam.jpg"
+  ggsave2(filename = "manuscript/SFigure-05.jpg"
          , width = 70
          , height = 40
          , units = "cm"
@@ -1111,7 +1107,7 @@ plot_qq <- 4:15 %>% map(\(x) {
 
 plot_qq %>% 
   plot_grid(plotlist = ., ncol = 4, labels = "auto") %>% 
-  ggsave2(filename = "quinoa4gwas/gwas/qqplot_nam.jpg"
+  ggsave2(filename = "manuscript/SFigure-06.jpg"
          , width = 70
          , height = 40
          , units = "cm"
@@ -1119,6 +1115,8 @@ plot_qq %>%
 ```
 
 ## (iii) Use genomic prediction in the NAM population to enhance breeding efficiency and accelerate genetic gain.
+
+> Reference: https://www.frontiersin.org/journals/genetics/articles/10.3389/fgene.2025.1568705/full 
 
 - Figure 3: Genomic prediction by traits (a) SAL population and (b) KAN pop.
   - SFig: Genomic prediction by pop
@@ -1175,17 +1173,17 @@ plot_pairwise_ld_heatmap(ld, facets = "CHROM.cross")
 - https://speciationgenomics.github.io/ld_decay/
 
 ```{bash}
-VCF=quinoa4gwas/pop_SAL.vcf
+VCF=genetics/pop_SAL.vcf
 
 plink1 --vcf $VCF --double-id --allow-extra-chr \
 --set-missing-var-ids @:# \
 --thin 0.1 --r2 gz --ld-window 100 --ld-window-kb 5 \
 --ld-window-r2 0 \
---out quinoa4gwas/ld_quinoa
+--out genetics/ld_quinoa
 ```
 
 ```{r}
-ld <- read.table("quinoa4gwas/ld_quinoa.ld.gz", header=TRUE) %>% 
+ld <- read.table("genetics/ld_quinoa.ld.gz", header=TRUE) %>% 
   mutate(distance = BP_B - BP_A)
 
 ggplot(ld, aes(x= distance, y = R2)) +
@@ -1197,11 +1195,11 @@ ggplot(ld, aes(x= distance, y = R2)) +
 ```
 
 ```{bash}
-plink1 --vcf quinoa4gwas/pop_SAL.vcf --ld-window 99999 --ld-window-r2 0 --r2 --out quinoa4gwas/ld_quinoa --allow-extra-chr
+plink1 --vcf genetics/pop_SAL.vcf --ld-window 99999 --ld-window-r2 0 --r2 --out genetics/ld_quinoa --allow-extra-chr
 ```
 
 ```{r}
-ld <- read.table("quinoa4gwas/ld_quinoa.ld", header=TRUE) %>% 
+ld <- read.table("genetics/ld_quinoa.ld", header=TRUE) %>% 
   mutate(distance = BP_B - BP_A)
 
 ggplot(ld, aes(x= distance, y = R2)) +

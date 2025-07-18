@@ -1,0 +1,24 @@
+65                !Integer, NumIndiv, #Individuals
+6046              !Integer, NumLoci, #Loci
+1                 !Boolean, AllSNP, All loci are SNP (1/0=Y/N)
+-1                !String, MisValue, Missing allele or PopData
+2024              !Integer, ISeed, Seed of random number
+nam_SAL.dat       !String, DataName, Genotype file name
+results/SALpc     !String, OutFile, Output file name
+0                 !Integer, Scaling, 0/1/2/3/4=No/Weak/Medium/Strong/VeryStrong scaling
+1                 !Integer, K_Low, Minimum K value
+10                !Integer, K_High, Maximum K value
+30                !Integer, NumRun, #Replicate Runs per K Value
+0                 !Integer, Search by 0/1=Assign_Prob/Relatedness
+1                 !Boolean, OutAlleleFre, to output allele frequency (1/0=Y/N)
+0                 !Boolean, PopDataQ, PopData available (1/0=Y/N)
+0                 !Boolean, PopFlagQ, PopFlag available (1/0=Y/N)
+2                 !Integer, Model, 1/2/3/4=Mixture/Admixture/Hybridization/Migration
+1                 !Boolean, LocusFst, to estimate locus-specific F-Statistics (1/0=Y/N)
+1                 !Boolean, UseKMeans, to Use K-Means clustering Method (1/0=Y/N)
+0                 !Boolean, IndivLocQ, Individual location data available (1/0=Y/N)
+1                 !Boolean, DataForm, 0/1/2/3/4/5=Indiv data in 1-row/2-rows/1-column/Bytes/.Ped/.Bed
+1                 !Boolean, LocusAdmixQ, to compute individual-locus admixture (1/0=Y/N)
+1                 !Integer, 0/1/2: Compute relatedness = No/Wang/LynchRitland
+1                 !Boolean, KinshipQ, to infer kinship (1/0=Y/N)
+2                 !Integer, 0/1/2=Undefined/equal/unequal prior allele freq

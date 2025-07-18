@@ -1,0 +1,2 @@
+Number loci: 61528
+Number individuals: 209
