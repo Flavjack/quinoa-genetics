@@ -1,0 +1,41 @@
+**Manuscript Title**
+
+Author List
+
+---
+
+## Manuscript
+
+> https://docs.google.com/document/d/1AOWoeGqica7uJifwYsiQXnLaoZemv-xejc4fs3rb4QU/edit?tab=t.0
+
+## Database
+
+> https://docs.google.com/spreadsheets/d/1WQKAOnxO9on7YoF9yC2WV7eHcChZJ5FR6DVyg0tJK1o/edit?gid=1551251950#gid=1551251950
+
+## Presentation
+
+> https://docs.google.com/presentation/d/1NH3myrT2KPaQrIvgXk2wzQXoPJ1-1UmHh3XpwZi5HuY/edit?slide=id.g2a8b3c7969c_0_9#slide=id.g2a8b3c7969c_0_9
+
+---
+
+# SciHub: research pipeline repository
+
+project-root/
+  ├── analysis.qmd          # Script with data analysis (R/Python)
+  ├── article.qmd           # Script for formatting the article
+  ├── design/               # Experimental design and setup
+  │   ├── design.qmd            # Document with experimental setup and planning
+  │   └── labels.pdf            # Labels for experimental units or field trials
+  ├── files/                # Supporting files for the project
+  │   ├── images/               # Raw and processed images
+  │   ├── zotero/               # Zotero library (.rds)
+  │   └── template.docx         # Journal article template  
+  ├── manuscript/           # Core outputs of the article
+  │   ├── Figures               # Figures for the manuscript (.jpg & .eps)
+  │   ├── ESM                   # Electronic Supplementary Material (ESM)
+  │   └── draft.docx            # Manuscript text versions
+  └── README.qmd            # Article title with authors:
+                                # Manuscript link (Google Docs)
+                                # Database link (Google Sheets)
+
+---
