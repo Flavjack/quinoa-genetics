@@ -7,7 +7,7 @@ format:
     toc-expand: 4
     number-sections: true
     self-contained: true
-    output-file: "ESM_3"
+    output-file: "ESM_1"
 editor_options: 
   chunk_output_type: console
 execute: 
@@ -60,7 +60,7 @@ gs <- url %>% as_sheets_id()
 
 fb <- gs %>%
   range_read("phenotype") %>% 
-  dplyr::select(!c(trial, pop, num, type, rlw_flw:w2l_mtr)) %>% 
+  dplyr::select(!c(trial, pop, num, type)) %>% 
   separate_wider_delim(line
                        , delim = "_"
                        , names = c("cross", "nline")
@@ -75,6 +75,12 @@ fb <- gs %>%
   
 
 fb %>% web_table(caption = "Phenotypic data")
+
+traits <- gs %>%
+  range_read("traits") %>% 
+  mutate(trait = paste0(traits, " ", "(", units, ")", "\nstage: ", phenology))
+
+traitnames <- traits %>% dplyr::select(abbreviations, trait) %>% deframe()
 ```
 
 ```{r}
@@ -86,23 +92,7 @@ fbdist <- fb %>%
                        , names = c("variable", "phenology")
                        , cols_remove = FALSE
                        ) %>% 
-  mutate(phenology = case_when(
-    phenology %in% "flw" ~ "flowering" 
-    , phenology %in% "mtr" ~ "maturity"
-    , phenology %in% "hrv" ~ "harvest"
-  )) %>% 
-  mutate(variable = case_when(
-    variable %in% "ndflw" ~ "Flowering (days)" 
-    , variable %in% "plth" ~ "Plant height (cm)"
-    , variable %in% "pnlg" ~ "Panicle lenght (cm)"
-    , variable %in% "pnwd" ~ "Panicle width (cm)"
-    , variable %in% "mstd" ~ "Mean stem diameter (cm)"
-    , variable %in% "ndpm" ~ "Physiological maturity (days)"
-    , variable %in% "sdyp" ~ "Yield by plant (g)"
-    , variable %in% "yplt" ~ "Yield by 10 plants (g)"
-    , variable %in% "yield" ~ "Yield (Tn/ha)"
-  )) %>% 
-  unite("label", c(variable, phenology), sep = "\nStage: ", remove = F)
+  mutate(label = dplyr::recode(trait, !!!traitnames))
 
 fbdist$trait %>% unique() %>% dput()
 
@@ -113,7 +103,7 @@ order <- c("ndflw_flw"
            , "plth_mtr"
            , "pnlg_mtr", "pnwd_mtr"
            , "mstd_mtr"
-           , "sdyp_hrv", "yplt_hrv", "yield_hrv")
+           , "sdyp_hrv", "yplt_hrv", "wl_mtr")
 
 lb <- fbdist %>% 
   dplyr::select(trait, label) %>% 
@@ -442,8 +432,6 @@ p1b
 ### FST
 
 ```{r}
-#| eval: false
-
 # Calculate pairwise fst
 x <- calc_pairwise_fst(snpdt_filt, c("cross"))
 
@@ -579,6 +567,8 @@ fig1 <- list(p1a, p1b, p1c) %>%
 ### Diversity indices
 
 ```{r}
+# cross
+
 snpdt_filt <- calc_pi(snpdt_filt, "cross")
 snpdt_filt <- calc_ho(snpdt_filt, "cross")
 snpdt_filt <- calc_he(snpdt_filt, "cross")
@@ -587,13 +577,33 @@ snpdt_filt <- calc_fis(snpdt_filt, "cross")
 stats <- get.snpR.stats(snpdt_filt, "cross"
                         , stats = c("pi", "he", "ho", "fis"))
 
-tab <- stats$weighted.means %>% 
+tab_cross <- stats$weighted.means %>% 
   dplyr::select(subfacet, starts_with("weighted")) %>% 
   rename_with(~ gsub("weighted_mean_", "", .)) %>% 
   rename("Population" = subfacet) %>% 
   mutate(across(where(is.numeric), ~ round(., 2)))
 
+# NAM
 
+snpdt_filt <- calc_pi(snpdt_filt, "pop")
+snpdt_filt <- calc_ho(snpdt_filt, "pop")
+snpdt_filt <- calc_he(snpdt_filt, "pop")
+snpdt_filt <- calc_fis(snpdt_filt, "pop")
+
+stats <- get.snpR.stats(snpdt_filt, "pop"
+                        , stats = c("pi", "he", "ho", "fis"))
+
+tab_nam <- stats$weighted.means %>% 
+  dplyr::select(subfacet, starts_with("weighted")) %>% 
+  rename_with(~ gsub("weighted_mean_", "", .)) %>% 
+  rename("Population" = subfacet) %>% 
+  mutate(across(where(is.numeric), ~ round(., 2)))
+
+tab <- list(tab_nam,tab_cross)  %>% 
+  bind_rows() %>% 
+  tibble::add_row(Population = "NAM", .before = 1) %>%
+  tibble::add_row(Population = "Cross", .before = 4) 
+  
 # tab %>% googlesheets4::sheet_write(ss = gs, "divindex")
 
 #> genetic distance
@@ -686,7 +696,7 @@ gwas_sal <- 1:length(mvp) %>% map(\(x) {
 }) %>% 
   Reduce(function(...) merge(..., all = TRUE), .) %>% 
   arrange(as.numeric(rowname)) %>% 
-  dplyr::select(!c(rowname, REF, ALT)) %>% 
+  dplyr::select(!c(rowname, MAF, A1, A2)) %>% 
   rename_with(~ gsub(".FarmCPU", "-SAL", .))
 ```
 
@@ -759,7 +769,7 @@ gwas_kan <- 1:length(mvp) %>% map(\(x) {
 }) %>% 
   Reduce(function(...) merge(..., all = TRUE), .) %>% 
   arrange(as.numeric(rowname)) %>% 
-  dplyr::select(!c(rowname, REF, ALT)) %>% 
+  dplyr::select(!c(rowname, MAF, A1, A2)) %>% 
   rename_with(~ gsub(".FarmCPU", "-KAN", .))
 ```
 
@@ -768,20 +778,27 @@ gwas_kan <- 1:length(mvp) %>% map(\(x) {
 ```{r}
 gwas_rmvp <- base::merge(x = gwas_sal, y = gwas_kan
                   , by = c("SNP", "CHROM", "POS")
-                  ) %>% 
-  arrange(CHROM)
+                  ) %>% arrange(CHROM)
+
+alpha_bon <- 0.05/6046 # Bonferroni
+alpha_sug <- 1e-4 # suggestive
 
 qtl <- gwas_rmvp %>% 
-  dplyr::select(!contains("MAF")) %>% 
-  pivot_longer(!c(1:POS)) %>% 
+  pivot_longer(!c(1:POS), values_to = "p-value") %>% 
   separate(name, c("Trait", "Population"), sep = "-") %>% 
   arrange(Trait, Population) %>% 
-  mutate(log10 = round(-log10(value), 2)) %>% 
-  filter(log10 >= 4)
+  mutate(log10 = -log10(`p-value`)) %>% 
+  mutate(alpha = case_when(
+    `p-value` <= alpha_bon ~ "Bonferroni"
+    , `p-value` <= alpha_sug ~ "Putative"
+  )) %>% 
+  drop_na(alpha) %>% 
+  mutate(Trait = dplyr::recode(Trait, !!!traitnames))
+  
 
 qtl %>% kable()
 
-# qtl %>% dplyr::select(!value) %>% write_sheet(ss = gs, sheet = "snps")
+# qtl %>% dplyr::select(Trait, Population, everything()) %>% dplyr::select(!`p-value`) %>% write_sheet(ss = gs, sheet = "snps")
 ```
 
 ## SNP density-plot
@@ -809,31 +826,29 @@ dsp %>%
 ## Manhatan
 
 ```{r}
-plot_mh <- 5:16 %>% map(\(x) {
+plot_mh <- 4:15 %>% map(\(x) {
   
   \() {
     
-    trait <- names(gwas_rmvp)[x] %>% gsub("-.*", "", .) 
+    trait <- names(gwas_rmvp)[x] %>% gsub("-.*", "", .)
+    
+    title <- traitnames %>% enframe() %>% 
+      filter(name %in% trait) %>% dplyr::select(value) %>% 
+      as_vector()
     
     CMplot(Pmap = gwas_rmvp %>% dplyr::select(1:3, starts_with({{trait}}))
        , plot.type = "m"
-       , col = "gray"
-       , main = trait
        , multraits = TRUE
-       , threshold=c(1e-4)
-       , threshold.lty=c(1)
-       , threshold.lwd=c(1,1)
-       , threshold.col=c("black","grey")
-       , amplify=TRUE
-       , chr.den.col=NULL
-       , signal.col=c("red", "blue")
-       , signal.cex=1,
-       , points.alpha=225
-       , legend.ncol=3
+       , LOG10=TRUE
+       , threshold=c(alpha_sug, alpha_bon)
+       , main = title
+       , main.cex = 1
        , legend.pos="middle"
        , chr.labels.angle = 75
        , file.output=FALSE
        , verbose=TRUE
+       , threshold.col=c("black", "red")
+       , col = c("#FD9135","#33AEAF")
       ) 
     
   }
@@ -853,7 +868,7 @@ plot_mh %>%
 ## Q-Q plot
 
 ```{r}
-plot_qq <- 5:16 %>% map(\(x) {
+plot_qq <- 4:15 %>% map(\(x) {
   
   \() {
     
@@ -863,8 +878,7 @@ plot_qq <- 5:16 %>% map(\(x) {
        , plot.type = "q"
        , col = c("red", "blue")
        , multraits = TRUE
-       , threshold = 1e-6
-       , ylab.pos = 2
+       , threshold = alpha_sug
        , signal.pch = c(15)
        , signal.cex = 1.2
        , signal.col = "red"
@@ -872,6 +886,7 @@ plot_qq <- 5:16 %>% map(\(x) {
        , box = FALSE
        , axis.cex = 1
        , file.output = FALSE
+       , verbose=TRUE
        )
   }
 
@@ -944,7 +959,7 @@ rsl <- (length(gwsdt) - 11):length(gwsdt) %>% map(\(x) {
                 , chr = chr
                 )
   
-  plot(nam_gwas, alpha = 0.05/nrow(info)
+  plot(nam_gwas, alpha = alpha_sug
          , main = names(trait)
          ) %>% print
   
@@ -1036,15 +1051,16 @@ gwas_kan_nam <- rsl %>%
 
 ## Merge GWAS NAM populations
 
+p-val in the NAM package is the -log(p-value)
+
 ```{r}
 gwas_nam <- base::merge(x = gwas_sal_nam, y = gwas_kan_nam
                   , by = c("ID", "CHROM", "POS")
                   ) %>% 
-  rename_with(~ gsub(".x", "-SAL", .)) %>% 
-  rename_with(~ gsub(".y", "-KAN", .)) %>% 
+  rename_with(~ gsub("\\.x", "-SAL", .)) %>% 
+  rename_with(~ gsub("\\.y", "-KAN", .)) %>% 
   arrange(CHROM) 
 ```
-
 
 ## Manhatan
 
@@ -1055,26 +1071,23 @@ plot_mh <- 4:15 %>% map(\(x) {
     
     trait <- names(gwas_nam)[x] %>% gsub("-.*", "", .)
     
+    title <- traitnames %>% enframe() %>% 
+      filter(name %in% trait) %>% dplyr::select(value) %>% 
+      as_vector()
+    
     CMplot(Pmap = gwas_nam %>% dplyr::select(1:3, starts_with({{trait}}))
-           , plot.type = "m"
-           , col = "gray"
-           , main = trait
-           , LOG10 = F
-           , multraits = TRUE
-           , threshold=4
-           , threshold.lty=c(1)
-           , threshold.lwd=c(1,1)
-           , threshold.col=c("black","grey")
-           , amplify=TRUE
-           , chr.den.col=NULL
-           , signal.col=c("red", "blue")
-           , signal.cex=1
-           , points.alpha=225
-           , legend.ncol=3
-           , legend.pos="middle"
-           , chr.labels.angle = 75
-           , file.output=FALSE
-           , verbose=TRUE
+       , plot.type = "m"
+       , multraits = TRUE
+       , LOG10 = FALSE
+       , threshold = c(alpha_sug, alpha_bon)
+       , main = title
+       , main.cex = 1
+       , legend.pos="middle"
+       , chr.labels.angle = 75
+       , file.output=FALSE
+       , verbose=TRUE
+       , threshold.col=c("black", "red")
+       , col = c("#FD9135","#33AEAF")
       ) 
   }
 })
@@ -1086,7 +1099,6 @@ plot_mh %>%
          , height = 40
          , units = "cm"
          )
-
 ```
 
 ## Q-Q plot
