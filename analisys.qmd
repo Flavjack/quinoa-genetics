@@ -44,10 +44,13 @@ suppressPackageStartupMessages({
 ncores <- floor(parallel::detectCores()*0.8)
 set.seed(2025)
 
-source('https://inkaverse.com/setup.r')
+library(rrBLUP)
+library(vcfR)
+library(data.table)
+library(rsample)
+library(gtsummary)
 
-cat("Project: ", getwd(), "\n")
-session_info()
+source('https://inkaverse.com/setup.r')
 ```
 
 For the large files was created a `xclude` folder and add the name to the `.gitignore` to avoid upload files saved in this folder to the server
@@ -1145,16 +1148,10 @@ plot_qq %>%
 https://pbgworks.org/sites/pbgworks.org/files/Introduction%20to%20Genomic%20Selection%20in%20R.pdf
 
 ```{r}
-library(rrBLUP)
-library(vcfR)
-library(data.table)
-library(tidyverse)
-library(rsample)
-
-set.seed(as.numeric(2025-10-05))
+set.seed(as.numeric(1989-19-08))
 ```
 
-# KAN GS
+# KAN Genomic Prediction
 
 ## Import data
 
@@ -1262,7 +1259,7 @@ GS_KAN <- traits %>%
   mutate(pop = "KAN", .before = "trait")
 ```
 
-# SAL GS
+# SAL Genomic Prediction
 
 ## Import data
 
@@ -1331,11 +1328,9 @@ GS_SAL <- traits %>%
   mutate(pop = "SAL", .before = trait)
 ```
 
-# GP merge data
+# Genomic Prediction merge data
 
 ```{r}
-library(gtsummary)
-
 gensel <- list(GS_KAN, GS_SAL) %>% 
   bind_rows() 
 
@@ -1359,20 +1354,49 @@ gs_smr <- gensel %>%
       modify_header(label ~ "**Metric**") 
   )
 
-gs_smr %>% 
-  gtsummary::as_tibble() %>% 
-  write_sheet(gs, "STable4")
+gs_smr
+
+gtsummary::as_hux_xlsx(gs_smr, file = "files/STable4.xlsx")
+
+# gs_smr %>% gtsummary::as_tibble() %>% write_sheet(gs, "STable4")
 
 grid <- gensel %>% 
+  
   inti::plot_raw(x = "pop", y = "accuracy", group = "trait"
                  , legend = "none") +
-   facet_wrap(. ~ trait, ncol = 3
+  geom_point(shape = 16, color = "grey50", alpha = 0.3, size = 1) +
+  facet_wrap(. ~ trait, ncol = 3
               , labeller = labeller(trait = traitnames)
               ) +
   labs(x = "Population", y = "Accuracy") +
   theme(
     strip.background = element_rect(fill = "grey95", colour = NA)
   )
+
+grid <- gensel %>%
+  ggplot(aes(x = pop, y = accuracy, fill = pop)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(
+    aes(x = pop, y = accuracy),
+    shape = 16,
+    color = "black",
+    alpha = 0.3,
+    size = 1,
+    position = position_jitter(width = 0.08, height = 0)
+  ) +
+  facet_wrap(
+    ~ trait,
+    ncol = 3,
+    labeller = labeller(trait = traitnames) 
+  ) +
+  labs(x = "Population", y = "Accuracy") +
+  theme_minimal() +
+  theme(
+    strip.background = element_rect(fill = "grey95", colour = NA),
+    legend.position = "none"
+  )
+
+grid
 
 plot <- grid %>% 
   ggsave2(filename = "manuscript/Figure-03.jpg"
