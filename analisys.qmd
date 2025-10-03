@@ -59,7 +59,7 @@ url <- "https://docs.google.com/spreadsheets/d/1WQKAOnxO9on7YoF9yC2WV7eHcChZJ5FR
 gs <- url %>% as_sheets_id()
 
 fb <- gs %>%
-  range_read("phenotype") %>% 
+  range_read("STable2") %>% 
   dplyr::select(!c(trial, pop, num, type)) %>% 
   separate_wider_delim(line
                        , delim = "_"
@@ -77,7 +77,7 @@ fb <- gs %>%
 fb %>% web_table(caption = "Phenotypic data")
 
 traits <- gs %>%
-  range_read("traits") %>% 
+  range_read("STable1") %>% 
   mutate(trait = paste0(traits, " ", "(", units, ")", "\nstage: ", phenology))
 
 traitnames <- traits %>% dplyr::select(abbreviations, trait) %>% deframe()
@@ -1140,422 +1140,245 @@ plot_qq %>%
 
 ## (iii) Use genomic prediction in the NAM population to enhance breeding efficiency and accelerate genetic gain.
 
-> Reference: https://www.frontiersin.org/journals/genetics/articles/10.3389/fgene.2025.1568705/full 
+> Reference
 
-- Figure 3: Genomic prediction by traits (a) SAL population and (b) KAN pop.
-  - SFig: Genomic prediction by pop
-  - Use mixed model vs IA model?
+https://pbgworks.org/sites/pbgworks.org/files/Introduction%20to%20Genomic%20Selection%20in%20R.pdf
 
-### Crear enviroment
+```{r}
+library(rrBLUP)
+library(vcfR)
+library(data.table)
+library(tidyverse)
+library(rsample)
 
-```{python}
-#| eval: false
-
-# conda create -n py3919 python=3.9.19
-conda activate py3919
-python --version
+set.seed(as.numeric(2025-10-05))
 ```
 
-### Instalar paquetes
+# KAN GS
 
-```{python}
-#| eval: false
+## Import data
 
-conda install -c conda-forge pyreadr
-conda install -c conda-forge statsmodels
-conda install -c conda-forge bayesian-optimization
+```{r}
+genotyping <- "genetics/pops/nam_KAN.vcf"  %>% 
+  read.vcfR(., verbose = FALSE)
 
-pip install numpy pandas matplotlib scikit-learn torch patsy
+phenotyping <- "genetics/mlt-kan.csv" %>% 
+  read.csv(.) %>% 
+  dplyr::rename(genotypes = line)
 ```
 
-### Importar paquetes
+## Transfor genotype data
 
-```{python}
-python
+```{r}
+gt_matrix <- genotyping %>% 
+  extract.gt(., element = "GT", as.numeric = TRUE, convertNA = TRUE)
 
-import numpy as np; import pandas as pd; 
-from sklearn.preprocessing import StandardScaler; from sklearn.preprocessing import OneHotEncoder
-from sklearn.model_selection import KFold; from scipy.stats import pearsonr; 
-from bayes_opt import BayesianOptimization
-from bayes_opt import UtilityFunction # https://github.com/fmfn/BayesianOptimization
-import pyreadr, sys, datetime, time, os, glob, random; from patsy import dmatrix
-import matplotlib.pyplot as plt; from statsmodels.graphics.api import abline_plot
-import torch as tch
+# Transpose the matrix to have individuals as rows and markers as columns
+gt_matrix <- t(gt_matrix)
+
+# Replace numeric genotype codes (0, 1, 2) with rrBLUP's required codes (-1, 0, 1)
+gt_matrix[gt_matrix == 0] <- -1  # Homozygous for parent 1
+gt_matrix[gt_matrix == 1] <- 0   # Heterozygous
+gt_matrix[gt_matrix == 2] <- 1   # Homozygous for parent 2
 ```
 
-#### Setup
+## Impute missing values
 
-```{python}
-import os, sys
-import multiprocessing
-
-# Detectar capacidad del sistema
-total_threads = multiprocessing.cpu_count()
-Num_Threads = max(1, int(total_threads * 0.7))
-os.environ["OMP_NUM_THREADS"] = str(Num_Threads)
-os.environ["MKL_NUM_THREADS"] = str(Num_Threads)
-tch.set_num_threads(Num_Threads)
-tch.set_num_interop_threads(Num_Threads)
-
-GPU = tch.cuda.is_available()
-Device = tch.device('cuda' if GPU else 'cpu')
-
-print(f"Total de hilos disponibles: {total_threads}")
-print(f"Usando {Num_Threads} hilos (~70%)")
-print(f"Dispositivo seleccionado: {'GPU' if GPU else 'CPU'}")
-
-Dir = os.getcwd()
-sys.path.append(Dir)
-Dir_DataSet = os.path.normpath(os.path.join(Dir, 'dat-PP'))
+```{r}
+# A.mat() can perform imputation as part of its relationship matrix calculation.
+# However, for direct marker-based prediction (RR-BLUP), pre-imputation is
+# often done. We can use the 'mean' method for a simple imputation strategy.
+imputed_markers <- A.mat(gt_matrix
+                         , max.missing = 0.5
+                         , impute.method = "mean"
+                         , return.imputed = T) %>% 
+  pluck("imputed")
 ```
 
-### Auxiliar functions and modules
+## Check data
 
-```{python}
-from Funs_Auxs import *
-Match_f
-from MLP_v8_0 import *
-Predictor = 'GID' 
+```{r}
+# Ensure sample IDs match in both genotype and phenotype data
+common_samples <- intersect(rownames(imputed_markers), phenotyping$genotypes)
+imputed_markers <- imputed_markers[common_samples, ]
+
+phenotyping4gp <- phenotyping[phenotyping$genotypes %in% common_samples, ] %>% 
+  tibble(.) %>% 
+  column_to_rownames("genotypes")
 ```
 
-### Training parameters
+## Itinerations
 
-```{python}
-Hypers_Fixed = {
-    'Epochs': 64,
-    'Batch_size': 32,
-    'Seed': 19,
-    'Iters': 50,
-    'IK': 5, 
-    'Use': 5, 
-    'Device': Device
+```{r}
+traits <- colnames(phenotyping4gp)[1:length(phenotyping4gp)]
+
+run_iteration <- function(trait, rep) {
+  # Split 60/40
+  split_data <- initial_split(phenotyping4gp, prop = 0.6)
+
+  pheno_train <- training(split_data) %>% as.matrix()
+  pheno_valid <- testing(split_data)  %>% as.matrix()
+
+  geno_train <- imputed_markers[row.names(pheno_train), ]
+  geno_valid <- imputed_markers[row.names(pheno_valid), ]
+
+  # Modelo GBLUP con rrBLUP
+  response <- mixed.solve(
+    y = pheno_train[, trait],
+    Z = geno_train,
+    K = NULL,
+    SE = FALSE,
+    return.Hinv = FALSE
+  )
+  
+  e <- as.matrix(response$u)
+  response_predic <- as.vector((geno_valid %*% e)[, 1]) + as.numeric(response$beta)
+
+  # Accuracy
+  acc <- cor(response_predic, pheno_valid[, trait], use = "complete")
+  
+  # Normalized Root Mean Square Error (NRMSE)
+  rmse <- sqrt(mean((pheno_valid[, trait] - response_predic)^2, na.rm = TRUE))
+  nrmse <- rmse / sd(pheno_valid[, trait], na.rm = TRUE)
+
+  tibble(
+    trait = trait,
+    replication = rep,
+    ntrain = nrow(pheno_train),
+    nvalid = nrow(pheno_valid),
+    accuracy = acc, # range: [-1 to +1]
+    nrmse = nrmse # range: [0, >1] where: 0 high precision accuracy
+  )
 }
 ```
 
-### Beysian parameters
-
-```{python}
-Bounds = {
-    'nHL1': [1, 3],
-    'Units1': [64, 256],
-    'll': [np.log(np.e**-8), np.log(np.e**-2)],
-    'llr': [np.log(np.e**-8), np.log(np.e**-1)],
-    'lwd': [np.log(1 - 0.90), np.log(1 - 0.10)]
-}
+```{r}
+GS_KAN <- traits %>%
+  set_names() %>%
+  map(\(trait) {
+    map_dfr(1:300, \(rep) run_iteration(trait, rep))
+  }) %>% 
+  bind_rows() %>% 
+  mutate(pop = "KAN", .before = "trait")
 ```
 
-### Cargar datos y preparar estructuras
+# SAL GS
 
-```{python}
-#Datos
-os.getcwd()
-Dir_DataSet =  os.path.normpath(os.path.join(Dir,'/dat-PP/'))
-Folds_df = pd.read_csv(os.path.join(Dir_DataSet,'10Folds_df.csv'))
-Folds_df.head()
-DataSets =  ['Wheat_'+str(j+1)+'_AL' for j in range(6)]
-DataSets
-for dn in range(1,6+1):  # To run the deep learning models on the first 6 datasets
-    #dn = 2
-    DataNumber = dn-1
-    Dir_dat = os.path.join(Dir_DataSet,DataSets[DataNumber]+'.RData')
-    Dir_dat = ''.join(Dir_dat)
-    OD = pyreadr.read_r(Dir_dat) 
-    print(OD.keys())
-    Pheno =  OD['Pheno']
-    Pheno = Pheno.rename(columns={'Line':'GID'})
-    Pheno.head()
-    list(Pheno.columns)
-    Traits = ["GY"]#,'T2','T3','T4' ]#colnames(Pheno)[4:7]
-    for t in range(1,2):  
-        print('DataSet',DataSets[DataNumber])
-        #Response
-        y = Pheno[Traits[t-1]]
-        Pos_NA = np.where(y.isna())
-        y =  y.to_numpy(copy=True)
-        y = y.astype(float)
-        y = np.reshape(y,(len(y),1))    
-   
-        #Markers
-        XM = OD['Markers']
-        np.shape(XM)
-        print(XM.iloc[:,0:5].head(5))
-        #XM.index = pd.RangeIndex(0,np.shape(XM)[0],1)
-        XM =  XM.apply(np.round)
-        XM.nunique().describe()
-        np.unique(np.unique(XM,axis=1))
-        print('Marker Data',np.shape(XM))
-        #XM = tf.keras.utils.to_categorical(y=XM,num_classes=2)
-        #np.shape(XM)#Para CNN
-        Scaler_Markers = StandardScaler()#with_mean=False)
-        XM = Scaler_Markers.fit_transform(XM)#xL_tr
-        #print(Scaler_Markers.mean_)
-        np.min(np.sqrt(Scaler_Markers.var_))
-    
-        G = np.matmul(XM,np.transpose(XM))/np.shape(XM)[1]
-        G = pd.DataFrame(G)
-        G5  =  XR2_f(G)
-        np.shape(G5)
-        Order = OD['Markers'].index # Define el orden deseado de las categorías
-        #Convierte la columna 'GID' en una categoría ordenada
-        Pheno['GID'] = pd.Categorical(Pheno['GID'], categories=Order, ordered=True)
-        ZL = pd.get_dummies(Pheno['GID'],columns=['GID'])
-        np.mean(ZL.columns==OD['Markers'].index)
-        XL = np.matmul(ZL,G5[Match_f(ZL.columns,OD['Markers'].index),:])#
-        XL = XL.to_numpy()
-        ZL =  None   
-        GIDs = Pheno['GID'].unique()
-        Fold_df =  Folds_df[Folds_df['DataSet']==DataSets[DataNumber]]
-        Fold_df.head()
-        K = len(Fold_df['Fold'].unique())        
-        x_ls_all = [XL]#
-        Params = {}
-        Hypers_Fixed = {'Epochs': 128,'Batch_size':len(y),'Seed':42,'Iters':250,
-                        'IK': 10,'Use':10} 
-        Device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')# Definir el dispositivo (GPU si está disponible, de lo contrario CPU)
-        Hypers_Fixed['Device'] =  Device#DataNumber = dn-1
-        Dir_Outs0 = os.path.join(Dir,'Outs-Mod-v8_0-Shared'+'-Iters-'+str(Hypers_Fixed['Iters']),DataSets[dn-1])#+str(Hypers_Fixed['IK'])+'Use'+str(Hypers_Fixed['Use']))#+'-Trait'+Traits[t-1])+'-Iters-'+str(Hypers_Fixed['Iters']))
-        if not os.path.exists(Dir_Outs0):
-            os.makedirs(Dir_Outs0, exist_ok=True)#mkdir(Dir_Outs0)
-        else:
-            print(f"El directorio '{Dir_Outs0}' ya existe.")
-        for k in range(1,K+1):
-            Fold = np.repeat(100,len(y))
-            Fold[Fold_df['Pos_tst'][Fold_df['Fold']==k].to_numpy()-1] = k#
-            np.mean(Fold==k)
-            x_ls_tr, y_tr = [x_ls_all[m][Fold!=k,:] for m in range(len(x_ls_all))], y[Fold!=k]
-            Scaler_y = StandardScaler()
-            y_tr = Scaler_y.fit_transform(y_tr)
-            dat_tr = {'x_ls_tr':x_ls_tr,'y_tr':y_tr}        
-            Hypers_Fixed['IFold'] = SIFold(dat_tr['y_tr'], K= Hypers_Fixed['IK'], nq=10, random_state=Hypers_Fixed['Seed'])   
-            Time = time.time()
-            def f_O(**kwargs):#nHL1,Units1,nHL2,Units2,nHLB2,UnitsB2,ll,llr):# nHL3,Units3 and (2**nHL3<=Units3)
-                nHL1, Units1 = kwargs['nHL1'],kwargs['Units1']#,kwargs['nHL2'] ,kwargs['Units2']  
-                #nHLB2, UnitsB2 = kwargs['nHLB2'],kwargs['UnitsB2']
-                ll,llr, lwd = kwargs['ll'], kwargs['llr'],kwargs['lwd']#,kwargs['llo']]
-                Ind = np.all(2**nHL1<=Units1)# and 2**nHL2<=Units2 and 2**nHLB2<=UnitsB2)
-                if Ind:
-                    nHLs, Units = [nHL1], [Units1]#nHL3
-                    nHL_ls, Units = [int(nHLs[j]) for j in range(len(nHLs))], [int(Units[j]) for j in range(len(nHLs))]
-                    Units_ls = [[ int(Units[m]/(2**j)) for j in range(nHL_ls[m]) ]   for m in range(len(x_ls_all))]
-                    #nHLB2 =  int(1)
-                    #UnitsB2_ls = []# int(UnitsB2/(2**j)) for j in range(nHLB2)]            
-                    Hypers_R = {'UnitsB1_lsls':Units_ls,#'UnitsB2_ls':UnitsB2_ls,
-                                'l':np.exp(ll),'lr':np.exp(llr),'wd':np.exp(lwd)}
-                    Hypers_p = {**Hypers_Fixed,**Hypers_R}#{**Hypers_a,**{'wd':np.exp(lwd),'Pat':int(Pat)}}
-                    #print(Hypers_p) Hypers_Fixed
-                    Val_metric = IKFCV_f(dat_tr,Hypers_p,IK = Hypers_Fixed['IK'],
-                                         Use = Hypers_Fixed['Use'],PlotTraining=False)
-                    MSEP_Val = np.mean(Val_metric['Val_metric'])#-sigma**2
-                    if np.isnan(MSEP_Val) or np.isinf(MSEP_Val) or MSEP_Val> np.var(y_tr)*1000:
-                        MSEP_Val = np.var(y_tr)*1000#-1e5
-                    return -MSEP_Val
-                else:
-                    #print('Units1',Units1,'nHL1',nHL1)
-                    return -np.var(y_tr)*1000#-1e5
-            Bounds = {'nHL1':[1,4],#'nHL2':[1,5],# 'nHL3':[1,4],
-                      'Units1':[64,512],#'Units2':[32,1032],# 'Units2':(8,128),
-                      #'nHLB2':[1,3], #'UnitsB2':[8,128],
-                     'll':[np.log(np.e**- 10),np.log(np.e**-1)],
-                     'llr':[np.log(np.e**-10),np.log(np.e**-0)],#,'Pat':(1,128)}
-                     'lwd':[np.log(1-0.95),np.log(1-0.05)]}#Entre 5 y 95% se reduce el lr,'ll2':[np.log(1e-6),np.log(1e-1)],
-                     #'llo':[np.log(1e-6),np.log(1e-1)],'llr':[np.log(1e-6),np.log(1e-1)],
-                     
-            BO = BayesianOptimization(f=f_O,pbounds=Bounds,random_state=50,verbose=1)
-            #xi=0.01 # Mayor explotación (default), xi=0.1# Balance entre exploración y explotación
-            #xi=1.0# Alta exploración, xi=2.0# Exploración muy alta
-            #kappa=0.01#Baja exploración, kappa=2.576)  # Balance entre exploración y explotación (default)
-            #kappa=10 #alta exploración,  kappa=20  # Exploración muy alta
-            #Utility = UtilityFunction(kind="pi", xi=0.01)  # Probability of Improvement (PI), xi controla la exploración
-            xi = 0.1#0.01, 1
-            Utility = UtilityFunction(kind="ei", xi=xi)  # Expected Improvement (EI), valores más altos de xi fomentan la exploración
-            #Utility = UtilityFunction(kind="ucb", kappa=2.576)  # Upper Confidence Bound (UCB), kappa controla la exploración
-            BO.maximize(init_points=5, n_iter=Hypers_Fixed['Iters'],  acquisition_function = Utility)# Por defecto usa Expected Improvement (EI)
-            #BO.maximize(init_points=5, n_iter=Hypers_Fixed['Iters'])# Por defecto usa Expected Improvement (EI)
-            print(BO.max)
-            #BO.set_bounds(new_bounds=Bounds)
-            #BO.maximize(init_points=1, n_iter=Iters)
-            #Optimal parameters >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-            Pars_O = BO.max['params']
-            #print(Pars_O)
-            nHLs, Units, l =  [], [], []
-            for i in range(len(x_ls_all)):#Cambiar 6 por nI+1 para cuando son nI inputs
-                nHLs.append(int(Pars_O[''.join(['nHL',str(i+1)])]))
-                Units.append(int(Pars_O[''.join(['Units',str(i+1)])]))
-                #l.append(np.exp(Pars_O['ll'+str(i+1)]))
-            l = np.exp(Pars_O['ll'])
-            nHL_ls, Units = [int(nHLs[j]) for j in range(len(nHLs))], [int(Units[j]) for j in range(len(nHLs))]
-            Units_ls = [[ int(Units[m]/(2**j)) for j in range(nHL_ls[m]) ]   for m in range(len(x_ls_all))]
-            #nHLB2 =  int(Pars_O['nHLB2'])
-            #UnitsB2_ls = []#[int(Pars_O['UnitsB2']/(2**j)) for j in range(nHLB2)]
-            Hypers_R_O = {'UnitsB1_lsls':Units_ls,#'UnitsB2_ls':UnitsB2_ls,
-                        'l':l,'lr':np.exp(Pars_O['llr']),'wd':np.exp(Pars_O['lwd'])}
-            Params_O = {**Hypers_Fixed,**Hypers_R_O}#{**Hypers_a,**{'wd':np.exp(lwd),'Pat':int(Pat)}}
-            Params_O
-            
-            #Prediction of tst >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-            yp_tst  =  np.zeros((np.sum(Fold==k),1))#0*y_tst
-            y_tst, x_ls_tst = y[Fold==k], [x_ls_all[m][Fold==k,:] for m in range(len(x_ls_all))]
-            x_ls_tst = [torch.from_numpy(arr) for arr in x_ls_tst]
-            x_ls_tst =  [x_ls_tst[m].to(torch.float32) for m in range(len(x_ls_all))]
-            if torch.cuda.is_available():
-                x_ls_tst = [tensor.to(Params_O['Device']) for tensor in x_ls_tst]
-            for ik in range(1,Hypers_Fixed['Use']+1):
-                DModel_O = MMMLP(Params_O, dat_tr)# Definir el modelo                
-                Pos_itr = Hypers_Fixed['IFold'] != ik #Notar que es un arreglo. Pos_itr = [IFold[j] != ik for j in range(len(IFold))]
-                #print(Pos_itr)
-                DModel_O.fit(Pos_itr=Pos_itr, PlotTraining=False) # Entrenar el modelo                
-                yp_tst_ik =  DModel_O.Model(x_ls_tst)#Scaler_y.inverse_transform(FM_O_ls['Model'].predict(x_ls_tst,verbose=0))# flatten()
-                if torch.cuda.is_available():
-                    yp_tst_ik = yp_tst_ik.cpu()
-                yp_tst = yp_tst +  Scaler_y.inverse_transform(yp_tst_ik.detach().numpy())
-            yp_tst = yp_tst/Hypers_Fixed['Use']
-            # DModel_O = MMMLP(Params_O, dat)# Definir el modelo        
-            # DModel_O.fit(Pos_itr=None, PlotTraining=True)# Entrenar el modelo        
-            # yp_tst = DModel_O.Model(x_ls_tst)# Entrenar el modelo 
-            # yp_tst =  yp_tst.cpu().detach().numpy()#[:,0] 
-            #fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(6, 6))
-            ##plt.scatter(y_tst,yp_tst,c='blue',s=5)
-            #ax.scatter(y_tst,yp_tst,c='blue',s=5)
-            #abline_plot(intercept=0, slope=1, ax=ax)
-            #plt.show()
-            Time = time.time()-Time
-            np.mean((y_tst-yp_tst)**2)
-            #Pos_Top tst
-            #Matching_Top = np.mean(yp_tst>np.quantile(y[Fold!=k],0.80))
-            PosTop_tst, PosTop_tstp = np.where(y_tst>np.quantile(y_tst,0.8))[0], np.where(yp_tst>np.quantile(yp_tst,0.8))[0]
-            GIDTop_tst = GIDs[Fold==k][PosTop_tst]
-            # #Matching_Top = np.mean([GIDs[Fold==k][i] in GIDTop_tst for i in range(np.sum(Fold==k))])# No tiene sentido
-            Id_df = {'Iters':Hypers_Fixed['Iters'],
-                     'Batch_size':Hypers_Fixed['Batch_size'],'GPU':str(GPU),
-                     'AF':'EI','Xi':xi,'Folds':K,'IKUsed':str(Hypers_Fixed['IK'])+'Used'+str(Hypers_Fixed['Use']),
-                     'DataSet':DataSets[DataNumber], 'Trait':Traits[t-1]}
-            Matching_Top = np.mean([GIDs[Fold==k][PosTop_tstp][i] in GIDTop_tst for i in range(len(PosTop_tstp))])
-            Tab_k = pd.DataFrame({**Id_df,**{'Fold':k,'Env':'NA', 'Cor':[np.corrcoef(y_tst[:,0],yp_tst[:,0])[0,1]],
-                                  'MSE':[np.mean((y_tst-yp_tst)**2)],
-                                  'NRMSE':[np.sqrt(np.mean((y_tst-yp_tst)**2))/np.mean(y_tst)],'Time':Time/3600,
-                                  'Matching':Matching_Top}})
-            
-            #Save Preds                             
-            Dir_Outs =  os.path.join(Dir_Outs0,'Preds-'+Predictor+'-Trait-'+str(Traits[t-1])+'.csv')
-            df_Preds = pd.DataFrame({**Id_df,**{'Env':'NA',#dat_F.loc[np.where(Fold==k)]['Env'],
-                                      'Fold':k,'y':y_tst[:,0],'yp':yp_tst[:,0]}})
-            df_Preds.reset_index(inplace=True)
-            #Tab_k2 = Metrics_df(df_Preds,Grp='Env')
-            #Tab_k2.insert(0, 'Fold', k)
-            if not os.path.exists(Dir_Outs):            
-                df_Preds.to_csv(Dir_Outs,index=False)
-            else:
-                Existing_file =  pd.read_csv(Dir_Outs)
-                df_Preds = pd.concat([Existing_file,df_Preds], ignore_index=True)
-                df_Preds.to_csv(Dir_Outs,index=False)        
-            #Save Tb-Smm
-            Dir_Outs =  os.path.join(Dir_Outs0,'Tab-Smm-'+Predictor+'-Trait-'+str(Traits[t-1])+'.csv')    
-            #Tab_k =  pd.concat([Tab_k,Tab_k2])
-            if not os.path.exists(Dir_Outs):                        
-                Tab_k.to_csv(Dir_Outs,index=False)
-            else:
-                Existing_file =  pd.read_csv(Dir_Outs)
-                Tab_k = pd.concat([Existing_file,Tab_k], ignore_index=True)
-                Tab_k.to_csv(Dir_Outs,index=False)       
-            #Save Hypers
-            Dir_Outs =  os.path.join(Dir_Outs0,'Hypers-'+Predictor+'-Trait-'+str(Traits[t-1])+'.csv')
-            Hyper_df_k = pd.DataFrame(BO.max)
-            Hyper_df_k['Parameter'], Hyper_df_k['Fold'] = Hyper_df_k.index, k
-            Hyper_df_k
-            if not os.path.exists(Dir_Outs):
-                Hyper_df_k.to_csv(Dir_Outs,index=False)
-            else:
-                Hyper_df =  pd.read_csv(Dir_Outs)
-                Hyper_df_k = pd.concat([Hyper_df,Hyper_df_k], ignore_index=True)
-                Hyper_df_k.to_csv(Dir_Outs,index=False)   
-            
-            print('Fold',k)
-        
-    
-```
-
-
-
-
-
+## Import data
 
 ```{r}
-knit_exit()
+genotyping <- "genetics/pops/nam_SAL.vcf"  %>% 
+  read.vcfR(., verbose = FALSE)
+
+phenotyping <- "genetics/mlt-sal.csv" %>% 
+  read.csv(.) %>% 
+  dplyr::rename(genotypes = line)
 ```
 
-
-# Effective population
+## Transfor genotype data
 
 ```{r}
-#| eval: false
+gt_matrix <- genotyping %>% 
+  extract.gt(., element = "GT", as.numeric = TRUE, convertNA = TRUE)
 
-snpdt_filt <- calc_ne(snpdt_filt, "pop"
-                      , chr = "CHROM"
-                      , NeEstimator_path = "C:\\Ne2\\Ne2-1.exe"
-                      )
+# Transpose the matrix to have individuals as rows and markers as columns
+gt_matrix <- t(gt_matrix)
 
-ne <- get.snpR.stats(snpdt_filt, "pop"
-                        , stats = c("ne"))
-
-ne$pop %>% web_table()
+# Replace numeric genotype codes (0, 1, 2) with rrBLUP's required codes (-1, 0, 1)
+gt_matrix[gt_matrix == 0] <- -1  # Homozygous for parent 1
+gt_matrix[gt_matrix == 1] <- 0   # Heterozygous
+gt_matrix[gt_matrix == 2] <- 1   # Homozygous for parent 2
 ```
 
-
-## LD
+## Impute missing values
 
 ```{r}
-#| eval: false
-
-ld <- calc_pairwise_ld(snpdt_filt, facets = "CHROM.cross"
-                               , par = ncores)
-get.snpR.stats(ld, "CHROM.cross", "LD")
-
-plot_pairwise_ld_heatmap(ld, facets = "CHROM.cross")
+# A.mat() can perform imputation as part of its relationship matrix calculation.
+# However, for direct marker-based prediction (RR-BLUP), pre-imputation is
+# often done. We can use the 'mean' method for a simple imputation strategy.
+imputed_markers <- A.mat(gt_matrix
+                         , max.missing = 0.5
+                         , impute.method = "mean"
+                         , return.imputed = T) %>% 
+  pluck("imputed")
 ```
 
-
-# LD decay
-
-- https://speciationgenomics.github.io/ld_decay/
-
-```{bash}
-VCF=genetics/pop_SAL.vcf
-
-plink1 --vcf $VCF --double-id --allow-extra-chr \
---set-missing-var-ids @:# \
---thin 0.1 --r2 gz --ld-window 100 --ld-window-kb 5 \
---ld-window-r2 0 \
---out genetics/ld_quinoa
-```
+## Check data
 
 ```{r}
-ld <- read.table("genetics/ld_quinoa.ld.gz", header=TRUE) %>% 
-  mutate(distance = BP_B - BP_A)
+# Ensure sample IDs match in both genotype and phenotype data
+common_samples <- intersect(rownames(imputed_markers), phenotyping$genotypes)
+imputed_markers <- imputed_markers[common_samples, ]
 
-ggplot(ld, aes(x= distance, y = R2)) +
-  geom_point() +
-  geom_smooth() +
-  labs(x="Distance (bp)", y="LD (r²)", title="LD Decay Plot")
-
-
+phenotyping4gp <- phenotyping[phenotyping$genotypes %in% common_samples, ] %>% 
+  tibble(.) %>% 
+  column_to_rownames("genotypes")
 ```
 
-```{bash}
-plink1 --vcf genetics/pop_SAL.vcf --ld-window 99999 --ld-window-r2 0 --r2 --out genetics/ld_quinoa --allow-extra-chr
-```
+## Itinerations
 
 ```{r}
-ld <- read.table("genetics/ld_quinoa.ld", header=TRUE) %>% 
-  mutate(distance = BP_B - BP_A)
+traits <- colnames(phenotyping4gp)[1:length(phenotyping4gp)]
 
-ggplot(ld, aes(x= distance, y = R2)) +
-  geom_point() +
-  geom_smooth() +
-  labs(x="Distance (bp)", y="LD (r²)", title="LD Decay Plot")
+# run_iteration()
+
+GS_SAL <- traits %>%
+  set_names() %>%
+  map(\(trait) {
+    map_dfr(1:300, \(rep) run_iteration(trait, rep))
+  }) %>% 
+  bind_rows() %>% 
+  mutate(pop = "SAL", .before = trait)
 ```
 
+# GP merge data
 
+```{r}
+library(gtsummary)
 
+gensel <- list(GS_KAN, GS_SAL) %>% 
+  bind_rows() 
 
+gs_smr <- gensel %>%
+  select(trait, pop, accuracy, nrmse) %>%
+  tbl_strata(
+    strata = trait,
+    .tbl = ~ tbl_summary(
+      data = .x,
+      by = pop,                                  
+      type = all_continuous() ~ "continuous2",    
+      statistic = all_continuous() ~ c("{mean}", "{sd}", "{min}", "{max}"),
+      digits = all_continuous() ~ 2,
+      label = list(
+        accuracy ~ "Accuracy",
+        nrmse    ~ "NRMSE"
+      )
+    ) |>
+      add_overall(last = TRUE) |>                 # columna "Overall" dentro de cada trait
+      add_p(test = all_continuous() ~ "t.test") |>   
+      modify_header(label ~ "**Metric**") 
+  )
 
+gs_smr %>% 
+  gtsummary::as_tibble() %>% 
+  write_sheet(gs, "STable4")
+
+grid <- gensel %>% 
+  inti::plot_raw(x = "pop", y = "accuracy", group = "trait"
+                 , legend = "none") +
+   facet_wrap(. ~ trait, ncol = 3
+              , labeller = labeller(trait = traitnames)
+              ) +
+  labs(x = "Population", y = "Accuracy") +
+  theme(
+    strip.background = element_rect(fill = "grey95", colour = NA)
+  )
+
+plot <- grid %>% 
+  ggsave2(filename = "manuscript/Figure-03.jpg"
+         , width = 25
+         , height = 30
+         , units = "cm"
+         )
+```
 
