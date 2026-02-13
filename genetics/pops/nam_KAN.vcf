@@ -1,5 +1,5 @@
 ##fileformat=VCFv4.0
-##fileDate=20250921
+##fileDate=20260213
 ##source=snpR
 ##INFO=<ID=NS,Number=1,Type=Integer,Description="Number of Samples With Data">
 ##INFO=<ID=AC,Number=1,Type=Integer,Description="Allele Count">

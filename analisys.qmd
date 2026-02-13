@@ -39,7 +39,7 @@ suppressPackageStartupMessages({
   }
 }); remove(cran, git, pkg)
 
-# remotes::install_github("hemstrow/snpR", ref = "dev")
+# remotes::install_github("hemstrow/snpR")
 
 ncores <- floor(parallel::detectCores()*0.8)
 set.seed(2025)
@@ -316,6 +316,11 @@ snpR::filters(snpdt_filt)
 sample.meta(snpdt_filt)
 snp.meta(snpdt_filt)
 
+npop <- sample.meta(snpdt_filt) %>% 
+  group_by(cross) %>% 
+  summarise(pops = n())
+
+
 vcfdt <- format_snps(x = snpdt_filt
                      , output = "vcf"
                      , chr = "CHROM"
@@ -494,6 +499,8 @@ open "C:\ZSL\PopCluster1\PopCluster.exe"
 ```
 
 ```{r}
+#| eval: false
+
 ktest <- 10
 
 kvalue <- read.table("genetics/pops/popcluster/quinoa.K", 
@@ -517,53 +524,78 @@ plot <- kvalue %>%
 plot
 ```
 
-### LD decay
-
-```{bash}
-VCF=genetics/pops/nam_KAN.vcf
-RSL=genetics/pops/ld_results_KAN
-
-plink1 --vcf $VCF --r2 --ld-window 99999 --ld-window-kb 300 --ld-window-r2 0 --allow-extra-chr --out $RSL
-
-VCF=genetics/pops/nam_SAL.vcf
-RSL=genetics/pops/ld_results_SAL
-
-plink1 --vcf $VCF --r2 --ld-window 99999 --ld-window-kb 300 --ld-window-r2 0 --allow-extra-chr --out $RSL
-```
+### SOMMER: LD decay
 
 ```{r}
 #| eval: false
 
-# Cargar los datos y calcular distancia
-ld_data_KAN <- read.table("genetics/pops/ld_results_KAN.ld", header = TRUE) %>% 
-  mutate(pop = "KAN") 
-ld_data_SAL <- read.table("genetics/pops/ld_results_SAL.ld", header = TRUE) %>% 
-  mutate(pop = "SAL")
+library(sommer)
+library(vcfR)
+library(tidyverse)
+library(snpR)
 
-ld_data <- list(ld_data_KAN, ld_data_SAL) %>%
-  bind_rows() %>% 
-  mutate(distance_kb = abs(BP_A - BP_B) / 1000)
+vcfdt <- read.vcfR("genetics/pops/nam_SAL.vcf") %>% 
+  vcfR::vcfR2tidy()
 
-# Filtrar a 300 kb
-ld_data <- ld_data %>% 
-  group_by(pop) %>% 
-  filter(distance_kb <= 300)
+mrk <- vcfdt$gt %>%
+  mutate(gt_num = case_when(
+    gt_GT == "0/0" ~ -1,
+    gt_GT %in% c("0/1", "1/0") ~ 0,
+    gt_GT == "1/1" ~ 1,
+    TRUE ~ NA_real_
+  )) %>%
+  unite(Locus, c("ChromKey", "POS")) %>% 
+  dplyr::select(Indiv, Locus, gt_num) %>%
+  pivot_wider(names_from = Locus, values_from = gt_num
+              , values_fn = list
+              ) %>%
+  column_to_rownames("Indiv") 
 
-ggplot(ld_data, aes(x = distance_kb, y = R2, color = pop)) +
-  geom_smooth(method = "loess", se = FALSE, span = 0.1, size = 1.2) +
-  geom_hline(yintercept = 0.2, linetype = "dashed", color = "black") +
-  labs(
-    x = "Pairwise distance (kb)",
-    y = expression(LD~(r^2))
-  ) +
-  theme(legend.position = "top")
+str(mrk)
+
+map <- vcfdt$fix %>% 
+  unite("Locus", c("ChromKey", "POS"), remove = F) %>%
+  dplyr::select(Locus, Position = POS, LG = CHROM) %>% 
+  as.data.frame()
+
+str(map)
+
+tx <- mrk |>
+  dplyr::count(Indiv, Locus) |>
+  dplyr::filter(n > 1)
+
+ld_decay <- enhancer::LD.decay(mrk, map)
+
+
+ld_decay$all.LG <- ld_decay$all.LG[which(ld_decay$all.LG$p < .001),]
+
+#### plot the LD decay
+with(res$all.LG, plot(r2~d,col=transp("cadetblue"),
+                    xlim=c(0,55), ylim=c(0,1),
+                    pch=20,cex=0.5,yaxt="n",
+                    xaxt="n",ylab=expression(r^2),
+                    xlab="Distance in cM")
+                    )
+axis(1, at=seq(0,55,5), labels=seq(0,55,5))
+axis(2,at=seq(0,1,.1), labels=seq(0,1,.1), las=1)
+
+#### if you want to add the loess regression lines
+#### this could take a long time!!!
+mod <- loess(r2 ~ d, data=res$all.LG)
+par(new=T)
+lilo <- predict(mod,data.frame(d=1:55))
+plot(lilo, bty="n", xaxt="n", yaxt="n", col="green",
+     type="l", ylim=c(0,1),ylab="",xlab="",lwd=2)
+res3 <- LD.decay(markers=CPgeno, map=mapCP,
+                unlinked = TRUE,gamma = .95)
+abline(h=res3$all.LG, col="red")
 ```
 
 ```{r}
 fig1 <- list(p1a, p1b, p1c) %>% 
   plot_grid(plotlist = ., ncol = 2, labels = "auto") %>% 
   ggsave(plot = .
-         , filename = "manuscript/Figure-01.jpg"
+         , filename = "manuscript/Figure-2.jpg"
          , units = "cm", width = 35, height = 20)
 ```
 
@@ -606,6 +638,8 @@ tab <- list(tab_nam,tab_cross)  %>%
   bind_rows() %>% 
   tibble::add_row(Population = "NAM", .before = 1) %>%
   tibble::add_row(Population = "Cross", .before = 4) 
+
+tab %>% kable()
   
 # tab %>% googlesheets4::sheet_write(ss = gs, "divindex")
 
@@ -616,7 +650,75 @@ get.snpR.stats(snpdt_filt, "cross", "genetic_distance")
 
 ```
 
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+knit_exit()
+```
+
+
+
+
 ## (ii) Map and characterize QTL to elucidate their roles in yield architecture and cross-reference them with prior genomic findings in quinoa
+
+```{bash}
+VCF=genetics/pops/nam_KAN.vcf
+RSL=genetics/pops/nam_KAN_qtl
+
+plink2 \
+  --vcf $VCF \
+  --recode A \
+  --out $RSL
+```
+
+```{r}
+library(qtl2)
+library(tidyverse)
+
+geno_raw <- read.table("genetics/pops/nam_KAN_qtl.raw", header = TRUE)
+
+geno <- geno_raw %>%
+  select(-FID, -PAT, -MAT, -SEX, -PHENOTYPE) %>%
+  column_to_rownames("IID")
+
+pheno <- fb %>% 
+  select(!c(pop, cross, nline)) %>% 
+   column_to_rownames("line")
+
+map <- read.vcfR(file = "genetics/pops/nam_KAN.vcf") %>% 
+  vcfR::vcfR2tidy() %>% 
+  pluck(1) %>% 
+  select(marker = ID, chr = CHROM, pos = POS)
+
+cross <- list(
+  geno  = geno,
+  pheno = pheno,
+  map   = map
+)
+
+class(cross) <- "cross2"
+
+summary(cross)
+
+pr <- calc_genoprob(
+  cross,
+  error_prob = 0.001,
+  cores = 12
+)
+
+
+
+```
 
 > rMVP: Memory-efficient, Visualization-enhanced, and Parallel-accelerated Genome-Wide Association Study
 
