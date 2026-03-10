@@ -524,7 +524,7 @@ plot <- kvalue %>%
 plot
 ```
 
-### SOMMER: LD decay
+### LD decay
 
 ```{r}
 #| eval: false
@@ -534,58 +534,113 @@ library(vcfR)
 library(tidyverse)
 library(snpR)
 
-vcfdt <- read.vcfR("genetics/pops/nam_SAL.vcf") %>% 
-  vcfR::vcfR2tidy()
+vcfile <- "G:/Mi unidad/coding/quinoa4gwas/quinoa_pops.vcf.gz"
 
-mrk <- vcfdt$gt %>%
-  mutate(gt_num = case_when(
-    gt_GT == "0/0" ~ -1,
-    gt_GT %in% c("0/1", "1/0") ~ 0,
-    gt_GT == "1/1" ~ 1,
-    TRUE ~ NA_real_
-  )) %>%
-  unite(Locus, c("ChromKey", "POS")) %>% 
-  dplyr::select(Indiv, Locus, gt_num) %>%
-  pivot_wider(names_from = Locus, values_from = gt_num
-              , values_fn = list
-              ) %>%
-  column_to_rownames("Indiv") 
+snpdt <- snpR::read_vcf(file = vcfile)
+snpdt
 
-str(mrk)
+sample_meta <- snpdt %>% 
+  names() %>% 
+  gsub("_.*", "", .) %>% 
+  enframe(value = "cross") %>% 
+  mutate(pop = case_when(
+    str_detect(cross, "xKAN") ~ "KAN"
+    , str_detect(cross, "KAN") ~ "KAN"
+    , str_detect(cross, "SALx") ~ "SAL"
+    , str_detect(cross, "SAL") ~ "SAL"
+  ))
+  
+sample.meta(snpdt)$cross <- factor(sample_meta$cross
+                                   , levels = c("HUAxKAN", "NCOxKAN", "PASxKAN"
+                                                , "SALxHUA", "SALxNCO", "SALxPAN"))
+sample.meta(snpdt)$pop <- sample_meta$pop
 
-map <- vcfdt$fix %>% 
-  unite("Locus", c("ChromKey", "POS"), remove = F) %>%
-  dplyr::select(Locus, Position = POS, LG = CHROM) %>% 
-  as.data.frame()
+sample.meta(snpdt)
+snp.meta(snpdt)
 
-str(map)
+snpdt_filt <- snpR::filter_snps(x = snpdt
+                              , maf = 0.05
+                              , min_ind = 0.5
+                              , min_loci = 0.3
+                              , maf_facets = "cross"
+                              )
 
-ld_decay <- enhancer::LD.decay(mrk, map)
+vcfdt <- format_snps(x = snpdt_filt
+                     , output = "sn"
+                     , interpolate = ""
+                     , chr = "CHROM"
+                     , position = "position"
+                     # , facets = "pop"
+                     , verbose = TRUE
+                     # , outfile = "genetics/pops/nam"
+                     ) %>% 
+  mutate(ID = paste0("marker", "_", row.names(.))) %>%
+  pivot_longer(!c(1:FILTER)
+               , names_to = "cross"
+               , values_to = "gt"
+               ) 
 
+nam_pop <- vcfdt #%>%
+  # filter(str_detect(cross, "SALx"))
 
-ld_decay$all.LG <- ld_decay$all.LG[which(ld_decay$all.LG$p < .001),]
+geno <- nam_pop %>%
+  dplyr::select(id = cross, marker = ID, alleles = gt) %>% 
+  mutate(alleles = case_when(
+    alleles %in% 0 ~ "-1"
+    , alleles %in% 1 ~ "0"
+    , alleles %in% 2 ~ "1"
+  )) %>% 
+  mutate(across(alleles, ~ as.numeric(.))) %>% 
+  pivot_wider(names_from = marker
+              , values_from = alleles)  %>%
+  column_to_rownames("id") %>% 
+  as.matrix()
 
-#### plot the LD decay
-with(res$all.LG, plot(r2~d,col=transp("cadetblue"),
-                    xlim=c(0,55), ylim=c(0,1),
-                    pch=20,cex=0.5,yaxt="n",
-                    xaxt="n",ylab=expression(r^2),
-                    xlab="Distance in cM")
-                    )
-axis(1, at=seq(0,55,5), labels=seq(0,55,5))
-axis(2,at=seq(0,1,.1), labels=seq(0,1,.1), las=1)
+gmap <- nam_pop %>%
+  pivot_wider(names_from = cross, values_from = gt) %>% 
+  dplyr::select(ID, CHROM, position) %>% 
+  mutate(across(position, ~ as.numeric(.))) %>% 
+  arrange(CHROM, position) %>% 
+  # mutate(CHROM = as.integer(as.factor(CHROM))) %>% # check num vs char
+  distinct(CHROM, position, .keep_all = TRUE) %>% 
+  dplyr::select(Locus = ID, Position = position, LG = CHROM) %>% 
+  data.frame()
 
-#### if you want to add the loess regression lines
-#### this could take a long time!!!
-mod <- loess(r2 ~ d, data=res$all.LG)
-par(new=T)
-lilo <- predict(mod,data.frame(d=1:55))
-plot(lilo, bty="n", xaxt="n", yaxt="n", col="green",
-     type="l", ylim=c(0,1),ylab="",xlab="",lwd=2)
-res3 <- LD.decay(markers=CPgeno, map=mapCP,
-                unlinked = TRUE,gamma = .95)
-abline(h=res3$all.LG, col="red")
+ld_decay <- enhancer::LD.decay(markers = geno, map = gmap)
+
+# significant LD
+
+ld4plot <- ld_decay$all.LG %>% 
+  filter(p < 0.001) %>% 
+  filter(d > 0) %>% 
+  mutate(d = d/1000) %>% # bp -> Kbp
+  filter(!d > 10)
+
+# plot the LD decay
+
+ggplot(ld4plot, aes(x = d, y = r2)) +
+  geom_point(
+    color = scales::alpha("cadetblue", 0.4),
+    size = 1
+  ) +
+  scale_x_continuous(
+    limits = c(0, 5),
+    breaks = seq(0, 5, 1)
+  ) +
+  scale_y_continuous(
+    limits = c(0, 1),
+    breaks = seq(0, 1, 0.1)
+  ) +
+  labs(
+    x = "Physical distance (Kbp)",
+    y = expression(r^2)
+  ) +
+  theme_classic() +
+  geom_hline(yintercept = 0.2, linetype = "dashed", colour = "red") +
+  geom_smooth(se = F, formula =  y ~ x )
+
 ```
+
 
 ```{r}
 fig1 <- list(p1a, p1b, p1c) %>% 
@@ -645,130 +700,6 @@ snpdt_filt <- calc_genetic_distances(snpdt_filt, "cross")
 get.snpR.stats(snpdt_filt, "cross", "genetic_distance")
 
 ```
-
-## (ii) QTL mapping
-
-```{r}
-library(snpR)
-library(tidyverse)
-library(qtl2)
-
-vcfile <- "G:/Mi unidad/coding/quinoa4gwas/quinoa_pops.vcf.gz"
-
-snpdt <- snpR::read_vcf(file = vcfile)
-snpdt
-
-sample_meta <- snpdt %>% 
-  names() %>% 
-  gsub("_.*", "", .) %>% 
-  enframe(value = "cross") %>% 
-  mutate(pop = case_when(
-    str_detect(cross, "xKAN") ~ "KAN"
-    , str_detect(cross, "KAN") ~ "KAN"
-    , str_detect(cross, "SALx") ~ "SAL"
-    , str_detect(cross, "SAL") ~ "SAL"
-  ))
-  
-sample.meta(snpdt)$cross <- factor(sample_meta$cross
-                                   , levels = c("HUAxKAN", "NCOxKAN", "PASxKAN"
-                                                , "SALxHUA", "SALxNCO", "SALxPAN"))
-sample.meta(snpdt)$pop <- sample_meta$pop
-
-sample.meta(snpdt)
-snp.meta(snpdt)
-
-snpdt_filt <- snpR::filter_snps(x = snpdt
-                              , maf = 0.05
-                              , min_ind = 0.5
-                              , min_loci = 0.3
-                              , maf_facets = "cross"
-                              )
-
-vcfdt <- format_snps(x = snpdt_filt
-                     , output = "sn"
-                     , interpolate = ""
-                     , chr = "CHROM"
-                     , position = "position"
-                     , facets = "pop"
-                     , verbose = TRUE
-                     # , outfile = "genetics/pops/nam"
-                     ) %>% 
-  mutate(ID = paste0("marker", "_", row.names(.))) %>%
-  pivot_longer(!c(1:FILTER)
-               , names_to = "cross"
-               , values_to = "gt"
-               ) 
-
-nam_pop <- vcfdt %>% 
-  filter(str_detect(cross, "SALx")) 
-
-gmap <- nam_pop %>%
-  pivot_wider(names_from = cross, values_from = gt) %>% 
-  dplyr::select(marker = ID, chr = CHROM, pos = position) %>% 
-  mutate(across(pos, ~ as.numeric(.))) %>% 
-  arrange(chr, pos) %>% 
-  # mutate(chr = as.integer(as.factor(chr))) %>% 
-  # mutate(pos = pos/1e6) %>% # bp -> Mbp
-  distinct(chr, pos, .keep_all = TRUE)
-
-gmap %>% write_csv("genetics/rqtl2/SAL_gmap.csv")
-
-geno <- nam_pop %>%
-  dplyr::select(id = cross, marker = ID, alleles = gt) %>% 
-  mutate(alleles = case_when(
-    alleles %in% 0 ~ "AA"
-    , alleles %in% 1 ~ "AB"
-    , alleles %in% 2 ~ "BB"
-  )) %>% 
-  pivot_wider(names_from = marker
-              , values_from = alleles) 
-
-geno %>% write_csv("genetics/rqtl2/SAL_geno.csv")
-
-pheno <- read_csv("genetics/mlt-sal.csv") %>% 
-  rename(id = line)
-
-pheno %>% write_csv("genetics/rqtl2/SAL_pheno.csv")
-
-crossinfo <- pheno %>% 
-  dplyr::select(id) %>% 
-  mutate(cross = gsub("_[0-9]+$", "", id)) %>% 
-  mutate(cross = as.integer(as.factor(cross)))
-
-crossinfo$cross %>% unique()
-
-crossinfo %>% write_csv("genetics/rqtl2/SAL_crossinfo.csv")
-```
-
-```{r}
-ncores <- floor(parallel::detectCores()*0.8)
-
-namqtl <- read_cross2("genetics/rqtl2/SAL.yaml")
-
-map <- insert_pseudomarkers(namqtl$gmap, step = 0, cores = ncores)
-
-pr <- calc_genoprob(cross = namqtl, map = map, cores = ncores
-                    , quiet = F)
-
-apr <- genoprob_to_alleleprob(pr, cores = ncores)
-
-kinship <- calc_kinship(apr, "loco", cores = ncores)
-
-out <- scan1(apr, namqtl$pheno, kinship, cores = ncores)
-
-par(mar=c(5.1, 4.1, 1.1, 1.1))
-ymx <- maxlod(out) # overall maximum LOD score
-plot(out, map, lodcolumn=5, col="slateblue", ylim=c(0, ymx*1.5))
-
-
-```
-
-
-```{r}
-knit_exit()
-```
-
-
 
 ## (ii) Map and characterize QTL to elucidate their roles in yield architecture and cross-reference them with prior genomic findings in quinoa
 
@@ -1609,3 +1540,123 @@ plot <- grid %>%
          )
 ```
 
+```{r}
+knitr::knit_exit()
+```
+
+## QTL mapping using R/qtl2
+
+```{r}
+library(snpR)
+library(tidyverse)
+library(qtl2)
+
+vcfile <- "G:/Mi unidad/coding/quinoa4gwas/quinoa_pops.vcf.gz"
+
+snpdt <- snpR::read_vcf(file = vcfile)
+snpdt
+
+sample_meta <- snpdt %>% 
+  names() %>% 
+  gsub("_.*", "", .) %>% 
+  enframe(value = "cross") %>% 
+  mutate(pop = case_when(
+    str_detect(cross, "xKAN") ~ "KAN"
+    , str_detect(cross, "KAN") ~ "KAN"
+    , str_detect(cross, "SALx") ~ "SAL"
+    , str_detect(cross, "SAL") ~ "SAL"
+  ))
+  
+sample.meta(snpdt)$cross <- factor(sample_meta$cross
+                                   , levels = c("HUAxKAN", "NCOxKAN", "PASxKAN"
+                                                , "SALxHUA", "SALxNCO", "SALxPAN"))
+sample.meta(snpdt)$pop <- sample_meta$pop
+
+sample.meta(snpdt)
+snp.meta(snpdt)
+
+snpdt_filt <- snpR::filter_snps(x = snpdt
+                              , maf = 0.05
+                              , min_ind = 0.5
+                              , min_loci = 0.3
+                              , maf_facets = "cross"
+                              )
+
+vcfdt <- format_snps(x = snpdt_filt
+                     , output = "sn"
+                     , interpolate = ""
+                     , chr = "CHROM"
+                     , position = "position"
+                     , facets = "pop"
+                     , verbose = TRUE
+                     # , outfile = "genetics/pops/nam"
+                     ) %>% 
+  mutate(ID = paste0("marker", "_", row.names(.))) %>%
+  pivot_longer(!c(1:FILTER)
+               , names_to = "cross"
+               , values_to = "gt"
+               ) 
+
+nam_pop <- vcfdt %>% 
+  filter(str_detect(cross, "SALx")) 
+
+gmap <- nam_pop %>%
+  pivot_wider(names_from = cross, values_from = gt) %>% 
+  dplyr::select(marker = ID, chr = CHROM, pos = position) %>% 
+  mutate(across(pos, ~ as.numeric(.))) %>% 
+  arrange(chr, pos) %>% 
+  # mutate(chr = as.integer(as.factor(chr))) %>% 
+  # mutate(pos = pos/1e6) %>% # bp -> Mbp
+  distinct(chr, pos, .keep_all = TRUE)
+
+gmap %>% write_csv("genetics/rqtl2/SAL_gmap.csv")
+
+geno <- nam_pop %>%
+  dplyr::select(id = cross, marker = ID, alleles = gt) %>% 
+  mutate(alleles = case_when(
+    alleles %in% 0 ~ "AA"
+    , alleles %in% 1 ~ "AB"
+    , alleles %in% 2 ~ "BB"
+  )) %>% 
+  pivot_wider(names_from = marker
+              , values_from = alleles) 
+
+geno %>% write_csv("genetics/rqtl2/SAL_geno.csv")
+
+pheno <- read_csv("genetics/mlt-sal.csv") %>% 
+  rename(id = line)
+
+pheno %>% write_csv("genetics/rqtl2/SAL_pheno.csv")
+
+crossinfo <- pheno %>% 
+  dplyr::select(id) %>% 
+  mutate(cross = gsub("_[0-9]+$", "", id)) %>% 
+  mutate(cross = as.integer(as.factor(cross)))
+
+crossinfo$cross %>% unique()
+
+crossinfo %>% write_csv("genetics/rqtl2/SAL_crossinfo.csv")
+```
+
+```{r}
+ncores <- floor(parallel::detectCores()*0.8)
+
+namqtl <- read_cross2("genetics/rqtl2/SAL.yaml")
+
+map <- insert_pseudomarkers(namqtl$gmap, step = 0, cores = ncores)
+
+pr <- calc_genoprob(cross = namqtl, map = map, cores = ncores
+                    , quiet = F)
+
+apr <- genoprob_to_alleleprob(pr, cores = ncores)
+
+kinship <- calc_kinship(apr, "loco", cores = ncores)
+
+out <- scan1(apr, namqtl$pheno, kinship, cores = ncores)
+
+par(mar=c(5.1, 4.1, 1.1, 1.1))
+ymx <- maxlod(out) # overall maximum LOD score
+plot(out, map, lodcolumn=5, col="slateblue", ylim=c(0, ymx*1.5))
+
+
+```
