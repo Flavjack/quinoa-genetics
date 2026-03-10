@@ -1,0 +1,24 @@
+# https://kbroman.org/qtl2/assets/vignettes/input_files.html
+# https://kbroman.org/qtl2/assets/sampledata/grav2/grav2.yaml
+# https://kbroman.org/qtl2/assets/sampledata/iron/iron.yaml
+crosstype: riself
+
+geno: SAL_geno.csv
+gmap: SAL_gmap.csv
+pheno: SAL_pheno.csv
+
+alleles: 
+- A
+- B
+
+genotypes:
+  AA: 1
+  AB: 2
+  BB: 3
+  
+cross_info:
+  covar: cross_direction
+  AxB: 0
+  BxA: 1
+
+na.strings: [NA,"-"]
