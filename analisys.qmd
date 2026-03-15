@@ -33,13 +33,13 @@ suppressPackageStartupMessages({
   
   for (pkg in git) {
     if( !require(sub(".*/", "", pkg), character.only = TRUE) ) {
-      devtools::install_github(pkg, upgrade = TRUE)
+      pak::pkg_install(pkg, upgrade = TRUE)
       library(sub(".*/", "", pkg), character.only = TRUE)
     }
   }
 }); remove(cran, git, pkg)
 
-# remotes::install_github("hemstrow/snpR")
+# pak::pkg_install("hemstrow/snpR")
 
 ncores <- floor(parallel::detectCores()*0.8)
 set.seed(2025)
@@ -135,7 +135,7 @@ dist$layers[[1]] <- NULL
 
 fig <- dist %>% 
   ggsave2(filename = "manuscript/SFigure-02.jpg"
-          , units = "cm", width = 30, height = 15)
+          , units = "cm", width = 35, height = 15)
 
 fig %>% include_graphics()
 ```
@@ -263,7 +263,7 @@ scp flaaw57@server231.ipsp.uni-hohenheim.de:/work/workspaces/flavio/quinoageneti
 
 # snpR
 
-- https://www.nature.com/articles/s41576-024-00738-6/tables/1
+> https://www.nature.com/articles/s41576-024-00738-6/tables/1
 
 ```{r}
 # vcffile <- choose.files()
@@ -320,7 +320,6 @@ npop <- sample.meta(snpdt_filt) %>%
   group_by(cross) %>% 
   summarise(pops = n())
 
-
 vcfdt <- format_snps(x = snpdt_filt
                      , output = "vcf"
                      , chr = "CHROM"
@@ -342,14 +341,58 @@ vcfdt <- format_snps(x = snpdt_filt
                      )
 ```
 
-# Objectives
+# Sequencing depth
 
-## (i) Assess the inter and intra-population genetic differentiation of the NAM populations
+```{r}
+library(vcfR)
+library(tidyverse)
 
-- Fig 1: (a) PCA, (b) POPstructure, (c) FST,  and (d) LD by NAM pop
-- Table with diversity value for NAM pop
+# Leer archivo VCF
+vcf <- read.vcfR("G:/Mi unidad/coding/quinoa4gwas/quinoa_pops.vcf.gz")
 
-### PCA
+# Extraer profundidad de cobertura (DP)
+dp <- extract.gt(vcf, element = "DP", as.numeric = TRUE) %>% 
+  data.frame() %>% 
+  rownames_to_column("marker") %>% 
+  pivot_longer(!marker, values_to = "dp") %>% 
+  drop_na(dp)
+
+ggplot(dp, aes(x = dp)) +
+  geom_histogram() +
+  scale_x_continuous(expand = c(0, 0), n.breaks = 20, limits = c(0, 40)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 2500000), n.breaks = 10) +
+  labs(x = "Sequencing depth",
+       y = "Frequency") +
+  theme_minimal()
+```
+
+# Breeding scheme
+
+```{r}
+#| label: Image pdf to jpeg
+
+library(tidyverse)
+library(magick)
+
+pdf4pub <- list.files("files/", pattern = "Fig.*pdf", full.names = T) 
+
+path <- "manuscript/"
+
+imgs <- 1:length(pdf4pub) %>% map(\(x) {
+  
+  filename <- pdf4pub[x] %>% 
+    basename() %>% 
+    gsub(".pdf", "\\1.jpeg", .) 
+  
+  pdf4pub[x] %>% 
+    image_read_pdf() %>% 
+    image_write(format = "jpeg", file.path(path, "Figure-01.jpg"))
+})
+```
+
+# Objectives Specific 1
+
+## PCA
 
 ```{r}
 pca <- plot_clusters(snpdt_filt, facets = c("pop.cross")
@@ -373,11 +416,9 @@ p1a <- pca$plots$pca +
 p1a
 ```
 
-### Population structure
+## Population structure
 
 ```{r}
-#| cache: true
-
 popstr_k <- snpR::plot_structure(x = snpdt_filt
                                , facet = "cross"
                                , k = 2:10
@@ -437,7 +478,7 @@ p1b <- popstr$plot +
 p1b
 ```
 
-### FST
+## FST
 
 ```{r}
 # Calculate pairwise fst
@@ -451,10 +492,9 @@ p1c
 ### PopCluster: Population Structure 
 
 > https://doi.org/10.1038/s41437-022-00535-z
-
 > https://www.zsl.org/about-zsl/resources/software/popcluster
 
-### Data convertion
+## Data convertion
 
 ```{bash}
 #| eval: false
@@ -480,7 +520,7 @@ rm <- list.files(path = "genetics/pops/"
 unlink(rm)
 ```
 
-### Run analysis
+## Run analysis
 
 ```{bash}
 #| eval: false
@@ -524,11 +564,9 @@ plot <- kvalue %>%
 plot
 ```
 
-### LD decay
+## LD decay
 
 ```{r}
-#| eval: false
-
 library(sommer)
 library(vcfR)
 library(tidyverse)
@@ -641,16 +679,15 @@ ggplot(ld4plot, aes(x = d, y = r2)) +
 
 ```
 
-
 ```{r}
 fig1 <- list(p1a, p1b, p1c) %>% 
   plot_grid(plotlist = ., ncol = 2, labels = "auto") %>% 
   ggsave(plot = .
-         , filename = "manuscript/Figure-2.jpg"
+         , filename = "manuscript/Figure-02.jpg"
          , units = "cm", width = 35, height = 20)
 ```
 
-### Diversity indices
+## Diversity indices
 
 ```{r}
 # cross
@@ -692,7 +729,7 @@ tab <- list(tab_nam,tab_cross)  %>%
 
 tab %>% kable()
   
-# tab %>% googlesheets4::sheet_write(ss = gs, "divindex")
+# tab %>% googlesheets4::sheet_write(ss = gs, "Table1")
 
 #> genetic distance
 
@@ -701,56 +738,7 @@ get.snpR.stats(snpdt_filt, "cross", "genetic_distance")
 
 ```
 
-## (ii) Map and characterize QTL to elucidate their roles in yield architecture and cross-reference them with prior genomic findings in quinoa
-
-```{bash}
-VCF=genetics/pops/nam_KAN.vcf
-RSL=genetics/pops/nam_KAN_qtl
-
-plink2 \
-  --vcf $VCF \
-  --recode A \
-  --out $RSL
-```
-
-```{r}
-library(qtl2)
-library(tidyverse)
-
-geno_raw <- read.table("genetics/pops/nam_KAN_qtl.raw", header = TRUE)
-
-geno <- geno_raw %>%
-  select(-FID, -PAT, -MAT, -SEX, -PHENOTYPE) %>%
-  column_to_rownames("IID")
-
-pheno <- fb %>% 
-  select(!c(pop, cross, nline)) %>% 
-   column_to_rownames("line")
-
-map <- read.vcfR(file = "genetics/pops/nam_KAN.vcf") %>% 
-  vcfR::vcfR2tidy() %>% 
-  pluck(1) %>% 
-  select(marker = ID, chr = CHROM, pos = POS)
-
-cross <- list(
-  geno  = geno,
-  pheno = pheno,
-  map   = map
-)
-
-class(cross) <- "cross2"
-
-summary(cross)
-
-pr <- calc_genoprob(
-  cross,
-  error_prob = 0.001,
-  cores = 12
-)
-
-
-
-```
+# Specific Objective 2
 
 > rMVP: Memory-efficient, Visualization-enhanced, and Parallel-accelerated Genome-Wide Association Study
 
@@ -784,7 +772,7 @@ MVP.Data(fileVCF = "genetics/pops/nam_SAL.vcf"
          )
 ```
 
-## Kinship
+### Kinship
 
 ```{r}
 MVP.Data.Kin(fileKin = TRUE
@@ -792,7 +780,7 @@ MVP.Data.Kin(fileKin = TRUE
              , out = 'genetics/rmvp/kin_sal')
 ```
 
-## Data input
+### Data input
 
 ```{r}
 genotype <- attach.big.matrix("genetics/rmvp/dt_sal.geno.desc")
@@ -856,7 +844,7 @@ MVP.Data(fileVCF = "genetics/pops/nam_KAN.vcf"
          )
 ```
 
-## Kinship
+### Kinship
 
 ```{r}
 MVP.Data.Kin(fileKin = TRUE
@@ -864,7 +852,7 @@ MVP.Data.Kin(fileKin = TRUE
              , out = 'genetics/rmvp/kin_kan')
 ```
 
-## Data input
+### Data input
 
 ```{r}
 genotype <- attach.big.matrix("genetics/rmvp/dt_kan.geno.desc")
@@ -918,7 +906,6 @@ gwas_rmvp <- base::merge(x = gwas_sal, y = gwas_kan
                   ) %>% arrange(CHROM)
 
 alpha_bon <- 0.05/6046 # Bonferroni
-alpha_sug <- 1e-4 # suggestive
 
 qtl <- gwas_rmvp %>% 
   pivot_longer(!c(1:POS), values_to = "p-value") %>% 
@@ -927,15 +914,21 @@ qtl <- gwas_rmvp %>%
   mutate(log10 = -log10(`p-value`)) %>% 
   mutate(alpha = case_when(
     `p-value` <= alpha_bon ~ "Bonferroni"
-    , `p-value` <= alpha_sug ~ "Putative"
   )) %>% 
   drop_na(alpha) %>% 
   mutate(Trait = dplyr::recode(Trait, !!!traitnames))
   
-
 qtl %>% kable()
 
-# qtl %>% dplyr::select(Trait, Population, everything()) %>% dplyr::select(!`p-value`) %>% write_sheet(ss = gs, sheet = "snps")
+# qtl %>% dplyr::select(Trait, Population, everything()) %>% dplyr::select(!`p-value`) %>% write_sheet(ss = gs, sheet = "STable3")
+
+qtl %>% 
+  group_by(Population) %>% 
+  summarise(n = n())
+
+qtl %>% 
+  group_by(Trait, Population) %>% 
+  summarise(n = n())
 ```
 
 ## SNP density-plot
@@ -977,7 +970,7 @@ plot_mh <- 4:15 %>% map(\(x) {
        , plot.type = "m"
        , multraits = TRUE
        , LOG10=TRUE
-       , threshold=c(alpha_sug, alpha_bon)
+       , threshold=c(alpha_bon)
        , main = title
        , main.cex = 1
        , legend.pos="middle"
@@ -992,14 +985,13 @@ plot_mh <- 4:15 %>% map(\(x) {
 
 })
 
-plot_mh %>% 
+plot_mh[c(1:4, 6:8, 11)] %>% 
   plot_grid(plotlist = ., ncol = 4, labels = "auto") %>% 
-  ggsave2(filename = "manuscript/Figure-02.jpg"
-         , width = 65
-         , height = 35
+  ggsave2(filename = "manuscript/Figure-03.jpg"
+         , width = 60
+         , height = 30
          , units = "cm"
          )
-
 ```
 
 ## Q-Q plot
@@ -1015,7 +1007,7 @@ plot_qq <- 4:15 %>% map(\(x) {
        , plot.type = "q"
        , col = c("red", "blue")
        , multraits = TRUE
-       , threshold = alpha_sug
+       , threshold = alpha_bon
        , signal.pch = c(15)
        , signal.cex = 1.2
        , signal.col = "red"
@@ -1040,7 +1032,7 @@ plot_qq %>%
 
 # NAM: Nested Association Mapping
 
-- https://cran.r-project.org/web/packages/NAM/index.html
+> https://cran.r-project.org/web/packages/NAM/index.html
 
 ## SALCEDO NAM
 
@@ -1096,7 +1088,7 @@ rsl <- (length(gwsdt) - 11):length(gwsdt) %>% map(\(x) {
                 , chr = chr
                 )
   
-  plot(nam_gwas, alpha = alpha_sug
+  plot(nam_gwas, alpha = alpha_bon
          , main = names(trait)
          ) %>% print
   
@@ -1192,8 +1184,8 @@ p-val in the NAM package is the -log(p-value)
 
 ```{r}
 gwas_nam <- base::merge(x = gwas_sal_nam, y = gwas_kan_nam
-                  , by = c("ID", "CHROM", "POS")
-                  ) %>% 
+                        , by = c("ID", "CHROM", "POS")
+                        ) %>% 
   rename_with(~ gsub("\\.x", "-SAL", .)) %>% 
   rename_with(~ gsub("\\.y", "-KAN", .)) %>% 
   arrange(CHROM) 
@@ -1216,7 +1208,7 @@ plot_mh <- 4:15 %>% map(\(x) {
        , plot.type = "m"
        , multraits = TRUE
        , LOG10 = FALSE
-       , threshold = c(alpha_sug, alpha_bon)
+       , threshold = c(alpha_bon)
        , main = title
        , main.cex = 1
        , legend.pos="middle"
@@ -1275,7 +1267,7 @@ plot_qq %>%
          )
 ```
 
-## (iii) Use genomic prediction in the NAM population to enhance breeding efficiency and accelerate genetic gain.
+## Specific Objective 3
 
 > Reference
 
@@ -1290,27 +1282,26 @@ set.seed(as.numeric(1989-19-08))
 ## Import data
 
 ```{r}
-genotyping <- "genetics/pops/nam_KAN.vcf"  %>% 
-  read.vcfR(., verbose = FALSE)
-
-phenotyping <- "genetics/mlt-kan.csv" %>% 
-  read.csv(.) %>% 
-  dplyr::rename(genotypes = line)
+genotyping <- nam_pop %>%
+  dplyr::select(id = cross, marker = ID, alleles = gt) %>% 
+  mutate(alleles = case_when(
+    alleles %in% 0 ~ "-1"
+    , alleles %in% 1 ~ "0"
+    , alleles %in% 2 ~ "1"
+  )) %>% 
+  mutate(across(alleles, ~ as.numeric(.))) %>% 
+  pivot_wider(names_from = marker
+              , values_from = alleles)
 ```
 
-## Transfor genotype data
-
 ```{r}
-gt_matrix <- genotyping %>% 
-  extract.gt(., element = "GT", as.numeric = TRUE, convertNA = TRUE)
-
-# Transpose the matrix to have individuals as rows and markers as columns
-gt_matrix <- t(gt_matrix)
-
-# Replace numeric genotype codes (0, 1, 2) with rrBLUP's required codes (-1, 0, 1)
-gt_matrix[gt_matrix == 0] <- -1  # Homozygous for parent 1
-gt_matrix[gt_matrix == 1] <- 0   # Heterozygous
-gt_matrix[gt_matrix == 2] <- 1   # Homozygous for parent 2
+geno <- genotyping %>% 
+  filter(str_detect(id, "xKAN")) %>% 
+  column_to_rownames("id")
+  
+pheno <- "genetics/mlt-kan.csv" %>% 
+  read.csv(.) %>% 
+  dplyr::rename(genotypes = line)
 ```
 
 ## Impute missing values
@@ -1319,7 +1310,8 @@ gt_matrix[gt_matrix == 2] <- 1   # Homozygous for parent 2
 # A.mat() can perform imputation as part of its relationship matrix calculation.
 # However, for direct marker-based prediction (RR-BLUP), pre-imputation is
 # often done. We can use the 'mean' method for a simple imputation strategy.
-imputed_markers <- A.mat(gt_matrix
+
+imputed_markers <- A.mat(geno
                          , max.missing = 0.5
                          , impute.method = "mean"
                          , return.imputed = T) %>% 
@@ -1330,22 +1322,22 @@ imputed_markers <- A.mat(gt_matrix
 
 ```{r}
 # Ensure sample IDs match in both genotype and phenotype data
-common_samples <- intersect(rownames(imputed_markers), phenotyping$genotypes)
+common_samples <- intersect(rownames(imputed_markers), pheno$geno)
 imputed_markers <- imputed_markers[common_samples, ]
 
-phenotyping4gp <- phenotyping[phenotyping$genotypes %in% common_samples, ] %>% 
+phenotyping4gp <- pheno[pheno$geno %in% common_samples, ] %>% 
   tibble(.) %>% 
   column_to_rownames("genotypes")
+
+traits <- colnames(phenotyping4gp)[1:length(phenotyping4gp)]
 ```
 
 ## Itinerations
 
 ```{r}
-traits <- colnames(phenotyping4gp)[1:length(phenotyping4gp)]
-
-run_iteration <- function(trait, rep) {
+run_iteration <- function(trait, rep, data = phenotyping4gp) {
   # Split 60/40
-  split_data <- initial_split(phenotyping4gp, prop = 0.6)
+  split_data <- initial_split(data, prop = 0.6)
 
   pheno_train <- training(split_data) %>% as.matrix()
   pheno_valid <- testing(split_data)  %>% as.matrix()
@@ -1398,27 +1390,13 @@ GS_KAN <- traits %>%
 ## Import data
 
 ```{r}
-genotyping <- "genetics/pops/nam_SAL.vcf"  %>% 
-  read.vcfR(., verbose = FALSE)
-
-phenotyping <- "genetics/mlt-sal.csv" %>% 
+geno <- genotyping %>% 
+  filter(str_detect(id, "SALx")) %>% 
+  column_to_rownames("id")
+  
+pheno <- "genetics/mlt-sal.csv" %>% 
   read.csv(.) %>% 
   dplyr::rename(genotypes = line)
-```
-
-## Transfor genotype data
-
-```{r}
-gt_matrix <- genotyping %>% 
-  extract.gt(., element = "GT", as.numeric = TRUE, convertNA = TRUE)
-
-# Transpose the matrix to have individuals as rows and markers as columns
-gt_matrix <- t(gt_matrix)
-
-# Replace numeric genotype codes (0, 1, 2) with rrBLUP's required codes (-1, 0, 1)
-gt_matrix[gt_matrix == 0] <- -1  # Homozygous for parent 1
-gt_matrix[gt_matrix == 1] <- 0   # Heterozygous
-gt_matrix[gt_matrix == 2] <- 1   # Homozygous for parent 2
 ```
 
 ## Impute missing values
@@ -1427,7 +1405,7 @@ gt_matrix[gt_matrix == 2] <- 1   # Homozygous for parent 2
 # A.mat() can perform imputation as part of its relationship matrix calculation.
 # However, for direct marker-based prediction (RR-BLUP), pre-imputation is
 # often done. We can use the 'mean' method for a simple imputation strategy.
-imputed_markers <- A.mat(gt_matrix
+imputed_markers <- A.mat(geno
                          , max.missing = 0.5
                          , impute.method = "mean"
                          , return.imputed = T) %>% 
@@ -1438,10 +1416,10 @@ imputed_markers <- A.mat(gt_matrix
 
 ```{r}
 # Ensure sample IDs match in both genotype and phenotype data
-common_samples <- intersect(rownames(imputed_markers), phenotyping$genotypes)
+common_samples <- intersect(rownames(imputed_markers), pheno$geno)
 imputed_markers <- imputed_markers[common_samples, ]
 
-phenotyping4gp <- phenotyping[phenotyping$genotypes %in% common_samples, ] %>% 
+phenotyping4gp <- pheno[pheno$geno %in% common_samples, ] %>% 
   tibble(.) %>% 
   column_to_rownames("genotypes")
 ```
@@ -1459,7 +1437,7 @@ GS_SAL <- traits %>%
     map_dfr(1:300, \(rep) run_iteration(trait, rep))
   }) %>% 
   bind_rows() %>% 
-  mutate(pop = "SAL", .before = trait)
+  mutate(pop = "SAL", .before = "trait")
 ```
 
 # Genomic Prediction merge data
@@ -1495,7 +1473,6 @@ gtsummary::as_hux_xlsx(gs_smr, file = "files/STable4.xlsx")
 # gs_smr %>% gtsummary::as_tibble() %>% write_sheet(gs, "STable4")
 
 grid <- gensel %>% 
-  
   inti::plot_raw(x = "pop", y = "accuracy", group = "trait"
                  , legend = "none") +
   geom_point(shape = 16, color = "grey50", alpha = 0.3, size = 1) +
@@ -1533,7 +1510,7 @@ grid <- gensel %>%
 grid
 
 plot <- grid %>% 
-  ggsave2(filename = "manuscript/Figure-03.jpg"
+  ggsave2(filename = "manuscript/Figure-04.jpg"
          , width = 25
          , height = 30
          , units = "cm"
