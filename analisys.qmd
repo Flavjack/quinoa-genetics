@@ -1267,6 +1267,71 @@ plot_qq %>%
          )
 ```
 
+
+## Gene ontology
+
+```{r}
+if(!requireNamespace("BiocManager")) install.packages("BiocManager")
+BiocManager::install(c("GenomicRanges","rtracklayer"))
+
+library(data.table)
+library(dplyr)
+library(GenomicRanges)
+library(rtracklayer)
+
+# browseURL("https://genomevolution.org/coge/GenomeInfo.pl?gid=60716")
+
+gff <- BiocIO::import("files/quinoa_QQ74.gff3")
+genes <- gff[gff$type == "gene"]
+
+qtl
+
+gr_snps <- GRanges(
+  seqnames = qtl$CHROM,
+  ranges = IRanges(start = qtl$POS,
+                   end = qtl$POS),
+  SNP = qtl$SNP
+)
+
+window_size <- 100000 # ±100 kb
+
+gr_windows <- resize(gr_snps,
+                     width = window_size*2 + 1,
+                     fix = "center")
+
+hits <- findOverlaps(gr_windows, genes)
+
+candidate_genes <- data.frame(
+  SNP = gr_windows$SNP[queryHits(hits)],
+  gene_id = genes$ID[subjectHits(hits)],
+  CHROM = seqnames(genes)[subjectHits(hits)],
+  gene_start = start(genes)[subjectHits(hits)],
+  gene_end = end(genes)[subjectHits(hits)],
+  annotation = genes$note[subjectHits(hits)]
+) %>% 
+  drop_na(annotation)
+
+candidate_genes %>% kable()
+
+trait2gene <- base::merge(candidate_genes, qtl) %>% 
+  dplyr::select(Trait, Population, SNP, CHROM
+                , gene_id, 
+                , POS
+                , gene_start
+                , gene_end
+                , annotation
+                , !c(`p-value`, log10, alpha)
+                ) %>% 
+  arrange(CHROM, Trait)
+
+qtl$SNP %>% length() 
+trait2gene$SNP %>% factor() %>% nlevels() 
+
+# trait2gene %>% write_sheet(ss = gs, sheet = "STable")
+
+trait2gene %>% kable()
+```
+
 ## Specific Objective 3
 
 > Reference
@@ -1516,6 +1581,7 @@ plot <- grid %>%
          , units = "cm"
          )
 ```
+
 
 ```{r}
 knitr::knit_exit()
