@@ -696,12 +696,13 @@ snpdt_filt <- calc_pi(snpdt_filt, "cross")
 snpdt_filt <- calc_ho(snpdt_filt, "cross")
 snpdt_filt <- calc_he(snpdt_filt, "cross")
 snpdt_filt <- calc_fis(snpdt_filt, "cross")
+snpdt_filt <- calc_prop_poly(snpdt_filt, "cross")
 
 stats <- get.snpR.stats(snpdt_filt, "cross"
-                        , stats = c("pi", "he", "ho", "fis"))
+                        , stats = c("pi", "he", "ho", "fis", "prop_poly"))
 
 tab_cross <- stats$weighted.means %>% 
-  dplyr::select(subfacet, starts_with("weighted")) %>% 
+  dplyr::select(subfacet, matches("weighted|prop")) %>% 
   rename_with(~ gsub("weighted_mean_", "", .)) %>% 
   rename("Population" = subfacet) %>% 
   mutate(across(where(is.numeric), ~ round(., 2)))
@@ -712,20 +713,24 @@ snpdt_filt <- calc_pi(snpdt_filt, "pop")
 snpdt_filt <- calc_ho(snpdt_filt, "pop")
 snpdt_filt <- calc_he(snpdt_filt, "pop")
 snpdt_filt <- calc_fis(snpdt_filt, "pop")
+snpdt_filt <- calc_prop_poly(snpdt_filt, "pop")
 
 stats <- get.snpR.stats(snpdt_filt, "pop"
-                        , stats = c("pi", "he", "ho", "fis"))
+                        , stats = c("pi", "he", "ho", "fis", "prop_poly"))
 
 tab_nam <- stats$weighted.means %>% 
-  dplyr::select(subfacet, starts_with("weighted")) %>% 
+  dplyr::select(subfacet, matches("weighted|prop")) %>% 
   rename_with(~ gsub("weighted_mean_", "", .)) %>% 
   rename("Population" = subfacet) %>% 
   mutate(across(where(is.numeric), ~ round(., 2)))
 
-tab <- list(tab_nam,tab_cross)  %>% 
+tab <- list(tab_nam, tab_cross)  %>% 
   bind_rows() %>% 
   tibble::add_row(Population = "NAM", .before = 1) %>%
-  tibble::add_row(Population = "Cross", .before = 4) 
+  tibble::add_row(Population = "Cross", .before = 4) %>% 
+  dplyr::rename(poly = "prop_poly") %>% 
+  dplyr::select(!pi) %>% 
+  mutate(n = c(NA, 60, 65, NA, 18, 21, 21, 19, 26, 20))
 
 tab %>% kable()
   
