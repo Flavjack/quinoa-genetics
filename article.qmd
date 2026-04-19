@@ -38,6 +38,8 @@ crossref:
 ```{r}
 #| label: setup
 
+# scientific reports: https://www.nature.com/srep/author-instructions/submission-guidelines
+
 source("http://inkaverse.com/docs.r")
 doc <- inti::gdoc2qmd(file = "article.zip"
                       # , type = "listfull"
