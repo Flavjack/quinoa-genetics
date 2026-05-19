@@ -1272,7 +1272,6 @@ plot_qq %>%
          )
 ```
 
-
 ## Gene ontology
 
 ```{r}
