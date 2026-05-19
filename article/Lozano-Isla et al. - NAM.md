@@ -14,7 +14,7 @@ Flavio Lozano-Isla^1,2\*^; Milagros Ninoska Munoz-Salas^3^, Mireia Vidal-Villare
 
 \*Corresponding author. 
 
-Flavio Lozano -Isla <[flavio.lozano@untrm.edu.pe](mailto:flavio.lozano@untrm.edu.pe)> 
+Flavio Lozano-Isla <[flavio.lozano@untrm.edu.pe](mailto:flavio.lozano@untrm.edu.pe)> 
 
 Karl Schmid <[karl.schmid@uni-hohenheim.de](mailto:karl.schmid@uni-hohenheim.de)>
 
@@ -35,7 +35,7 @@ ORCID IDs:
 
 
 
-**DECLARATIONS**
+**STATEMENTS AND DECLARATIONS**
 
 **Funding**
 
@@ -184,7 +184,7 @@ An additional association analysis was performed using the R package NAM, which 
 
 ```Unknown element type at this position: UNSUPPORTED```
 
-![Genome-wide association study for yield-related traits in quinoa (*Chenopodium quinoa*) in two NAM populations evaluated at two locations in the Peruvian highlands. (a) Number of days to 50% flowering (days, ndflw), (b) Plant height at flowering (cm, plth\_flw), (c) Panicle length at flowering (cm, pnlg\_flw), (d) Panicle width at flowering (cm, pnwd), (e) Panicle length at maturity (cm, pnlg\_mtr ), (f) Plant height at maturity (cm, plth\_mtr), (g) Number of days to 50% physiological maturity (days, ndpm\_mtr), and (h) Grain yield per plot (g/5m^2^, yplt\_hrv) Orange and green points denote SAL- and KAN-derived NAM populations, respectively (n = 125). The horizontal line indicates the genome-wide significance at Bonferroni threshold (p-value < 0.000008). $\alpha_{Bonferroni}=\frac{m}{\alpha};\ m=0.05,\ \alpha=6046\ snps$.](img_2.jpg){#fig:id.ysu94l6l37zq}
+![Genome-wide association study for yield-related traits in quinoa (*Chenopodium quinoa*) in two NAM populations evaluated at two locations in the Peruvian highlands. (a) Number of days to 50% flowering (days, ndflw), (b) Plant height at flowering (cm, plth\_flw), (c) Panicle length at flowering (cm, pnlg\_flw), (d) Panicle width at flowering (cm, pnwd), (e) Panicle length at maturity (cm, pnlg\_mtr ), (f) Plant height at maturity (cm, plth\_mtr), (g) Number of days to 50% physiological maturity (days, ndpm\_mtr), and (h) Grain yield per plot (g/5m^2^, yplt\_hrv) Orange and green points denote SAL- and KAN-derived NAM populations, respectively (n = 125). The horizontal line indicates the genome-wide significance at Bonferroni threshold (p-value < 0.000008; $\alpha_{Bonferroni}=\frac{m}{\alpha};\ m=0.05,\ \alpha=6046\ snps$).](img_2.jpg){#fig:id.ysu94l6l37zq}
 
 
 

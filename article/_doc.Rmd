@@ -14,7 +14,7 @@ Flavio Lozano-Isla^1,2\*^; Milagros Ninoska Munoz-Salas^3^, Mireia Vidal-Villare
 
 \*Corresponding author. 
 
-Flavio Lozano -Isla <[flavio.lozano@untrm.edu.pe](mailto:flavio.lozano@untrm.edu.pe)> 
+Flavio Lozano-Isla <[flavio.lozano@untrm.edu.pe](mailto:flavio.lozano@untrm.edu.pe)> 
 
 Karl Schmid <[karl.schmid@uni-hohenheim.de](mailto:karl.schmid@uni-hohenheim.de)>
 
@@ -35,7 +35,8 @@ ORCID IDs:
 
 
 
-**DECLARATIONS**
+\newpage
+**STATEMENTS AND DECLARATIONS**
 
 **Funding**
 
@@ -57,7 +58,6 @@ The authors thank the Andean Crops Genebank of the Universidad Nacional del Alti
 
 The authors declare no competing financial or non-financial interests.
 
-\newpage
 **Nested Association Mapping (NAM) Reveals Genetic Architecture of Agronomic Traits in Quinoa** 
 
 
@@ -80,7 +80,6 @@ Recent advances in genomics have shown the potential of improving quinoa cultiva
 
 This study explores the potential of NAM populations for dissecting complex agronomic and adaptive traits in quinoa. The integration of widely used cultivars in the Peruvian highlands, such as Salcedo INIA and traditional landraces such as Kancolla provides a foundation for including causal genetic variation for these traits in a NAM population design. We focus on the genetic analysis of NAM populations developed from crosses between Salcedo INIA, Kancolla, and diverse founder lines. Our objectives were (i) to assess the genetic structure and diversity of the NAM families, (ii) to identify QTLs for yield-related traits through joint linkage–association analyses, based on phenotyping data from two field trials in the Peruvian highlands, and (iii) to evaluate the predictive performance of genomic selection models. These populations represent a foundational genomic resource for quinoa improvement, providing a pathway to integrate genetic diversity into breeding pipelines for quinoa.
 
-\newpage
 # MATERIALS AND METHODS
 
 ## Plant material and population development
@@ -136,7 +135,6 @@ To assess predictive ability, cross-validation (CV) was used. In each replicate,
 
 Prediction accuracy was quantified with the Pearson correlation between observed phenotypes and genomic estimated breeding values (GEBVs) in the validation set, complemented by the normalized root mean square error (NRMSE) to account for scaling effects  [[49]](https://www.zotero.org/google-docs/?dtU4Ip). The Pearson correlation (r), which ranges from −1 to 1, measures the ability of the model to correctly rank genotypes according to their genetic merit, with values closer to 1 indicating higher predictive ability [[50]](https://www.zotero.org/google-docs/?bZasTF). In contrast, the NRMSE quantifies the magnitude of prediction error relative to the scale of the trait, where values closer to cero indicate greater predictive precision [[51]](https://www.zotero.org/google-docs/?CiLLYZ). 
 
-\newpage
 # RESULTS
 
 ## Genetic structure and diversity
@@ -210,7 +208,7 @@ An additional association analysis was performed using the R package NAM, which 
 
 ```{r}
 #| label: fig-id.ysu94l6l37zq
-#| fig-cap: "Genome-wide association study for yield-related traits in quinoa (*Chenopodium quinoa*) in two NAM populations evaluated at two locations in the Peruvian highlands. (a) Number of days to 50% flowering (days, ndflw), (b) Plant height at flowering (cm, plth\_flw), (c) Panicle length at flowering (cm, pnlg\_flw), (d) Panicle width at flowering (cm, pnwd), (e) Panicle length at maturity (cm, pnlg\_mtr ), (f) Plant height at maturity (cm, plth\_mtr), (g) Number of days to 50% physiological maturity (days, ndpm\_mtr), and (h) Grain yield per plot (g/5m^2^, yplt\_hrv) Orange and green points denote SAL- and KAN-derived NAM populations, respectively (n = 125). The horizontal line indicates the genome-wide significance at Bonferroni threshold (p-value < 0.000008). $\alpha_{Bonferroni}=\frac{m}{\alpha};\ m=0.05,\ \alpha=6046\ snps$."
+#| fig-cap: "Genome-wide association study for yield-related traits in quinoa (*Chenopodium quinoa*) in two NAM populations evaluated at two locations in the Peruvian highlands. (a) Number of days to 50% flowering (days, ndflw), (b) Plant height at flowering (cm, plth\_flw), (c) Panicle length at flowering (cm, pnlg\_flw), (d) Panicle width at flowering (cm, pnwd), (e) Panicle length at maturity (cm, pnlg\_mtr ), (f) Plant height at maturity (cm, plth\_mtr), (g) Number of days to 50% physiological maturity (days, ndpm\_mtr), and (h) Grain yield per plot (g/5m^2^, yplt\_hrv) Orange and green points denote SAL- and KAN-derived NAM populations, respectively (n = 125). The horizontal line indicates the genome-wide significance at Bonferroni threshold (p-value < 0.000008; $\alpha_{Bonferroni}=\frac{m}{\alpha};\ m=0.05,\ \alpha=6046\ snps$)."
 
 knitr::include_graphics("article/img_2.jpg")
 ```
@@ -244,7 +242,6 @@ knitr::include_graphics("article/img_3.jpg")
 
 
 
-\newpage
 # DISCUSSION
 
 This study presents the first implementation of nested association mapping (NAM) in quinoa, providing a genomic resource to dissect the genetic architecture of yield-related traits in germplasm from the Andean highlands. By combining the two different recurrent parents Salcedo INIA, a widely cultivated improved variety, and Kancolla, a traditional highland landrace, with diverse founder lines from the Peruvian highlands, the NAM populations were designed to include broad allelic variation associated with phenology, plant architecture, and yield components. The integration of multi-environment phenotyping, genome-wide SNP data, and association studies enabled the identification of genomic regions contributing to agronomic trait variation while simultaneously revealing the population structure and genetic diversity underlying this breeding material. Genomic prediction allowed to evaluate the potential of genomic selection in these structured populations. 
@@ -445,4 +442,3 @@ This study establishes a nested association mapping (NAM) approach in Chenopodiu
 [74.](https://www.zotero.org/google-docs/?q8N38D)	[Varshney, R. K. *et al.* Resequencing of 429 chickpea accessions from 45 countries provides insights into genome diversity, domestication and agronomic traits. *Nat. Genet.* **51**, 857–864 (2019). ](https://www.zotero.org/google-docs/?q8N38D)
 
 [75.](https://www.zotero.org/google-docs/?q8N38D)	[McMullen, M. D. *et al.* Genetic Properties of the Maize Nested Association Mapping Population. *Science* **325**, 737–740 (2009). ](https://www.zotero.org/google-docs/?q8N38D)
-\newpage
