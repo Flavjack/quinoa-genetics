@@ -1586,6 +1586,89 @@ plot <- grid %>%
          )
 ```
 
+# European Variation Archive (EVA)
+
+> https://www.ebi.ac.uk/eva/
+
+Si tienes Windows puedes utilizar WSL2 (Windows Subsystem for Linux).
+
+```{bash}
+<!-- wsl --install -->
+wsl
+sudo apt update && sudo apt upgrade -y
+<!-- curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -->
+<!-- ./Miniconda3-latest-Linux-x86_64.sh -->
+<!-- source ~/.bashrc -->
+conda --version
+
+conda install -c bioconda plink2
+conda install -c bioconda bcftools
+conda install -c bioconda vcf-validator
+
+plink2 --version
+bcftools --version
+
+cd EVA
+```
+
+## Validate files
+
+> https://github.com/ebivariation/vcf-validator
+
+> https://ebivariation.github.io/eva-sub-cli/input_file_overview.html
+
+### VCF file
+
+```{bash}
+<!-- plink2 --vcf quinoa_pops.vcf.gz --export vcf --out quinoa_pops -->
+
+vcf_validator -i quinoa_pops.vcf
+
+nano quinoa_pops.vcf
+```
+
+## eva-sub-cli tool
+
+> https://ebivariation.github.io/eva-sub-cli/
+
+```{bash}
+wsl
+<!-- conda install -c bioconda eva-sub-cli -->
+conda activate eva
+```
+
+1. VCF files
+2. FASTA (https://genomevolution.org/coge/SearchResults.pl?s=quinoa&p=genome)
+3. Submission Template (https://embl-ebi.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=9284869a-9f57-43c6-8222-b3aa0158941e)
+
+### Validation
+
+```{bash}
+wsl
+conda activate eva
+
+export NXF_VER=23.10.1
+nextflow -version
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
+java -version
+
+cd EVA
+
+<!-- NXF_VER=23.10.1 -->
+
+eva-sub-cli.py \
+  --metadata_xlsx "/mnt/c/Users/LENOVO/git/quinoa-genetics/EVA/submission_info.xlsx" \
+  --submission_dir "/mnt/c/Users/LENOVO/git/quinoa-genetics/EVA/" \
+  --tasks VALIDATE
+```
+
+### Submission
+
+```{bash}
+eva-sub-cli.py --metadata_xlsx <metadata file> --submission_dir <submission directory> --tasks SUBMIT --username <webin username> --password <webin password>
+```
+
 
 ```{r}
 knitr::knit_exit()
