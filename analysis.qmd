@@ -566,118 +566,367 @@ plot
 
 ## LD decay
 
+```{bash}
+# vcf to bed
+
+plink2 \
+    --vcf genetics/pops/nam_SAL.vcf \
+    --allow-extra-chr \
+    --double-id \
+    --make-bed \
+    --out genetics/pops/SAL
+    
+plink2 \
+    --vcf genetics/pops/nam_KAN.vcf \
+    --allow-extra-chr \
+    --double-id \
+    --make-bed \
+    --out genetics/pops/KAN
+
+# LD calculation
+
+plink2 \
+    --bfile genetics/pops/SAL \
+    --allow-extra-chr \
+    --r2-unphased \
+    --ld-window 99999 \
+    --ld-window-kb 10000 \
+    --ld-window-r2 0 \
+    --out genetics/pops/SAL_LD
+
+plink2 \
+    --bfile genetics/pops/KAN \
+    --allow-extra-chr \
+    --r2-unphased \
+    --ld-window 99999 \
+    --ld-window-kb 10000 \
+    --ld-window-r2 0 \
+    --out genetics/pops/KAN_LD
+```
+
 ```{r}
-library(sommer)
-library(vcfR)
-library(tidyverse)
-library(snpR)
+##----------------------------
+## Read LD files
+##----------------------------
 
-vcfile <- "G:/Mi unidad/coding/quinoa4gwas/quinoa_pops.vcf.gz"
+ld_sal <- read_table("genetics/pops/SAL_LD.vcor",
+                     show_col_types = FALSE) |>
+    mutate(pop = "SAL")
 
-snpdt <- snpR::read_vcf(file = vcfile)
-snpdt
+ld_kan <- read_table("genetics/pops/KAN_LD.vcor",
+                     show_col_types = FALSE) |>
+    mutate(pop = "KAN")
 
-sample_meta <- snpdt %>% 
-  names() %>% 
-  gsub("_.*", "", .) %>% 
-  enframe(value = "cross") %>% 
-  mutate(pop = case_when(
-    str_detect(cross, "xKAN") ~ "KAN"
-    , str_detect(cross, "KAN") ~ "KAN"
-    , str_detect(cross, "SALx") ~ "SAL"
-    , str_detect(cross, "SAL") ~ "SAL"
-  ))
-  
-sample.meta(snpdt)$cross <- factor(sample_meta$cross
-                                   , levels = c("HUAxKAN", "NCOxKAN", "PASxKAN"
-                                                , "SALxHUA", "SALxNCO", "SALxPAN"))
-sample.meta(snpdt)$pop <- sample_meta$pop
+ld <- bind_rows(ld_sal, ld_kan)
 
-sample.meta(snpdt)
-snp.meta(snpdt)
+##----------------------------
+## Distance
+##----------------------------
 
-snpdt_filt <- snpR::filter_snps(x = snpdt
-                              , maf = 0.05
-                              , min_ind = 0.5
-                              , min_loci = 0.3
-                              , maf_facets = "cross"
-                              )
+ld <- ld |>
+    mutate(distance = abs(POS_B - POS_A))
 
-vcfdt <- format_snps(x = snpdt_filt
-                     , output = "sn"
-                     , interpolate = ""
-                     , chr = "CHROM"
-                     , position = "position"
-                     # , facets = "pop"
-                     , verbose = TRUE
-                     # , outfile = "genetics/pops/nam"
-                     ) %>% 
-  mutate(ID = paste0("marker", "_", row.names(.))) %>%
-  pivot_longer(!c(1:FILTER)
-               , names_to = "cross"
-               , values_to = "gt"
-               ) 
+##----------------------------
+## Remove different chromosomes
+##----------------------------
 
-nam_pop <- vcfdt #%>%
-  # filter(str_detect(cross, "SALx"))
+ld <- ld |>
+    filter(`#CHROM_A` == CHROM_B)
 
-geno <- nam_pop %>%
-  dplyr::select(id = cross, marker = ID, alleles = gt) %>% 
-  mutate(alleles = case_when(
-    alleles %in% 0 ~ "-1"
-    , alleles %in% 1 ~ "0"
-    , alleles %in% 2 ~ "1"
-  )) %>% 
-  mutate(across(alleles, ~ as.numeric(.))) %>% 
-  pivot_wider(names_from = marker
-              , values_from = alleles)  %>%
-  column_to_rownames("id") %>% 
-  as.matrix()
+##----------------------------
+## Create bins
+##----------------------------
 
-gmap <- nam_pop %>%
-  pivot_wider(names_from = cross, values_from = gt) %>% 
-  dplyr::select(ID, CHROM, position) %>% 
-  mutate(across(position, ~ as.numeric(.))) %>% 
-  arrange(CHROM, position) %>% 
-  # mutate(CHROM = as.integer(as.factor(CHROM))) %>% # check num vs char
-  distinct(CHROM, position, .keep_all = TRUE) %>% 
-  dplyr::select(Locus = ID, Position = position, LG = CHROM) %>% 
-  data.frame()
+bin_size <- 50000   # 50 kb
 
-ld_decay <- enhancer::LD.decay(markers = geno, map = gmap)
+ld <- ld |>
+    mutate(bin = floor(distance/bin_size)*bin_size)
 
-# significant LD
+##----------------------------
+## Mean LD
+##----------------------------
 
-ld4plot <- ld_decay$all.LG %>% 
-  filter(p < 0.001) %>% 
-  filter(d > 0) %>% 
-  mutate(d = d/1000) %>% # bp -> Kbp
-  filter(!d > 10)
+ld_summary <- ld |>
+    group_by(pop, bin) |>
+    summarise(
+        mean_r2 = mean(UNPHASED_R2, na.rm = TRUE),
+        median_r2 = median(UNPHASED_R2, na.rm = TRUE),
+        n = n(),
+        .groups = "drop"
+    ) |>
+    filter(n >= 50)
 
-# plot the LD decay
+ggplot(ld_summary,
+       aes(bin/1000,
+           mean_r2,
+           colour = pop))+
 
-ggplot(ld4plot, aes(x = d, y = r2)) +
-  geom_point(
-    color = scales::alpha("cadetblue", 0.4),
-    size = 1
-  ) +
-  scale_x_continuous(
-    limits = c(0, 5),
-    breaks = seq(0, 5, 1)
-  ) +
-  scale_y_continuous(
-    limits = c(0, 1),
-    breaks = seq(0, 1, 0.1)
-  ) +
-  labs(
-    x = "Physical distance (Kbp)",
-    y = expression(r^2)
-  ) +
-  theme_classic() +
-  geom_hline(yintercept = 0.2, linetype = "dashed", colour = "red") +
-  geom_smooth(se = F, formula =  y ~ x )
+    geom_line(linewidth = 1.2)+
+
+    geom_hline(yintercept = 0.2,
+               linetype = 2)+
+
+    labs(x="Physical distance (kb)",
+         y=expression(r^2),
+         colour="Population")+
+
+    theme_classic(base_size = 14)
+```
+
+
+```{r}
+sal <- read_tsv(
+  "genetics/pops/SAL_LD.vcor",
+  comment = "#",
+  col_names = c("CHR_A","POS_A","ID_A",
+                "CHR_B","POS_B","ID_B","R2")
+)
+
+kan <- read_tsv(
+  "genetics/pops/KAN_LD.vcor",
+  comment = "#",
+  col_names = c("CHR_A","POS_A","ID_A",
+                "CHR_B","POS_B","ID_B","R2")
+)
+
+ld <- bind_rows(
+  mutate(sal, Population="SAL"),
+  mutate(kan, Population="KAN")
+)
+
+ld <- ld %>%
+  filter(CHR_A == CHR_B) %>%
+  mutate(
+    Chromosome = CHR_A,
+    Distance = abs(POS_B - POS_A)
+  )
+
+bin_size <- 10000
+
+ld <- ld %>%
+  mutate(
+    Bin = floor(Distance/bin_size)*bin_size
+  )
+
+ld_summary <- ld %>%
+  group_by(Population, Chromosome, Bin) %>%
+  summarise(
+    median_r2 = median(R2),
+    mean_r2 = mean(R2),
+    n = n(),
+    .groups="drop"
+  ) %>%
+  filter(n >= 20)
+
+ggplot(ld_summary,
+       aes(Bin/1000,
+           median_r2))+
+
+    geom_line(linewidth=0.8)+
+
+    facet_grid(Population~Chromosome)+
+
+    theme_bw(base_size=13)+
+
+    labs(
+        x="Distance (kb)",
+        y=expression(r^2)
+    )
+
+ld %>%
+  count(Population, Chromosome) %>% 
+  view()
+
+ld %>%
+    group_by(Population, Chromosome) %>%
+    summarise(
+        SNP_pairs=n(),
+        Mean_r2=mean(R2),
+        Median_r2=median(R2)
+    ) %>% 
+  view()
+
 
 ```
+
+```{r}
+sal_map <- read_table(
+  "genetics/pops/SAL.bim",
+  col_names = c("CHR","SNP","CM","POS","A1","A2"),
+  show_col_types = FALSE
+)
+
+kan_map <- read_table(
+  "genetics/pops/KAN.bim",
+  col_names = c("CHR","SNP","CM","POS","A1","A2"),
+  show_col_types = FALSE
+)
+
+calc_spacing <- function(map){
+
+  map %>%
+    arrange(CHR, POS) %>%
+    group_by(CHR) %>%
+    mutate(
+      spacing = POS - lag(POS)
+    ) %>%
+    ungroup()
+
+}
+
+sal_spacing <- calc_spacing(sal_map)
+kan_spacing <- calc_spacing(kan_map)
+
+sal_spacing %>%
+group_by(CHR) %>%
+summarise(
+    SNPs=n(),
+    Mean_spacing=mean(spacing,na.rm=TRUE),
+    Median_spacing=median(spacing,na.rm=TRUE),
+    Max_spacing=max(spacing,na.rm=TRUE)
+)
+
+
+ggplot(
+    sal_spacing,
+    aes(spacing/1000)
+)+
+geom_histogram(
+    bins=60
+)+
+facet_wrap(~CHR,scales="free_y")+
+theme_bw()+
+labs(
+    x="Distance between adjacent SNPs (kb)"
+)
+
+ld %>%
+  mutate(
+    class = cut(
+      Distance,
+      breaks = c(
+        0,
+        1000,
+        5000,
+        10000,
+        25000,
+        50000,
+        100000,
+        250000,
+        500000,
+        1000000,
+        Inf
+      ),
+      include.lowest = TRUE
+    )
+  ) %>%
+  count(Population, class) %>% 
+  view()
+
+
+ld %>%
+mutate(
+
+group=cut(
+Distance,
+breaks=c(
+0,
+1000,
+5000,
+10000,
+25000,
+50000,
+100000,
+250000,
+500000,
+1000000,
+Inf
+)
+
+)
+
+) %>%
+
+group_by(Population,group)%>%
+
+summarise(
+
+n=n(),
+
+mean_r2=mean(R2),
+
+median_r2=median(R2),
+
+q90=quantile(R2,.90),
+
+q95=quantile(R2,.95),
+
+q99=quantile(R2,.99)
+
+) %>% 
+  view()
+
+ld_summary2 <- ld_summary %>%
+  mutate(
+    Distance = case_when(
+      Bin ==       0 ~ "0–1",
+      Bin ==    1000 ~ "1–5",
+      Bin ==    5000 ~ "5–10",
+      Bin ==   10000 ~ "10–25",
+      Bin ==   25000 ~ "25–50",
+      Bin ==   50000 ~ "50–100",
+      Bin ==  100000 ~ "100–250",
+      Bin ==  250000 ~ "250–500",
+      Bin ==  500000 ~ "500–1000",
+      TRUE           ~ ">1000"
+    ),
+    Distance = factor(
+      Distance,
+      levels = c(
+        "0–1",
+        "1–5",
+        "5–10",
+        "10–25",
+        "25–50",
+        "50–100",
+        "100–250",
+        "250–500",
+        "500–1000",
+        ">1000"
+      )
+    )
+  )
+
+ggplot(ld_summary2,
+       aes(Distance,
+           median_r2,
+           colour=Population,
+           group=Population))+
+
+geom_point(size=3)+
+
+geom_line(linewidth=1.3)+
+
+theme_classic(base_size=15)+
+
+scale_colour_manual(values=c(
+"SAL"="#1b9e77",
+"KAN"="#d95f02"
+))+
+
+labs(
+x="Physical distance (kb)",
+y=expression("Median linkage disequilibrium ("*r^2*")")
+)+
+
+theme(
+legend.position="top",
+axis.text.x=element_text(angle=45,hjust=1)
+)
+
+```
+
+
 
 ```{r}
 fig1 <- list(p1a, p1b, p1c) %>% 

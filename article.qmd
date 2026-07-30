@@ -33,7 +33,7 @@ source("http://inkaverse.com/docs.r")
 #| results: 'asis'
 
 "render2rticle.md" %>% 
-  rticle(type = "list") %>% # ["asis" or "list"]
+  rticle(type = "asis") %>% # ["asis" or "list"]
   knitr::knit_child(quiet = TRUE) %>% 
   cat(sep = '\n')
 ```
@@ -42,8 +42,38 @@ source("http://inkaverse.com/docs.r")
 knitr::knit_exit()
 ```
 
+# GitHub: check files
+
+```{bash}
+#| eval: false
+
+SIZE_MB=100
+EXCLUDE_DIRS=(".git" "xclude")
+
+find . \
+  \( -name "${EXCLUDE_DIRS[0]}" -o -name "${EXCLUDE_DIRS[1]}" \) \
+  -prune -o \
+  -type f -size +${SIZE_MB}M -exec ls -lh {} \; | sort -hr -k5
+  
+git reset --soft HEAD~0
+git status
+```
+
+# GitHub: update repository
+
+```{bash}
+#| eval: false
+
+git pull
+
+git add .
+git commit -m "update"
+git push
+```
+
+# PDF to images (.jpg)
+
 ```{r}
-#| label: pdf to jpeg
 #| eval: false
 
 library(tidyverse)
@@ -58,18 +88,19 @@ imgs <- 1:length(pdf4pub) %>% map(\(x) {
   
   filename <- pdf4pub[x] %>% 
     basename() %>% 
-    gsub(".pdf", "\\1.jpeg", .) 
+    gsub(".pdf", "\\1.jpg", .) 
   
   pdf4pub[x] %>% 
     image_read_pdf() %>% 
     # image_transparent("red") %>% 
-    image_write(format = "jpeg", file.path(path, filename))
+    image_write(format = "jpg", file.path(path, filename))
   
 })
 ```
 
+# Images to PDF
+
 ```{r}
-#| label: Images to PDF
 #| eval: false
 
 library(tidyverse)
@@ -84,8 +115,9 @@ img2pdf <- list.files(".", full.names = T
               , file.path(getwd(), "figures.pdf"))
 ```
 
+# Images to grid
+
 ```{r}
-#| label: Images to grids
 #| eval: false
 
 library(tidyverse)
@@ -111,8 +143,9 @@ plot <- grid %>%
          )
 ```
 
+# Zip files
+
 ```{r}
-#| label: zip file
 #| eval: false
 
 tozip <- "manuscript" 
@@ -124,3 +157,4 @@ utils::zip(zipfile = paste0(tozip, ".zip")
                              , flags = "-r9Xj"
                              )
 ```
+

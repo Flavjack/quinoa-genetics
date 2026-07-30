@@ -1,0 +1,2091 @@
+TY  - JOUR
+TI  - Cross‐validation of stagewise mixed‐model analysis of Swedish variety trials with winter wheat and spring barley
+AU  - Buntaran, Harimurti
+AU  - Piepho, Hans‐Peter
+AU  - Schmidt, Paul
+AU  - Rydén, Jesper
+AU  - Halling, Magnus
+AU  - Forkman, Johannes
+T2  - Crop Science
+DA  - 2020/09//
+PY  - 2020
+DO  - 10.1002/csc2.20177
+DP  - DOI.org (Crossref)
+VL  - 60
+IS  - 5
+SP  - 2221
+EP  - 2240
+J2  - Crop Sci.
+LA  - en
+SN  - 0011-183X, 1435-0653
+UR  - https://onlinelibrary.wiley.com/doi/10.1002/csc2.20177
+Y2  - 2021/05/21/19:33:59
+ER  - 
+
+TY  - JOUR
+TI  - A beginner's guide to low-coverage whole genome sequencing for population genomics
+AU  - Lou, Runyang Nicolas
+AU  - Jacobs, Arne
+AU  - Wilder, Aryn P.
+AU  - Therkildsen, Nina Overgaard
+T2  - Molecular Ecology
+AB  - Low-coverage whole genome sequencing (lcWGS) has emerged as a powerful and cost-effective approach for population genomic studies in both model and nonmodel species. However, with read depths too low to confidently call individual genotypes, lcWGS requires specialized analysis tools that explicitly account for genotype uncertainty. A growing number of such tools have become available, but it can be difficult to get an overview of what types of analyses can be performed reliably with lcWGS data, and how the distribution of sequencing effort between the number of samples analysed and per-sample sequencing depths affects inference accuracy. In this introductory guide to lcWGS, we first illustrate how the per-sample cost for lcWGS is now comparable to RAD-seq and Pool-seq in many systems. We then provide an overview of software packages that explicitly account for genotype uncertainty in different types of population genomic inference. Next, we use both simulated and empirical data to assess the accuracy of allele frequency, genetic diversity, and linkage disequilibrium estimation, detection of population structure, and selection scans under different sequencing strategies. Our results show that spreading a given amount of sequencing effort across more samples with lower depth per sample consistently improves the accuracy of most types of inference, with a few notable exceptions. Finally, we assess the potential for using imputation to bolster inference from lcWGS data in nonmodel species, and discuss current limitations and future perspectives for lcWGS-based population genomics research. With this overview, we hope to make lcWGS more approachable and stimulate its broader adoption.
+DA  - 2021///
+PY  - 2021
+DO  - 10.1111/mec.16077
+DP  - Wiley Online Library
+VL  - 30
+IS  - 23
+SP  - 5966
+EP  - 5993
+LA  - en
+SN  - 1365-294X
+UR  - https://onlinelibrary.wiley.com/doi/abs/10.1111/mec.16077
+Y2  - 2024/09/04/02:57:47
+KW  - population structure
+KW  - allele frequency
+KW  - bioinformatics
+KW  - genotype imputation
+KW  - genotype likelihoods
+KW  - selection scans
+ER  - 
+
+TY  - JOUR
+TI  - Genome-wide mapping and prediction of plant architecture in a sorghum nested association mapping population
+AU  - Marcus O. Olatoye
+AU  - Olatoye, Marcus O.
+AU  - Zhenbin Hu
+AU  - Hu, Zhenbin
+AU  - Geoffrey P. Morris
+AU  - Morris, Geoffrey P.
+T2  - bioRxiv
+AB  - Modifying plant architecture is often necessary for yield improvement and climate adaptation, but we lack understanding of the genotype-phenotype map for plant morphology in sorghum. Here, we use a nested association mapping (NAM) population that captures global allelic diversity of sorghum to characterize the genetics of leaf erectness, leaf width (at two stages), and stem diameter. Recombinant inbred lines (n = 2200) were phenotyped in multiple environments (35,200 observations) and joint linkage mapping was performed with ~93,000 markers. Fifty-four QTL of small to large effect were identified for trait BLUPs (9-16 per trait) each explaining 0.4-4% of variation across the NAM population. While some of these QTL colocalize with sorghum homologs of grass genes [e.g. involved in hormone synthesis (maize spi1), floral transition (SbCN8), and transcriptional regulation of development (rice Ideal plant architecture1)], most QTL did not colocalize with an a priori candidate gene (82%). Genomic prediction accuracy was generally high in five-fold cross-validation (0.65-0.83), and varied from low to high in leave-one-family-out cross-validation (0.04-0.61). The findings provide a foundation to identify the molecular basis of architecture variation in sorghum and establish genomic-enabled breeding for improved plant architecture.
+DA  - 2020/01/29/
+PY  - 2020
+DO  - 10.1101/2020.01.28.923540
+ER  - 
+
+TY  - JOUR
+TI  - Comparing performances of different statistical models and multiple threshold methods in a nested association mapping population of wheat
+AU  - K. Sandhu
+AU  - A. Burke
+AU  - L. Merrick
+AU  - M. Pumphrey
+AU  - Arron H. Carter
+T2  - Frontiers in Plant Science
+AB  - Nested association mapping (NAM) populations emerged as a multi-parental strategy that combines the high statistical power of biparental linkage mapping with greater allelic richness of association mapping. Several statistical models have been developed for marker-trait associations (MTAs) in genome-wide association studies (GWAS), which ranges from simple to increasingly complex models. These statistical models vary in their performance for detecting real association with the avoidance of false positives and false negatives. Furthermore, significant threshold methods play an equally important role for controlling spurious associations. In this study, we compared the performance of seven different statistical models ranging from single to multi-locus models on eight different simulated traits with varied genetic architecture for a NAM population of spring wheat (Triticum aestivum L.). The best identified model was further used to identify MTAs for 11 different agronomic and spectral reflectance traits, which were collected on the NAM population between 2014 and 2016. The “Bayesian information and linkage disequilibrium iteratively nested keyway (BLINK)” model performed better than all other models observed based on QQ plots and detection of real association in a simulated data set. The results from model comparison suggest that BLINK controls both false positives and false negatives under the different genetic architecture of simulated traits. Comparison of multiple significant threshold methods suggests that Bonferroni correction performed superior for controlling false positives and false negatives and complements the performance of GWAS models. BLINK identified 45 MTAs using Bonferroni correction of 0.05 for 11 different phenotypic traits in the NAM population. This study helps identify the best statistical model and significant threshold method for performing association analysis in subsequent NAM population studies.
+DA  - 2024///
+PY  - 2024
+DO  - 10.3389/fpls.2024.1460353
+ER  - 
+
+TY  - JOUR
+TI  - Genomic Selection and Genome-Wide Association Studies for Grain Protein Content Stability in a Nested Association Mapping Population of Wheat
+AU  - Sandhu, Karansher S.
+AU  - Karansher Singh Sandhu
+AU  - Mihalyov, Paul D.
+AU  - Paul D. Mihalyov
+AU  - Lewien, Megan J.
+AU  - Megan J. Lewien
+AU  - Pumphrey, Michael O.
+AU  - Michael O. Pumphrey
+AU  - Carter, Arron H.
+AU  - Arron H. Carter
+T2  - Agronomy
+AB  - Grain protein content (GPC) is controlled by complex genetic systems and their interactions and is an important quality determinant for hard spring wheat as it has a positive effect on bread and pasta quality. GPC is variable among genotypes and strongly influenced by the environment. Thus, understanding the genetic control of wheat GPC and identifying genotypes with improved stability is an important breeding goal. The objectives of this research were to identify genetic backgrounds with less variation for GPC across environments and identify quantitative trait loci (QTLs) controlling the stability of GPC. A spring wheat nested association mapping (NAM) population of 650 recombinant inbred lines (RIL) derived from 26 diverse founder parents crossed to one common parent, ‘Berkut’, was phenotyped over three years of field trials (2014–2016). Genomic selection models were developed and compared based on predictions of GPC and GPC stability. After observing variable genetic control of GPC within the NAM population, seven RIL families displaying reduced marker-by-environment interaction were selected based on a stability index derived from a Finlay–Wilkinson regression. A genome-wide association study identified eighteen significant QTLs for GPC stability with a Bonferroni-adjusted p-value &lt; 0.05 using four different models and out of these eighteen QTLs eight were identified by two or more GWAS models simultaneously. This study also demonstrated that genome-wide prediction of GPC with ridge regression best linear unbiased estimates reached up to r = 0.69. Genomic selection can be used to apply selection pressure for GPC and improve genetic gain for GPC.
+DA  - 2021/12/13/
+PY  - 2021
+DO  - 10.3390/agronomy11122528
+VL  - 11
+IS  - 12
+SP  - 2528
+EP  - 2528
+KW  - genomic selection
+KW  - genome-wide association study
+KW  - wheat
+KW  - Finlay–Wilkinson regression
+KW  - grain protein content
+KW  - nested association mapping
+KW  - ridge regression best linear unbiased prediction
+ER  - 
+
+TY  - JOUR
+TI  - Genotype imputation for soybean nested association mapping population to improve precision of QTL detection.
+AU  - Linfeng Chen
+AU  - Linfeng Chen
+AU  - Linfeng Chen
+AU  - Shouping Yang
+AU  - Shouping Yang
+AU  - Shouping Yang
+AU  - Susan Araya
+AU  - Susan Araya
+AU  - Susan Araya
+AU  - Charles Quigley
+AU  - Charles Quigley
+AU  - Charles V. Quigley
+AU  - Earl Taliercio
+AU  - Earl Taliercio
+AU  - Earl Taliercio
+AU  - Rouf Mian
+AU  - Rouf Mian
+AU  - Rouf Mian
+AU  - James E Specht
+AU  - James E Specht
+AU  - James E. Specht
+AU  - Brian W Diers
+AU  - Brian W Diers
+AU  - Brian W. Diers
+AU  - Song, Qijian
+AU  - Qijian Song
+T2  - Theoretical and Applied Genetics
+AB  - Software for high imputation accuracy in soybean was identified. Imputed dataset could significantly reduce the interval of genomic regions controlling traits, thus greatly improve the efficiency of candidate gene identification. Genotype imputation is a strategy to increase marker density of existing datasets without additional genotyping. We compared imputation performance of software BEAGLE 5.0, IMPUTE 5 and AlphaPlantImpute and tested software parameters that may help to improve imputation accuracy in soybean populations. Several factors including marker density, extent of linkage disequilibrium (LD), minor allele frequency (MAF), etc., were examined for their effects on imputation accuracy across different software. Our results showed that AlphaPlantImpute had a higher imputation accuracy than BEAGLE 5.0 or IMPUTE 5 tested in each soybean family, especially if the study progeny were genotyped with an extremely low number of markers. LD extent, MAF and reference panel size were positively correlated with imputation accuracy, a minimum number of 50 markers per chromosome and MAF of SNPs > 0.2 in soybean line were required to avoid a significant loss of imputation accuracy. Using the software, we imputed 5176 soybean lines in the soybean nested mapping population (NAM) with high-density markers of the 40 parents. The dataset containing 423,419 markers for 5176 lines and 40 parents was deposited at the Soybase. The imputed NAM dataset was further examined for the improvement of mapping quantitative trait loci (QTL) controlling soybean seed protein content. Most of the QTL identified were at identical or at similar position based on initial and imputed datasets; however, QTL intervals were greatly narrowed. The resulting genotypic dataset of NAM population will facilitate QTL mapping of traits and downstream applications. The information will also help to improve genotyping imputation accuracy in self-pollinated crops.
+DA  - 2022/03/11/
+PY  - 2022
+DO  - 10.1007/s00122-022-04070-7
+ER  - 
+
+TY  - JOUR
+TI  - Nested Association Mapping (NAM) Populations: Present Status and Future Prospects in the Genomics Era
+AU  - C. Gireesh
+AU  - Gireesh, Channappa
+AU  - R. M. Sundaram
+AU  - Sundaram, Raman Meenakshi
+AU  - Sundaram, R. M.
+AU  - Siddaiah M. Anantha
+AU  - Anantha, Siddaiah M.
+AU  - Manish K. Pandey
+AU  - Pandey, Manish K.
+AU  - Sheshu Madhav Maganti
+AU  - Madhav, Maganti Sheshu
+AU  - Santosha Rathod
+AU  - Rathod, Santosha
+AU  - Santosha Rathod
+AU  - K. R. Yathish
+AU  - Yathish, Kondajji R.
+AU  - P. Senguttuvel
+AU  - Senguttuvel, P.
+AU  - Barbadikar M. Kalyani
+AU  - Kalyani, Barbadikar M.
+AU  - Ellur Ranjith
+AU  - Ranjith, Ellur
+AU  - L. V. Subbarao
+AU  - Subbarao, L. V.
+AU  - Tapan Kumar Mondal
+AU  - Tapan Kumar Mondal
+AU  - Mondal, Tapan Kumar
+AU  - Mallikarjuna Swamy
+AU  - Swamy, Mallikarjuna
+AU  - Sujay Rakshit
+AU  - Rakshit, Sujay
+T2  - Critical Reviews in Plant Sciences
+AB  - Development of mapping population is a prerequisite for genetic dissection of genomic regions underlying complex traits. Nested Association Mapping (NAM) is an integrated multi-parent population ap...
+DA  - 2021///
+PY  - 2021
+DO  - 10.1080/07352689.2021.1880019
+VL  - 40
+IS  - 1
+SP  - 49
+EP  - 67
+KW  - GWAS
+KW  - Combined linkage analysis and linkage disequilibrium
+KW  - genomic prediction
+KW  - multi-parent mapping population
+KW  - quantitative traits
+ER  - 
+
+TY  - JOUR
+TI  - Ten Years of the Maize Nested Association Mapping Population: Impact, Limitations, and Future Directions.
+AU  - Joseph L. Gage
+AU  - Gage, Joseph L.
+AU  - Brandon Monier
+AU  - Monier, Brandon
+AU  - Anju Giri
+AU  - Giri, Anju
+AU  - Anju Giri
+AU  - Edward S. Buckler
+AU  - Buckler, Edward S.
+T2  - The Plant Cell
+AB  - : It has been just over a decade since the release of the maize Nested Association Mapping (NAM) population. The NAM population has been and continues to be an invaluable resource for the maize genetics community, and has yielded insights into the genetic architecture of complex traits. The parental lines have become some of the most well-characterized maize germplasm, and their de novo assemblies were recently made publicly available. As we enter an exciting new stage in maize genomics, this retrospective will summarize the design and intentions behind the NAM population; its application, the discoveries it has enabled, and its influence in other systems; and use the past decade of hindsight to consider whether and how it will remain useful in a new age of genomics.
+DA  - 2020/01/01/
+PY  - 2020
+DO  - 10.1105/tpc.19.00951
+VL  - 32
+IS  - 7
+SP  - 2083
+EP  - 2093
+ER  - 
+
+TY  - JOUR
+TI  - Genetic dissection of maize plant architecture using a novel nested association mapping population.
+AU  - Sheng Zhao
+AU  - Zhao, Sheng
+AU  - Xueying Li
+AU  - Li, Xueying
+AU  - Jun Song
+AU  - Junfeng Song
+AU  - Huimin Li
+AU  - Huimin Li
+AU  - Xiaolei Zhao
+AU  - Zhao, Xiaodi
+AU  - Peng Zhang
+AU  - Zhang, Peng
+AU  - Zhimin Li
+AU  - Li, Zhimin
+AU  - Zhongyuan Tian
+AU  - Tian, Zhiqiang
+AU  - Meng Lv
+AU  - Lv, Meng
+AU  - Ce Deng
+AU  - Deng, Ce
+AU  - Tangshun Ai
+AU  - Ai, Tangshun
+AU  - Gengshen Chen
+AU  - Chen, Gengshen
+AU  - Hui Zhang
+AU  - Zhang, Hui
+AU  - Jianlin Hu
+AU  - Jianlin Hu
+AU  - Zhang Xu
+AU  - Zhijun Xu
+AU  - Jiafa Chen
+AU  - Chen, Jiafa
+AU  - Junqiang Ding
+AU  - Ding, Junqiang
+AU  - Weibin Song
+AU  - Weibin Song
+AU  - Yuxiao Chang
+AU  - Chang, Yuxiao
+T2  - The Plant Genome
+AB  - The leaf angle (LA), plant height (PH), and ear height (EH) are key plant architectural traits influencing maize (Zea mays L.) yield. However, their genetic determinants have not yet been well-characterized. Here, we developed a maize advanced backcross-nested association mapping population in Henan Agricultural University (HNAU-NAM1) comprised of 1,625 BC1 F4 /BC2 F4 lines. These were obtained by crossing a diverse set of 12 representative inbred lines with the common GEMS41 line, which were then genotyped using the MaizeSNP9.4Karray. Genetic diversity and phenotypic distribution analyses showed considerable levels of genetic variation. We obtained 18-88 quantitative trait loci (QTLs) associated with LA, PH, and EH by using three complementary mapping methods, named as separate linkage mapping, joint linkage mapping, and genome-wideassociationstudies. Our analyses enabled the identification of ten QTL hot-spot regions associated with the three traits, which were distributed on nine different chromosomes. We further selected 13 major QTLs that were simultaneously detected by three methods and deduced the candidate genes, of which eight were not reported before. The newly constructed HNAU-NAM1 population in this study will further broaden our insights into understanding of genetic regulation of plant architecture, thus will help to improve maize yield and provide an invaluable resource for maize functional genomics and breeding research.
+DA  - 2021/12/03/
+PY  - 2021
+DO  - 10.1002/tpg2.20179
+ER  - 
+
+TY  - JOUR
+TI  - High-Throughput Characterization, Correlation, and Mapping of Leaf Photosynthetic and Functional Traits in the Soybean (<i>glycine Max</i>) Nested Association Mapping Population
+AU  - Christopher M. Montes
+AU  - Christopher M Montes
+AU  - Christopher M Montes
+AU  - Carolyn M. Fox
+AU  - Carolyn Fox
+AU  - Carolyn Fox
+AU  - Álvaro Sanz‐Sáez
+AU  - Álvaro Sanz-Sáez
+AU  - Álvaro Sanz-Sáez
+AU  - Shawn P. Serbin
+AU  - Shawn P Serbin
+AU  - Shawn P Serbin
+AU  - Etsushi Kumagai
+AU  - Etsushi Kumagai
+AU  - Etsushi Kumagai
+AU  - Matheus Dalsente Krause
+AU  - Matheus D Krause
+AU  - Matheus D Krause
+AU  - Alencar Xavier
+AU  - Alencar Xavier
+AU  - Alencar Xavier
+AU  - James E. Specht
+AU  - James E Specht
+AU  - James E Specht
+AU  - William D. Beavis
+AU  - William D Beavis
+AU  - William D Beavis
+AU  - Carl J. Bernacchi
+AU  - Carl J Bernacchi
+AU  - Carl J Bernacchi
+AU  - Brian W. Diers
+AU  - Brian W Diers
+AU  - Brian W Diers
+AU  - Elizabeth A. Ainsworth
+AU  - Elizabeth A Ainsworth
+AU  - Elizabeth A Ainsworth
+T2  - Genetics
+AB  - Abstract Photosynthesis is a key target to improve crop production in many species including soybean [Glycine max (L.) Merr.]. A challenge is that phenotyping photosynthetic traits by traditional approaches is slow and destructive. There is proof-of-concept for leaf hyperspectral reflectance as a rapid method to model photosynthetic traits. However, the crucial step of demonstrating that hyperspectral approaches can be used to advance understanding of the genetic architecture of photosynthetic traits is untested. To address this challenge, we used full-range (500–2400 nm) leaf reflectance spectroscopy to build partial least squares regression (PLSR) models to estimate leaf traits, including the rate-limiting processes of photosynthesis, maximum Rubisco carboxylation rate and maximum electron transport. In total, eleven models were produced from a diverse population of soybean sampled over multiple field seasons to estimate photosynthetic parameters, chlorophyll content, leaf carbon and leaf nitrogen percentage, and specific leaf area (with R2 from 0.56 to 0.96 and RMSE approximately &amp;lt;10% of the range of calibration data). We explore the utility of these models by applying them to the Soybean Nested Association Mapping population, which showed variability in photosynthetic and leaf traits. Genetic mapping provided insights into the underlying genetic architecture of photosynthetic traits and potential improvement in soybean. Notably, the maximum Rubisco carboxylation rate mapped to a region of chromosome 19 containing genes encoding multiple small subunits of Rubisco. We also mapped the maximum electron transport rate to a region of chromosome 10 containing a fructose 1,6-bisphosphatase gene, encoding an important enzyme in the regeneration of ribulose 1,5-bisphosphate and the sucrose biosynthetic pathway. The estimated rate-limiting steps of photosynthesis were low or negatively correlated with yield suggesting that these traits are not influenced by the same genetic mechanisms and are not limiting yield in the soybean NAM population. Leaf carbon percentage, leaf nitrogen percentage, and specific leaf area showed strong correlations with yield and may be of interest in breeding programs as a proxy for yield. This work is among the first to use hyperspectral reflectance to model and map the genetic architecture of the rate-limiting steps of photosynthesis.
+DA  - 2022/04/22/
+PY  - 2022
+DO  - 10.1093/genetics/iyac065
+ER  - 
+
+TY  - JOUR
+TI  - A wild barley nested association mapping population shows a wide variation for yield-associated traits to be used for breeding in Australian environment
+AU  - Anh-Tung Pham
+AU  - A. Maurer
+AU  - K. Pillen
+AU  - Trung Dzung Nguyen
+AU  - Julian Taylor
+AU  - S. Coventry
+AU  - J. Eglinton
+AU  - T. March
+T2  - Euphytica
+AB  - This study aimed to identify wild barley alleles controlling grain size and weight with the potential to improve barley yield in Australia and worldwide. The HEB-25 nested association mapping population was used, which samples 25 different wild barley accessions in a ‘Barke’ genetic background. The HEB-25 population was evaluated in field conditions at Strathalbyn in South Australia in 2015 and 2016. Seven yield component traits reflecting ear length, grain number per ear and grain dimension were measured. Among 114 quantitative trait loci (QTL) identified for the seven traits in both years, many co-localise with known genes controlling flowering and spike morphology. There were 18 QTL hotspots associated with four loci or more, of which one at the beginning of chromosome 5H had wild alleles that increased both grain number per ear and thousand-grain weight. A wide range of effects was found for wild alleles for each trait across all QTL identified, providing a rich source of genetic diversity that barley breeders can exploit to enhance barley yield.
+DA  - 2024///
+PY  - 2024
+DO  - 10.1007/s10681-023-03260-8
+ER  - 
+
+TY  - JOUR
+TI  - Linkage-Mapping and Genome-wide Association Study Identified Two Peanut Late Leaf Spot Resistance Loci, PLLSR-1 and PLLSR-2, Using a Nested Association Mapping.
+AU  - S. S. Gangurde
+AU  - Ethan Thompson
+AU  - Shasidhar Yaduru
+AU  - Hui Wang
+AU  - J. Fountain
+AU  - Y. Chu
+AU  - P. Ozias‐Akins
+AU  - T. Isleib
+AU  - C. Holbrook
+AU  - Bhabesh Dutta
+AU  - A. Culbreath
+AU  - Manish K. Pandey
+AU  - B. Guo
+T2  - Phytopathology
+AB  - Identification of candidate genes and molecular markers for late leaf spot (LLS) disease resistance in peanut (Arachis hypogaea) has been a focus of molecular breeding for the U.S. industry funded peanut genome project. Efforts have been hindered by limited mapping resolution due to low levels of genetic recombination and marker density available in traditional biparental mapping populations. To address this, a multi-parental nested association mapping (NAM) population has been genotyped with the peanut 58 K SNP array and phenotyped for LLS severity in the field for three years. Joint linkage-based QTL mapping identified nine QTLs for LLS resistance with significant phenotypic variance explained (PVE) up to 47.7%. A genome-wide association study (GWAS) identified 13 SNPs consistently associated with LLS resistance. Two genomic regions harboring the consistent QTLs and SNPs were identified from 1,336 Kb to 1,520 Kb (184 Kb) on chromosome B02 and from 1,026.9 Kb to 1,793.2 Kb (767 Kb) on chromosome B03, designated as peanut late leaf spot resistance loci, PLLSR-1 and PLLSR-2, respectively. PLLSR-1 contains 10 NBS-LRR disease resistant genes. An NBS-LRR disease resistance gene Arahy.VKVT6A was also identified on homoeologous chromosome A02. PLLSR-2 contains five significant SNPs associated with five different genes encoding callose synthase, pollen defective in guidance protein, pentatricopeptide repeat (PPR), acyl-activating enzyme, and C2 GRAM domains-containing protein. This study highlights the power of multi-parent populations such as NAM for genetic mapping and marker-trait association studies in peanuts. Validation of these two LLS resistance loci will be needed for marker-assisted breeding.
+DA  - 2024///
+PY  - 2024
+DO  - 10.1094/phyto-04-23-0143-r
+ER  - 
+
+TY  - JOUR
+TI  - Nested association mapping of important agronomic traits in three interspecific soybean populations
+AU  - Eduardo Beche
+AU  - Beche, Eduardo
+AU  - Jason D. Gillman
+AU  - Gillman, Jason D.
+AU  - Qijian Song
+AU  - Song, Qijian
+AU  - Randall L. Nelson
+AU  - Nelson, Randall L.
+AU  - Tim Beissinger
+AU  - Beissinger, Timothy M.
+AU  - Jared E. Decker
+AU  - Decker, Jared E.
+AU  - Grover Shannon
+AU  - Shannon, Grover
+AU  - Andrew Scaboo
+AU  - Scaboo, Andrew
+T2  - Theoretical and Applied Genetics
+AB  - Glycine soja germplasm can be used to successfully introduce new alleles with the potential to add valuable new genetic diversity to the current elite soybean gene pool. Given the demonstrated narrow genetic base of the US soybean production, it is essential to identify beneficial alleles from exotic germplasm, such as wild soybean, to enhance genetic gain for favorable traits. Nested association mapping (NAM) is an approach to population development that permits the comparison of allelic effects of the same QTL in multiple parents. Seed yield, plant maturity, plant height and plant lodging were evaluated in a NAM panel consisting of 392 recombinant inbred lines derived from three biparental interspecific soybean populations in eight environments during 2016 and 2017. Nested association mapping, combined with linkage mapping, identified three major QTL for plant maturity in chromosomes 6, 11 and 12 associated with alleles from wild soybean resulting in significant increases in days to maturity. A significant QTL for plant height was identified on chromosome 13 with the allele increasing plant height derived from wild soybean. A significant grain yield QTL was detected on chromosome 17, and theallele from Glycine soja had a positive effect of 166kgha−1; RIL’s with the wild soybean allele yielded on average 6% more than the lines carrying the Glycine max allele. These findings demonstrate the usefulness and potential of alleles from wild soybean germplasm to enhance important agronomic traits in a soybean breeding program.
+DA  - 2020/01/23/
+PY  - 2020
+DO  - 10.1007/s00122-019-03529-4
+VL  - 133
+IS  - 3
+SP  - 1039
+EP  - 1054
+ER  - 
+
+TY  - JOUR
+TI  - The parental inbred lines of the Nested Association Mapping (NAM) population of corn show sources of resistance to tar spot in northern Indiana
+AU  - Raksha Singh
+AU  - R. N. Singh
+AU  - Su Shim
+AU  - Su Shim
+AU  - Darcy E P Telenko
+AU  - Darcy E. P. Telenko
+AU  - Stephen B Goodwin
+AU  - Stephen B. Goodwin
+T2  - Plant Disease
+AB  - Tar spot is a major foliar disease of corn caused by the obligate fungal pathogen Phyllachora maydis, first identified in Indiana in 2015. Under conducive weather conditions, P. maydis causes significant yield losses in the U.S. and other countries constituting a major threat to corn production. Relatively little is known about resistance to tar spot other than a major quantitative gene that was identified in tropical maize lines. To test for additional sources of resistance against populations of P. maydis in North America, twenty-six parental inbred lines of the Nested Associated Mapping (NAM) population were evaluated for tar spot resistance in Indiana in replicated field trials under natural infection for 3 years. Tar spot disease severity was scored visually using a 0 to 100 % scale. Maximum disease severities (MDS) for tar spot scoring at reproductive growth stage ranged from 0 to 48.3 % with 0% being most resistant and 48.3% being most susceptible. Nine inbred lines were resistant to P. maydis with MDS ranging from 0 to 5.0%, six were moderately resistant (5.2 to 10.6% MDS), two were moderately susceptible (11.7 to 26.0% MDS) and the remaining eight inbred lines were rated as susceptible (30.0 to 48.3% MDS). There was some variability between years, due to higher disease pressure after 2019. Inbred B73, the common parent of the NAM populations, was rated as susceptible with MDS of 30.0%. The nine highly resistant lines provide a potential source of new genes for genetic analysis and mapping of tar spot resistance in corn.
+DA  - 2022/07/14/
+PY  - 2022
+DO  - 10.1094/pdis-02-22-0314-sc
+ER  - 
+
+TY  - JOUR
+TI  - WGNAM: whole-genome nested association mapping
+AU  - Valeria Paccapelo
+AU  - Paccapelo, Valeria
+AU  - Alison Kelly
+AU  - Alison M. Kelly
+AU  - Jack Christopher
+AU  - Jack T. Christopher
+AU  - A. P. Verbyla
+AU  - Arūnas P. Verbyla
+T2  - Theoretical and Applied Genetics
+AB  - Abstract Key message A powerful QTL analysis method for nested association mapping populations is presented. Based on a one-stage multi-locus model, it provides accurate predictions of founder specific QTL effects. Abstract Nested association mapping (NAM) populations have been created to enable the identification of quantitative trait loci (QTL) in different genetic backgrounds. A whole-genome nested association mapping (WGNAM) method is presented to perform QTL analysis in NAM populations. The WGNAM method is an adaptation of the multi-parent whole genome average interval mapping approach where the crossing design is incorporated through the probability of inheriting founder alleles for every marker across the genome. Based on a linear mixed model, this method provides a one-stage analysis of raw phenotypic data, molecular markers, and crossing design. It simultaneously scans the whole-genome through an iterative process leading to a model with all the identified QTL while keeping the false positive rate low. The WGNAM approach was assessed through a simulation study, confirming to be a powerful and accurate method for QTL analysis for a NAM population. This novel method can also accommodate a multi-reference NAM (MR-NAM) population where donor parents are crossed with multiple reference parents to increase genetic diversity. Therefore, a demonstration is presented using a MR-NAM population for wheat ( Triticum aestivum L.) to perform a QTL analysis for plant height. The strength and size of the putative QTL were summarized enhancing the understanding of the QTL effects depending on the parental origin. Compared to other methods, the proposed methodology based on a one-stage analysis provides greater power to detect QTL and increased accuracy in the estimation of their effects. The WGNAM method establishes the basis for accurate QTL mapping studies for NAM and MR-NAM populations.
+DA  - 2022/05/21/
+PY  - 2022
+DO  - 10.1007/s00122-022-04107-x
+ER  - 
+
+TY  - JOUR
+TI  - Genome-Wide Association Study of Yield-Related Traits in a Nested Association Mapping Population Grown in Kazakhstan
+AU  - A. Amalova
+AU  - Simon Griffiths
+AU  - S. Abugalieva
+AU  - Y. Turuspekov
+T2  - Agronomy
+AB  - This study evaluated 290 recombinant inbred lines (RILs) from the Nested Association Mapping (NAM) population in the UK, consisting of 24 hybrid families. All genotypes were grown in Southeastern Kazakhstan (Kazakh Research Institute of Agriculture and Plant Growing, Almaty region, 2021–2022) and Northern Kazakhstan (Alexandr Barayev Scientific-Production Center for Grain Farming, Akmola region, 2020). The studied traits included six yield-related characteristics: spike length (SL, cm), number of productive spikes per plant (NPS, pcs), number of kernels per spike (NKS, pcs), weight of kernels per spike (WKS, g), thousand kernel weight (TKW, g), and yield per square meter (YM2, g/m2). The significant phenotypic variability among genotypes was observed, which was suitable for the genome-wide association study of yield-related traits. Pearson’s index showed positive correlations among most yield-related traits, although a negative correlation was found between NKS and TKW in southeastern regions, and no correlation was recorded for northern regions. Top-performing RILs, surpassing local checks, were identified for NKS, TKW, and YM2, suggesting their potential for breeding programs. The application of GWAS allowed the identification of 72 quantitative trait loci (QTLs), including 36 QTLs in the southeastern region, 16 QTLs in the northern region, and 19 in both locations. Eleven QTLs matched those reported in previous QTL mapping studies and GWAS for studied traits. The results can be used for further studies related to the adaptation and productivity of wheat in breeding projects for higher grain productivity.
+DA  - 2024///
+PY  - 2024
+DO  - 10.3390/agronomy14081848
+ER  - 
+
+TY  - JOUR
+TI  - Development of a Nested Association Mapping (NAM) population for untangling complex traits in lentil (Lens culinaris Medik.)
+AU  - Sandesh Neupane
+AU  - Robert Stonehouse
+AU  - L. Ramsay
+AU  - Mari Baker
+AU  - T. Haile
+AU  - David J. Konkin
+AU  - Christine Sidebottom
+AU  - K. E. Bett
+T2  - bioRxiv
+DA  - 2025///
+PY  - 2025
+DO  - 10.1101/2025.06.17.660011
+ER  - 
+
+TY  - JOUR
+TI  - Seedling growth rate and root traits in the maize Nested Association Mapping (NAM) panel
+AU  - Maya Montoya-Pimolwatana
+AU  - Tai McClellan Maaz
+AU  - M. Kantar
+AU  - Michael Muszynski
+AU  - Yuriy Mileyko
+AU  - Rishi Prasadh
+AU  - I. Dhungana
+AU  - Kenneth Kiehl
+AU  - Abigail H Ana
+AU  - Alanna Nguyen
+AU  - Alycia Tausaga
+AU  - Amanda Godfrey
+AU  - Amanda K Nitta
+AU  - Bryceson Tugade
+AU  - D. JadenYamagata-Santos
+AU  - Elizabeth Swantek
+AU  - Ethan S Morrell
+AU  - G'Voni Kalaiwaa
+AU  - Germaine Lindsay Juan
+AU  - Gunnar Larsen
+AU  - India Kawelolani Ching
+AU  - Jesse Mikasobe-Kealiinohomoku
+AU  - Jessica Araszewski
+AU  - Joseph Carmelo M Averion
+AU  - Katie Strachan
+AU  - Kayla-Marie A Torres
+AU  - Keara Botanes
+AU  - Keilah C Wilkes
+AU  - Lydia Rigge
+AU  - Malisa Lo
+AU  - Nicholas Carr
+AU  - Noa Brenner
+AU  - Olivia Johnson
+AU  - Roma Amor B Malasarte
+AU  - Ruby Noland
+AU  - S. Naldini
+AU  - Stephenie Andriana Santos
+AU  - Tomas Pierce
+AU  - Urban Halpern
+AU  - Zeus Gean Paul Miguel
+AU  - Zhuocheng Gan
+AU  - Nhu H. Nguyen
+T2  - BMC Research Notes
+AB  - This paper characterizes variation in shoot and root traits collected from the founders of the Maize Nested Association Mapping panel, which was designed to maximize genetic diversity while ensuring appropriate flowering in eastern North America. Here, we present a detailed account of greenhouse experiments conducted by four cohorts of undergraduate research interns at the University of Hawaiʻi at Mānoa. We summarize data collection, data cleaning procedures, and present data for 38 phenotypic variables for 24 genotypes with the number of plant replicates ranging from 3 to 20. The genotype B73 served as our experimental control to enable comparison over the four years. We also grew a subset of genotypes under different abiotic stress treatments to assess the phenotypic plasticity. These data can be used to predict the potential for different lines to function and capacity to adapt to different environments. Data are published on GitHub repositories, and have large reuse potential by the scientific community, as well as educators of undergraduate and graduate instruction.
+DA  - 2025///
+PY  - 2025
+DO  - 10.1186/s13104-025-07279-z
+ER  - 
+
+TY  - JOUR
+TI  - Nested association mapping-based GWAS for grain yield and related traits in wheat grown under diverse Australian environments
+AU  - Chidzanga, Charity
+AU  - Charity Chidzanga
+AU  - Mullan, Dan
+AU  - Daniel Mullan
+AU  - Roy, Stuart J.
+AU  - Stuart J. Roy
+AU  - Baumann, Ute
+AU  - Ute Baumann
+AU  - Garcia, Melissa
+AU  - Melissa Garcia
+T2  - Theoretical and Applied Genetics
+AB  - Utilising a nested association mapping (NAM) population-based GWAS, 98 stable marker-trait associations with 127 alleles unique to the exotic parents were detected for grain yield and related traits in wheat. Grain yield, thousand-grain weight, screenings and hectolitre weight are important wheat yield traits. An understanding of their genetic basis is crucial for improving grain yield in breeding programmes. Nested association mapping (NAM) populations are useful resources for the dissection of the genetic basis of complex traits such as grain yield and related traits in wheat. Coupled with phenotypic data collected from multiple environments, NAM populations have the power to detect quantitative trait loci and their multiple alleles, providing germplasm that can be incorporated into breeding programmes. In this study, we evaluated a large-scale wheat NAM population with two recurrent parents in unbalanced trials in nine diverse Australian field environments over three years. By applying a single-stage factor analytical linear mixed model (FALMM) to the NAM multi-environment trials (MET) data and conducting a genome-wide association study (GWAS), we detected 98 stable marker-trait associations (MTAs) with their multiple alleles. 74 MTAs had 127 alleles that were derived from the exotic parents and were absent in either of the two recurrent parents. The exotic alleles had favourable effects on 46 MTAs of the 74 MTAs, for grain yield, thousand-grain weight, screenings and hectolitre weight. Two NAM RILs with consistently high yield in multiple environments were also identified, highlighting the potential of the NAM population in supporting plant breeding through provision of germplasm that can be readily incorporated into breeding programmes. The identified beneficial exotic alleles introgressed into the NAM population provide potential target alleles for the genetic improvement of wheat and further studies aimed at pinpointing the underlying genes.
+DA  - 2022/10/07/
+PY  - 2022
+DO  - 10.1007/s00122-022-04230-9
+ER  - 
+
+TY  - JOUR
+TI  - Harnessing genome prediction in Brassica napus through a nested association mapping population
+AU  - Sampath Perumal
+AU  - E. Higgins
+AU  - S. Sra
+AU  - Yogendra Khedikar
+AU  - Jessica Moore
+AU  - Raju Chaudary
+AU  - T. Haile
+AU  - Kevin Koh
+AU  - Sally Vail
+AU  - Stephen J. Robinson
+AU  - Kyla N. Horner
+AU  - Brad Hope
+AU  - Henry Klein-Gebbinck
+AU  - David Herrmann
+AU  - Katy Navabi
+AU  - Andrew G. Sharpe
+AU  - I. Parkin
+T2  - bioRxiv
+AB  - Genome prediction (GP) significantly enhances genetic gain by improving selection efficiency and shortening crop breeding cycles. Using a nested association mapping (NAM) population a set of diverse scenarios were assessed to evaluate GP for vital agronomic traits in B. napus. GP accuracy was examined by employing different models, marker sets, population sizes, marker densities, and incorporating genome-wide association (GWAS) markers. Eight models, including linear and semi-parametric approaches, were tested. The choice of model minimally impacted GP accuracy across traits. Notably, two models, rrBLUP and RKHS, consistently yielded the highest prediction accuracies. Employing a training population of 1500 lines or more resulted in increased prediction accuracies. Inclusion of single nucleotide absence polymorphism (SNaP) markers significantly improved prediction accuracy, with gains of up to 15%. Utilizing the Brassica 60K Illumina SNP array, our study effectively revealed the genetic potential of the B. napus NAM panel. It provided estimates of genomic predictions for crucial agronomic traits through varied prediction scenarios, shedding light on achievable genetic gains. These insights, coupled with marker application, can advance the breeding cycle acceleration in B. napus. Core ideas Genome prediction (GP) enhances genetic gains by improving selection efficiency and shortening breeding cycles. Factors influencing GP accuracy include model choice, marker types, and population size. Inclusion of SNaP markers and highly significant GWAS markers improves prediction accuracy, shedding light on achievable genetic gains. Plain Summary Genome prediction (GP) is a powerful tool that helps us improve crops more efficiently. In this study, we assessed how well GP works for predicting important traits in Brassica napus plants. We tested different models and marker sets to see which ones were most accurate. We found that two models, rrBLUP and RKHS, were consistently the best. Also, including certain types of genetic markers, like SNaP markers and highly significant GWAS markers, improved the predictions. Overall, our study shows that GP can help us understand the genetic potential of B. napus plants and improve breeding strategies, which can be exploited to develop better varieties more quickly, which is good news for farmers and the food supply.
+DA  - 2024///
+PY  - 2024
+DO  - 10.1101/2024.07.29.604859
+ER  - 
+
+TY  - JOUR
+TI  - Genome-wide association study in quinoa reveals selection pattern typical for crops with a short breeding history
+AU  - Patiranage, Dilan SR
+AU  - Rey, Elodie
+AU  - Emrani, Nazgol
+AU  - Wellman, Gordon
+AU  - Schmid, Karl
+AU  - Schmöckel, Sandra M
+AU  - Tester, Mark
+AU  - Jung, Christian
+T2  - eLife
+A2  - Castric, Vincent
+A2  - Schuman, Meredith C
+A2  - Borevitz, Justin O
+A2  - Andersen, Stig Uggerhøj
+AB  - Quinoa germplasm preserves useful and substantial genetic variation, yet it remains untapped due to a lack of implementation of modern breeding tools. We have integrated field and sequence data to characterize a large diversity panel of quinoa. Whole-genome sequencing of 310 accessions revealed 2.9 million polymorphic high confidence single nucleotide polymorphism (SNP) loci. Highland and Lowland quinoa were clustered into two main groups, with FST divergence of 0.36 and linkage disequilibrium (LD) decay of 6.5 and 49.8 kb, respectively. A genome-wide association study using multi-year phenotyping trials uncovered 600 SNPs stably associated with 17 traits. Two candidate genes are associated with thousand seed weight, and a resistance gene analog is associated with downy mildew resistance. We also identified pleiotropically acting loci for four agronomic traits important for adaptation. This work demonstrates the use of re-sequencing data of an orphan crop, which is partially domesticated to rapidly identify marker-trait association and provides the underpinning elements for genomics-enabled quinoa breeding.
+DA  - 2022/07/08/
+PY  - 2022
+DO  - 10.7554/eLife.66873
+DP  - eLife
+VL  - 11
+SP  - e66873
+PB  - eLife Sciences Publications, Ltd
+SN  - 2050-084X
+UR  - https://doi.org/10.7554/eLife.66873
+Y2  - 2025/02/01/16:09:07
+KW  - Chenopodium quinoa
+KW  - adaptation
+KW  - plant breeding
+KW  - domestication
+KW  - genetic variation
+KW  - re-sequencing
+ER  - 
+
+TY  - JOUR
+TI  - Fast and accurate population admixture inference from genotype data from a few microsatellites to millions of SNPs
+AU  - Wang, Jinliang
+T2  - Heredity
+AB  - Model-based (likelihood and Bayesian) and non-model-based (PCA and K-means clustering) methods were developed to identify populations and assign individuals to the identified populations using marker genotype data. Model-based methods are favoured because they are based on a probabilistic model of population genetics with biologically meaningful parameters and thus produce results that are easily interpretable and applicable. Furthermore, they often yield more accurate structure inferences than non-model-based methods. However, current model-based methods either are computationally demanding and thus applicable to small problems only or use simplified admixture models that could yield inaccurate results in difficult situations such as unbalanced sampling. In this study, I propose new likelihood methods for fast and accurate population admixture inference using genotype data from a few multiallelic microsatellites to millions of diallelic SNPs. The methods conduct first a clustering analysis of coarse-grained population structure by using the mixture model and the simulated annealing algorithm, and then an admixture analysis of fine-grained population structure by using the clustering results as a starting point in an expectation maximisation algorithm. Extensive analyses of both simulated and empirical data show that the new methods compare favourably with existing methods in both accuracy and running speed. They can analyse small datasets with just a few multiallelic microsatellites but can also handle in parallel terabytes of data with millions of markers and millions of individuals. In difficult situations such as many and/or lowly differentiated populations, unbalanced or very small samples of individuals, the new methods are substantially more accurate than other methods.
+DA  - 2022/08//
+PY  - 2022
+DO  - 10.1038/s41437-022-00535-z
+DP  - www.nature.com
+VL  - 129
+IS  - 2
+SP  - 79
+EP  - 92
+LA  - en
+PB  - Nature Publishing Group
+SN  - 1365-2540
+UR  - https://www.nature.com/articles/s41437-022-00535-z
+Y2  - 2024/04/02/20:18:40
+KW  - Evolutionary ecology
+KW  - Population genetics
+ER  - 
+
+TY  - JOUR
+TI  - Ridge Regression and Other Kernels for Genomic Selection with R Package rrBLUP
+AU  - Endelman, Jeffrey B.
+T2  - The Plant Genome
+AB  - Many important traits in plant breeding are polygenic and therefore recalcitrant to traditional marker-assisted selection. Genomic selection addresses this complexity by including all markers in the prediction model. A key method for the genomic prediction of breeding values is ridge regression (RR), which is equivalent to best linear unbiased prediction (BLUP) when the genetic covariance between lines is proportional to their similarity in genotype space. This additive model can be broadened to include epistatic effects by using other kernels, such as the Gaussian, which represent inner products in a complex feature space. To facilitate the use of RR and nonadditive kernels in plant breeding, a new software package for R called rrBLUP has been developed. At its core is a fast maximum-likelihood algorithm for mixed models with a single variance component besides the residual error, which allows for efficient prediction with unreplicated training data. Use of the rrBLUP software is demonstrated through several examples, including the identification of optimal crosses based on superior progeny value. In cross-validation tests, the prediction accuracy with nonadditive kernels was significantly higher than RR for wheat (Triticum aestivum L.) grain yield but equivalent for several maize (Zea mays L.) traits.
+DA  - 2011///
+PY  - 2011
+DO  - 10.3835/plantgenome2011.08.0024
+DP  - Wiley Online Library
+VL  - 4
+IS  - 3
+LA  - en
+SN  - 1940-3372
+UR  - https://onlinelibrary.wiley.com/doi/abs/10.3835/plantgenome2011.08.0024
+Y2  - 2024/02/29/15:09:11
+ER  - 
+
+TY  - COMP
+TI  - cran/NAM
+AB  - :exclamation: This is a read-only mirror of the CRAN R package repository.  NAM — Nested Association Mapping
+DA  - 2019/09/23/T17:56:51Z
+PY  - 2019
+DP  - GitHub
+LA  - R
+PB  - cran
+UR  - https://github.com/cran/NAM
+Y2  - 2024/02/07/02:49:31
+ER  - 
+
+TY  - COMP
+TI  - ValeriaPaccapelo/wgnam
+AU  - ValeriaPaccapelo
+AB  - Whole-Genome Nested Association Mapping
+DA  - 2022/03/01/T05:26:11Z
+PY  - 2022
+DP  - GitHub
+LA  - R
+UR  - https://github.com/ValeriaPaccapelo/wgnam
+Y2  - 2024/02/07/02:49:22
+ER  - 
+
+TY  - JOUR
+TI  - NAM: association studies in multiple populations
+AU  - Xavier, Alencar
+AU  - Xu, Shizhong
+AU  - Muir, William M.
+AU  - Rainey, Katy Martin
+T2  - Bioinformatics
+AB  - Motivation: Mixed linear models provide important techniques for performing genome-wide association studies. However, current models have pitfalls associated with their strong assumptions. Here, we propose a new implementation designed to overcome some of these pitfalls using an empirical Bayes algorithm.Results: Here we introduce NAM, an R package that allows user to take into account prior information regarding population stratification to relax the linkage phase assumption of current methods. It allows markers to be treated as a random effect to increase the resolution, and uses a sliding-window strategy to increase power and avoid double fitting markers into the model.Availability and implementation: NAM is an R package available in the CRAN repository. It can be installed in R by typing install.packages (‘NAM’).Contact:  krainey@purdue.eduSupplementary information:  Supplementary date are available at Bioinformatics online.
+DA  - 2015/12/01/
+PY  - 2015
+DO  - 10.1093/bioinformatics/btv448
+DP  - Silverchair
+VL  - 31
+IS  - 23
+SP  - 3862
+EP  - 3864
+J2  - Bioinformatics
+SN  - 1367-4803
+ST  - NAM
+UR  - https://doi.org/10.1093/bioinformatics/btv448
+Y2  - 2024/02/07/01:37:47
+ER  - 
+
+TY  - JOUR
+TI  - Genomic prediction and association mapping of maize grain yield in multi-environment trials based on reaction norm models
+AU  - Tolley, Seth A.
+AU  - Brito, Luiz F.
+AU  - Wang, Diane R.
+AU  - Tuinstra, Mitchell R.
+T2  - Frontiers in Genetics
+AB  - Genotype-by-environment interaction (GEI) is among the greatest challenges for maize breeding programs. Strong GEI limits both the prediction of genotype performance across variable environmental conditions and the identification of genomic regions associated with grain yield. Incorporating GEI into yield prediction models has been shown to improve prediction accuracy of yield; nevertheless, more work is needed to further understand this complex interaction across populations and environments. The main objectives of this study were to: 1) assess GEI in maize grain yield based on reaction norm models and predict hybrid performance across a gradient of environmental (EG) conditions and 2) perform a genome-wide association study (GWAS) and post-GWAS analyses for maize grain yield using data from 2014 to 2017 of the Genomes to Fields initiative hybrid trial. After quality control, 2,126 hybrids with genotypic and phenotypic data were assessed across 86 environments representing combinations of locations and years, although not all hybrids were evaluated in all environments. Heritability was greater in higher-yielding environments due to an increase in genetic variability in these environments in comparison to the low-yielding environments. GWAS was carried out for yield and five single nucleotide polymorphisms (SNPs) with the highest magnitude of effect were selected in each environment for follow-up analyses. Many candidate genes in proximity of selected SNPs have been previously reported with roles in stress response. Genomic prediction was performed to assess prediction accuracy of previously tested or untested hybrids in environments from a new growing season. Prediction accuracy was 0.34 for cross validation across years (CV0-Predicted EG) and 0.21 for cross validation across years with only untested hybrids (CV00-Predicted EG) when compared to Best Linear Unbiased Prediction (BLUPs) that did not utilize genotypic or environmental relationships. Prediction accuracy improved to 0.80 (CV0-Predicted EG) and 0.60 (CV00-Predicted EG) when compared to the whole-dataset model that used the genomic relationships and the environmental gradient of all environments in the study. These results identify regions of the genome for future selection to improve yield and a methodology to increase the number of hybrids evaluated across locations of a multi-environment trial through genomic prediction.
+DA  - 2023///
+PY  - 2023
+DP  - Frontiers
+VL  - 14
+SN  - 1664-8021
+UR  - https://www.frontiersin.org/journals/genetics/articles/10.3389/fgene.2023.1221751
+Y2  - 2024/02/07/01:35:21
+ER  - 
+
+TY  - JOUR
+TI  - Genome-Wide Analysis of Grain Yield Stability and Environmental Interactions in a Multiparental Soybean Population
+AU  - Xavier, Alencar
+AU  - Jarquin, Diego
+AU  - Howard, Reka
+AU  - Ramasubramanian, Vishnu
+AU  - Specht, James E
+AU  - Graef, George L
+AU  - Beavis, William D
+AU  - Diers, Brian W
+AU  - Song, Qijian
+AU  - Cregan, Perry B
+AU  - Nelson, Randall
+AU  - Mian, Rouf
+AU  - Shannon, J Grover
+AU  - McHale, Leah
+AU  - Wang, Dechun
+AU  - Schapaugh, William
+AU  - Lorenz, Aaron J
+AU  - Xu, Shizhong
+AU  - Muir, William M
+AU  - Rainey, Katy M
+T2  - G3 Genes|Genomes|Genetics
+AB  - Genetic improvement toward optimized and stable agronomic performance of soybean genotypes is desirable for food security. Understanding how genotypes perform in different environmental conditions helps breeders develop sustainable cultivars adapted to target regions. Complex traits of importance are known to be controlled by a large number of genomic regions with small effects whose magnitude and direction are modulated by environmental factors. Knowledge of the constraints and undesirable effects resulting from genotype by environmental interactions is a key objective in improving selection procedures in soybean breeding programs. In this study, the genetic basis of soybean grain yield responsiveness to environmental factors was examined in a large soybean nested association population. For this, a genome-wide association to performance stability estimates generated from a Finlay-Wilkinson analysis and the inclusion of the interaction between marker genotypes and environmental factors was implemented. Genomic footprints were investigated by analysis and meta-analysis using a recently published multiparent model. Results indicated that specific soybean genomic regions were associated with stability, and that multiplicative interactions were present between environments and genetic background. Seven genomic regions in six chromosomes were identified as being associated with genotype-by-environment interactions. This study provides insight into genomic assisted breeding aimed at achieving a more stable agronomic performance of soybean, and documented opportunities to exploit genomic regions that were specifically associated with interactions involving environments and subpopulations.
+DA  - 2018/02/01/
+PY  - 2018
+DO  - 10.1534/g3.117.300300
+DP  - Silverchair
+VL  - 8
+IS  - 2
+SP  - 519
+EP  - 529
+J2  - G3 Genes|Genomes|Genetics
+SN  - 2160-1836
+UR  - https://doi.org/10.1534/g3.117.300300
+Y2  - 2024/02/07/01:30:51
+ER  - 
+
+TY  - JOUR
+TI  - Nested-association mapping (NAM)-based genetic dissection uncovers candidate genes for seed and pod weights in peanut (Arachis hypogaea)
+AU  - Gangurde, Sunil S.
+AU  - Wang, Hui
+AU  - Yaduru, Shasidhar
+AU  - Pandey, Manish K.
+AU  - Fountain, Jake C.
+AU  - Chu, Ye
+AU  - Isleib, Thomas
+AU  - Holbrook, C. Corley
+AU  - Xavier, Alencar
+AU  - Culbreath, Albert K.
+AU  - Ozias-Akins, Peggy
+AU  - Varshney, Rajeev K.
+AU  - Guo, Baozhu
+T2  - Plant Biotechnology Journal
+AB  - Multiparental genetic mapping populations such as nested-association mapping (NAM) have great potential for investigating quantitative traits and associated genomic regions leading to rapid discovery of candidate genes and markers. To demonstrate the utility and power of this approach, two NAM populations, NAM_Tifrunner and NAM_Florida-07, were used for dissecting genetic control of 100-pod weight (PW) and 100-seed weight (SW) in peanut. Two high-density SNP-based genetic maps were constructed with 3341 loci and 2668 loci for NAM_Tifrunner and NAM_Florida-07, respectively. The quantitative trait locus (QTL) analysis identified 12 and 8 major effect QTLs for PW and SW, respectively, in NAM_Tifrunner, and 13 and 11 major effect QTLs for PW and SW, respectively, in NAM_Florida-07. Most of the QTLs associated with PW and SW were mapped on the chromosomes A05, A06, B05 and B06. A genomewide association study (GWAS) analysis identified 19 and 28 highly significant SNP–trait associations (STAs) in NAM_Tifrunner and 11 and 17 STAs in NAM_Florida-07 for PW and SW, respectively. These significant STAs were co-localized, suggesting that PW and SW are co-regulated by several candidate genes identified on chromosomes A05, A06, B05, and B06. This study demonstrates the utility of NAM population for genetic dissection of complex traits and performing high-resolution trait mapping in peanut.
+DA  - 2020///
+PY  - 2020
+DO  - 10.1111/pbi.13311
+DP  - Wiley Online Library
+VL  - 18
+IS  - 6
+SP  - 1457
+EP  - 1471
+LA  - en
+SN  - 1467-7652
+UR  - https://onlinelibrary.wiley.com/doi/abs/10.1111/pbi.13311
+Y2  - 2024/02/07/01:21:43
+KW  - peanut
+KW  - association mapping
+KW  - candidate genes
+KW  - linkage mapping
+KW  - nested-association mapping
+KW  - pod weight
+KW  - seed weight
+ER  - 
+
+TY  - JOUR
+TI  - Fine mapping of a major QTL for awn length in barley using a multiparent mapping population
+AU  - Liller, Corinna B.
+AU  - Walla, Agatha
+AU  - Boer, Martin P.
+AU  - Hedley, Pete
+AU  - Macaulay, Malcolm
+AU  - Effgen, Sieglinde
+AU  - von Korff, Maria
+AU  - van Esse, G. Wilma
+AU  - Koornneef, Maarten
+T2  - Theoretical and Applied Genetics
+AB  - Awn length was mapped using a multiparent population derived from cv. Morex and four wild accessions. One QTL was fine mapped and candidate genes were identified in NILs by RNA-seq.
+DA  - 2017/02/01/
+PY  - 2017
+DO  - 10.1007/s00122-016-2807-y
+DP  - Springer Link
+VL  - 130
+IS  - 2
+SP  - 269
+EP  - 281
+J2  - Theor Appl Genet
+LA  - en
+SN  - 1432-2242
+UR  - https://doi.org/10.1007/s00122-016-2807-y
+Y2  - 2024/02/07/01:20:47
+KW  - Barley Genotype
+KW  - Recombinant Inbred Line
+KW  - Seed Width
+KW  - Thousand Grain Weight
+KW  - Wild Barley
+ER  - 
+
+TY  - JOUR
+TI  - Multi-parent populations in crops: a toolbox integrating genomics and genetic mapping with breeding
+AU  - Scott, Michael F.
+AU  - Ladejobi, Olufunmilayo
+AU  - Amer, Samer
+AU  - Bentley, Alison R.
+AU  - Biernaskie, Jay
+AU  - Boden, Scott A.
+AU  - Clark, Matt
+AU  - Dell’Acqua, Matteo
+AU  - Dixon, Laura E.
+AU  - Filippi, Carla V.
+AU  - Fradgley, Nick
+AU  - Gardner, Keith A.
+AU  - Mackay, Ian J.
+AU  - O’Sullivan, Donal
+AU  - Percival-Alwyn, Lawrence
+AU  - Roorkiwal, Manish
+AU  - Singh, Rakesh Kumar
+AU  - Thudi, Mahendar
+AU  - Varshney, Rajeev Kumar
+AU  - Venturini, Luca
+AU  - Whan, Alex
+AU  - Cockram, James
+AU  - Mott, Richard
+T2  - Heredity
+AB  - Crop populations derived from experimental crosses enable the genetic dissection of complex traits and support modern plant breeding. Among these, multi-parent populations now play a central role. By mixing and recombining the genomes of multiple founders, multi-parent populations combine many commonly sought beneficial properties of genetic mapping populations. For example, they have high power and resolution for mapping quantitative trait loci, high genetic diversity and minimal population structure. Many multi-parent populations have been constructed in crop species, and their inbred germplasm and associated phenotypic and genotypic data serve as enduring resources. Their utility has grown from being a tool for mapping quantitative trait loci to a means of providing germplasm for breeding programmes. Genomics approaches, including de novo genome assemblies and gene annotations for the population founders, have allowed the imputation of rich sequence information into the descendent population, expanding the breadth of research and breeding applications of multi-parent populations. Here, we report recent successes from crop multi-parent populations in crops. We also propose an ideal genotypic, phenotypic and germplasm ‘package’ that multi-parent populations should feature to optimise their use as powerful community resources for crop research, development and breeding.
+DA  - 2020/12//
+PY  - 2020
+DO  - 10.1038/s41437-020-0336-6
+DP  - www.nature.com
+VL  - 125
+IS  - 6
+SP  - 396
+EP  - 416
+LA  - en
+PB  - Nature Publishing Group
+SN  - 1365-2540
+ST  - Multi-parent populations in crops
+UR  - https://www.nature.com/articles/s41437-020-0336-6
+Y2  - 2024/02/06/22:20:35
+KW  - Plant breeding
+KW  - Agricultural genetics
+KW  - Plant genetics
+KW  - Quantitative trait
+ER  - 
+
+TY  - JOUR
+TI  - Joint linkage–linkage disequilibrium mapping is a powerful approach to detecting quantitative trait loci underlying drought tolerance in maize
+AU  - Lu, Yanli
+AU  - Zhang, Shihuang
+AU  - Shah, Trushar
+AU  - Xie, Chuanxiao
+AU  - Hao, Zhuanfang
+AU  - Li, Xinhai
+AU  - Farkhari, Mohammad
+AU  - Ribaut, Jean-Marcel
+AU  - Cao, Moju
+AU  - Rong, Tingzhao
+AU  - Xu, Yunbi
+T2  - Proceedings of the National Academy of Sciences
+AB  - This paper describes two joint linkage–linkage disequilibrium (LD) mapping approaches: parallel mapping (independent linkage and LD analysis) and integrated mapping (datasets analyzed in combination). These approaches were achieved using 2,052 single nucleotide polymorphism (SNP) markers, including 659 SNPs developed from drought-response candidate genes, screened across three recombinant inbred line (RIL) populations and 305 diverse inbred lines, with anthesis-silking interval (ASI), an important trait for maize drought tolerance, as the target trait. Mapping efficiency was improved significantly due to increased population size and allele diversity and balanced allele frequencies. Integrated mapping identified 18 additional quantitative trait loci (QTL) not detected by parallel mapping. The use of haplotypes improved mapping efficiency, with the sum of phenotypic variation explained (PVE) increasing from 5.4% to 23.3% for single SNP-based analysis. Integrated mapping with haplotype further improved the mapping efficiency, and the most significant QTL had a PVE of up to 34.7%. Normal allele frequencies for 113 of 277 (40.8%) SNPs with minor allele frequency (<5%) in 305 lines were recovered in three RIL populations, three of which were significantly associated with ASI. The candidate genes identified by two significant haplotype loci included one for a SET domain protein involved in the control of flowering time and the other encoding aldo/keto reductase associated with detoxification pathways that contribute to cellular damage due to environmental stress. Joint linkage–LD mapping is a powerful approach for detecting QTL underlying complex traits, including drought tolerance.
+DA  - 2010/11/09/
+PY  - 2010
+DO  - 10.1073/pnas.1006105107
+DP  - pnas.org (Atypon)
+VL  - 107
+IS  - 45
+SP  - 19585
+EP  - 19590
+PB  - Proceedings of the National Academy of Sciences
+UR  - https://www.pnas.org/doi/full/10.1073/pnas.1006105107
+Y2  - 2024/02/06/20:45:11
+ER  - 
+
+TY  - JOUR
+TI  - Comparison of statistical models for nested association mapping in rapeseed (Brassica napus L.) through computer simulations
+AU  - Li, Jinquan
+AU  - Bus, Anja
+AU  - Spamer, Viola
+AU  - Stich, Benjamin
+T2  - BMC Plant Biology
+AB  - Rapeseed (Brassica napus L.) is an important oilseed crop throughout the world, serving as source for edible oil and renewable energy. Development of nested association mapping (NAM) population and methods is of importance for quantitative trait locus (QTL) mapping in rapeseed. The objectives of the research were to compare the power of QTL detection 1- β∗ (β∗ is the empirical type II error rate) (i) of two mating designs, double haploid (DH-NAM) and backcross (BC-NAM), (ii) of different statistical models, and (iii) for different genetic situations.
+DA  - 2016/01/25/
+PY  - 2016
+DO  - 10.1186/s12870-016-0707-6
+DP  - BioMed Central
+VL  - 16
+IS  - 1
+SP  - 26
+J2  - BMC Plant Biology
+SN  - 1471-2229
+UR  - https://doi.org/10.1186/s12870-016-0707-6
+Y2  - 2024/02/06/20:21:35
+KW  - Backcross NAM
+KW  - Computer simulations
+KW  - Double haploid NAM
+KW  - Nested association mapping (NAM)
+KW  - Rapeseed (Brassica napus L.)
+KW  - Statistical models
+ER  - 
+
+TY  - JOUR
+TI  - Nested association mapping population in crops: current status and future prospects
+AU  - Kitony, Justine Kipruto
+T2  - Journal of Crop Science and Biotechnology
+AB  - The recent advancement of bioinformatics tools and next-generation sequencing (NGS) has created enormous opportunities for a thorough understanding of quantitative (complex) traits in plants. One of the key drivers facilitating the mining of beneficial alleles for climate adaptation and increased crop productivity is multi-parental mapping populations. In this article, the current status and opportunities of multi-parental mapping populations for breeding and genetics are discussed. The paper particularly focuses on nested association mapping (NAM) population. NAM is primarily made up of inbred lines derived from crossing/backcrossing a common parent(s) to multiple diversity donor lines. NAM has high genetic diversity and low population structure, making it ideal for discovering genes and elucidating the genetic architecture of quantitative traits in plants. Because NAM lines are immortal, they allow for repeated measurements and multi-environment testing, which can be used in traditional functional genomics. Overall, the NAM population is a simple but powerful genetic resource that can be used as a gene mapping tool as well as a platform for evaluating models used in plant breeding.
+DA  - 2023/01/01/
+PY  - 2023
+DO  - 10.1007/s12892-022-00158-0
+DP  - Springer Link
+VL  - 26
+IS  - 1
+SP  - 1
+EP  - 12
+J2  - J. Crop Sci. Biotechnol.
+LA  - en
+SN  - 2005-8276
+ST  - Nested association mapping population in crops
+UR  - https://doi.org/10.1007/s12892-022-00158-0
+Y2  - 2024/02/06/19:47:59
+KW  - Nested association mapping (NAM)
+KW  - Genome-wide association study (GWAS)
+KW  - Genomic prediction (GP)
+KW  - Genomic selection (GS)
+KW  - Next-generation sequencing (NGS)
+KW  - Quantitative trait loci (QTL)
+ER  - 
+
+TY  - JOUR
+TI  - Construction of Genetic Linkage Maps in Multiparental Populations
+AU  - Zheng, Chaozhi
+AU  - Boer, Martin P
+AU  - van Eeuwijk, Fred A
+T2  - Genetics
+AB  - Construction of genetic linkage maps has become a routine step for mapping quantitative trait loci (QTL), particularly in animal and plant breeding populations. Many multiparental populations have recently been produced to increase genetic diversity and QTL mapping resolution. However, few software packages are available for map construction in these populations. In this paper, we build a general framework for the construction of genetic linkage maps from genotypic data in diploid populations, including bi- and multiparental populations, cross-pollinated (CP) populations, and breeding pedigrees. The framework is implemented as an automatic pipeline called magicMap, where the maximum multilocus likelihood approach utilizes genotypic information efficiently. We evaluate magicMap by extensive simulations and eight real datasets: one biparental, one CP, four multiparent advanced generation intercross (MAGIC), and two nested association mapping (NAM) populations, the number of markers ranging from a few hundred to tens of thousands. Not only is magicMap the only software capable of accommodating all of these designs, it is more accurate and robust to missing genotypes and genotyping errors than commonly used packages.
+DA  - 2019/08/01/
+PY  - 2019
+DO  - 10.1534/genetics.119.302229
+DP  - Silverchair
+VL  - 212
+IS  - 4
+SP  - 1031
+EP  - 1044
+J2  - Genetics
+SN  - 1943-2631
+UR  - https://doi.org/10.1534/genetics.119.302229
+Y2  - 2024/02/06/19:28:46
+ER  - 
+
+TY  - JOUR
+TI  - R/qtl2: Software for Mapping Quantitative Trait Loci with High-Dimensional Data and Multiparent Populations
+AU  - Broman, Karl W
+AU  - Gatti, Daniel M
+AU  - Simecek, Petr
+AU  - Furlotte, Nicholas A
+AU  - Prins, Pjotr
+AU  - Sen, Śaunak
+AU  - Yandell, Brian S
+AU  - Churchill, Gary A
+T2  - Genetics
+AB  - R/qtl2 is an interactive software environment for mapping quantitative trait loci (QTL) in experimental populations. The R/qtl2 software expands the scope of the widely-used R/qtl software package to include multiparental populations, better handles modern high-dimensional data....R/qtl2 is an interactive software environment for mapping quantitative trait loci (QTL) in experimental populations. The R/qtl2 software expands the scope of the widely used R/qtl software package to include multiparent populations derived from more than two founder strains, such as the Collaborative Cross and Diversity Outbred mice, heterogeneous stocks, and MAGIC plant populations. R/qtl2 is designed to handle modern high-density genotyping data and high-dimensional molecular phenotypes, including gene expression and proteomics. R/qtl2 includes the ability to perform genome scans using a linear mixed model to account for population structure, and also includes features to impute SNPs based on founder strain genomes and to carry out association mapping. The R/qtl2 software provides all of the basic features needed for QTL mapping, including graphical displays and summary reports, and it can be extended through the creation of add-on packages. R/qtl2, which is free and open source software written in the R and C++ programming languages, comes with a test framework.
+DA  - 2019/02/01/
+PY  - 2019
+DO  - 10.1534/genetics.118.301595
+DP  - Silverchair
+VL  - 211
+IS  - 2
+SP  - 495
+EP  - 502
+J2  - Genetics
+SN  - 1943-2631
+ST  - R/qtl2
+UR  - https://doi.org/10.1534/genetics.118.301595
+Y2  - 2023/02/22/13:45:05
+ER  - 
+
+TY  - JOUR
+TI  - Construction and integration of genetic linkage maps from three multi-parent advanced generation inter-cross populations in rice
+AU  - Qu, Pingping
+AU  - Shi, Jinhui
+AU  - Chen, Tianxiao
+AU  - Chen, Kai
+AU  - Shen, Congcong
+AU  - Wang, Jiankang
+AU  - Zhao, Xiangqian
+AU  - Ye, Guoyou
+AU  - Xu, Jianlong
+AU  - Zhang, Luyan
+T2  - Rice
+AB  - The construction of genetic maps based on molecular markers is a crucial step in rice genetic and genomic studies. Pure lines derived from multiple parents provide more abundant genetic variation than those from bi-parent populations. Two four-parent pure-line populations (4PL1 and 4PL2) and one eight-parent pure-line population (8PL) were developed from eight homozygous indica varieties of rice by the International Rice Research Institute (IRRI). To the best of our knowledge, there have been no reports on linkage map construction and their integration in multi-parent populations of rice.
+DA  - 2020/02/14/
+PY  - 2020
+DO  - 10.1186/s12284-020-0373-z
+DP  - BioMed Central
+VL  - 13
+IS  - 1
+SP  - 13
+J2  - Rice
+SN  - 1939-8433
+UR  - https://doi.org/10.1186/s12284-020-0373-z
+Y2  - 2023/02/22/13:45:01
+KW  - QTL mapping
+KW  - Integrated map
+KW  - Linkage map
+KW  - Multi-parent population
+KW  - Quantitative trait locus (QTL)
+ER  - 
+
+TY  - ELEC
+TI  - Analysis of Next Generation Sequencing Data
+UR  - http://www.popgen.dk/software/index.php/Main_Page
+Y2  - 2023/02/22/04:27:10
+ER  - 
+
+TY  - JOUR
+TI  - Efficient approaches for large-scale GWAS with genotype uncertainty
+AU  - Jørsboe, Emil
+AU  - Albrechtsen, Anders
+T2  - G3 Genes|Genomes|Genetics
+AB  - Association studies using genetic data from SNP-chip-based imputation or low-depth sequencing data provide a cost-efficient design for large-scale association studies. We explore methods for performing association studies applicable to such genetic data and investigate how using different priors when estimating genotype probabilities affects the association results. Our proposed method, ANGSD-asso’s latent model, models the unobserved genotype as a latent variable in a generalized linear model framework. The software is implemented in C/C++ and can be run multi-threaded. ANGSD-asso is based on genotype probabilities, which can be estimated using either the sample allele frequency or the individual allele frequencies as a prior. We explore through simulations how genotype probability-based methods compare with using genetic dosages. Our simulations show that in a structured population using the individual allele frequency prior has better power than the sample allele frequency. In scenarios with sequencing depth and phenotype correlation ANGSD-asso’s latent model has higher statistical power and less bias than using dosages. Adding additional covariates to the linear model of ANGSD-asso’s latent model has higher statistical power and less bias than other methods that accommodate genotype uncertainty, while also being much faster. This is shown with imputed data from UK Biobank and simulations.
+DA  - 2022/01/01/
+PY  - 2022
+DO  - 10.1093/g3journal/jkab385
+DP  - Silverchair
+VL  - 12
+IS  - 1
+SP  - jkab385
+J2  - G3 Genes|Genomes|Genetics
+SN  - 2160-1836
+UR  - https://doi.org/10.1093/g3journal/jkab385
+Y2  - 2023/02/22/03:24:33
+ER  - 
+
+TY  - JOUR
+TI  - ANGSD: Analysis of Next Generation Sequencing Data
+AU  - Korneliussen, Thorfinn Sand
+AU  - Albrechtsen, Anders
+AU  - Nielsen, Rasmus
+T2  - BMC Bioinformatics
+AB  - High-throughput DNA sequencing technologies are generating vast amounts of data. Fast, flexible and memory efficient implementations are needed in order to facilitate analyses of thousands of samples simultaneously.
+DA  - 2014/11/25/
+PY  - 2014
+DO  - 10.1186/s12859-014-0356-4
+DP  - BioMed Central
+VL  - 15
+IS  - 1
+SP  - 356
+J2  - BMC Bioinformatics
+SN  - 1471-2105
+ST  - ANGSD
+UR  - https://doi.org/10.1186/s12859-014-0356-4
+Y2  - 2023/02/21/15:42:28
+KW  - Bioinformatics
+KW  - Population genetics
+KW  - Association studies
+KW  - Next-generation sequencing
+ER  - 
+
+TY  - JOUR
+TI  - MegaLMM: Mega-scale linear mixed models for genomic predictions with thousands of traits
+AU  - Runcie, Daniel E.
+AU  - Qu, Jiayi
+AU  - Cheng, Hao
+AU  - Crawford, Lorin
+T2  - Genome Biology
+AB  - Large-scale phenotype data can enhance the power of genomic prediction in plant and animal breeding, as well as human genetics. However, the statistical foundation of multi-trait genomic prediction is based on the multivariate linear mixed effect model, a tool notorious for its fragility when applied to more than a handful of traits. We present MegaLMM, a statistical framework and associated software package for mixed model analyses of a virtually unlimited number of traits. Using three examples with real plant data, we show that MegaLMM can leverage thousands of traits at once to significantly improve genetic value prediction accuracy.
+DA  - 2021/07/23/
+PY  - 2021
+DO  - 10.1186/s13059-021-02416-w
+DP  - BioMed Central
+VL  - 22
+IS  - 1
+SP  - 213
+J2  - Genome Biology
+SN  - 1474-760X
+ST  - MegaLMM
+UR  - https://doi.org/10.1186/s13059-021-02416-w
+Y2  - 2023/02/21/13:27:26
+KW  - High-throughput phenotyping
+KW  - Genomic prediction
+KW  - Multi-environment trial
+KW  - Multi-trait Linear Mixed Model
+ER  - 
+
+TY  - JOUR
+TI  - vcf2gwas: Python API for comprehensive GWAS analysis using GEMMA
+AU  - Vogt, Frank
+AU  - Shirsekar, Gautam
+AU  - Weigel, Detlef
+T2  - Bioinformatics
+AB  - Genome-wide association study (GWAS) requires a researcher to perform a multitude of different actions during analysis. From editing and formatting genotype and phenotype information to running the analysis software to summarizing and visualizing the results. A typical GWAS workflow poses a significant challenge of utilizing the command-line, manual text-editing and requiring knowledge of one or more programming/scripting languages, especially for newcomers.vcf2gwas is a package that provides a convenient pipeline to perform all of the steps of a traditional GWAS workflow by reducing it to a single command-line input of a Variant Call Format file and a phenotype data file. In addition, all the required software is installed with the package. vcf2gwas also implements several useful features enhancing the reproducibility of GWAS analysis.The source code of vcf2gwas is available under the GNU General Public License. The package can be easily installed using conda. Installation instructions and a manual including tutorials can be accessed on the package website at https://github.com/frankvogt/vcf2gwas.Supplementary data are available at Bioinformatics online.
+DA  - 2022/01/12/
+PY  - 2022
+DO  - 10.1093/bioinformatics/btab710
+DP  - Silverchair
+VL  - 38
+IS  - 3
+SP  - 839
+EP  - 840
+J2  - Bioinformatics
+SN  - 1367-4803
+ST  - vcf2gwas
+UR  - https://doi.org/10.1093/bioinformatics/btab710
+Y2  - 2023/02/21/13:32:54
+ER  - 
+
+TY  - JOUR
+TI  - Recent innovations and in-depth aspects of post-genome wide association study (Post-GWAS) to understand the genetic basis of complex phenotypes
+AU  - Mortezaei, Zahra
+AU  - Tavallaei, Mahmood
+T2  - Heredity
+AB  - In the past decade, the high throughput and low cost of sequencing/genotyping approaches have led to the accumulation of a large amount of data from genome-wide association studies (GWASs). The first aim of this review is to highlight how post-GWAS analysis can be used make sense of the obtained associations. Novel directions for integrating GWAS results with other resources, such as somatic mutation, metabolite-transcript, and transcriptomic data, are also discussed; these approaches can help us move beyond each individual data point and provide valuable information about complex trait genetics. In addition, cross-phenotype association tests, when the loci detected by GWASs have significant associations with multiple traits, are reviewed to provide biologically informative results for use in real-time applications. This review also discusses the challenges of identifying interactions between genetic mutations (epistasis) and mutations of loci affecting more than one trait (pleiotropy) as underlying causes of cross-phenotype associations; these challenges can be overcome using post-GWAS analysis. Genetic similarities between phenotypes that can be revealed using post-GWAS analysis are also discussed. In summary, different methodologies of post-GWAS analysis are now available, enhancing the value of information obtained from GWAS results, and facilitating application in both humans and nonhuman species. However, precise methods still need to be developed to overcome challenges in the field and uncover the genetic underpinnings of complex traits.
+DA  - 2021/12//
+PY  - 2021
+DO  - 10.1038/s41437-021-00479-w
+DP  - www.nature.com
+VL  - 127
+IS  - 6
+SP  - 485
+EP  - 497
+LA  - en
+PB  - Nature Publishing Group
+SN  - 1365-2540
+UR  - https://www.nature.com/articles/s41437-021-00479-w
+Y2  - 2023/02/21/13:28:20
+KW  - Gene expression
+KW  - Bioinformatics
+KW  - Development
+KW  - Genome-wide association studies
+ER  - 
+
+TY  - JOUR
+TI  - SambaR: An R package for fast, easy and reproducible population-genetic analyses of biallelic SNP data sets
+AU  - de Jong, Menno J.
+AU  - de Jong, Joost F.
+AU  - Hoelzel, A. Rus
+AU  - Janke, Axel
+T2  - Molecular Ecology Resources
+AB  - SNP data sets can be used to infer a wealth of information about natural populations, including information about their structure, genetic diversity, and the presence of loci under selection. However, SNP data analysis can be a time-consuming and challenging process, not in the least because at present many different software packages are needed to execute and depict the wide variety of mainstream population-genetic analyses. Here, we present SambaR, an integrative and user-friendly R package which automates and simplifies quality control and population-genetic analyses of biallelic SNP data sets. SambaR allows users to perform mainstream population-genetic analyses and to generate a wide variety of ready to publish graphs with a minimum number of commands (less than 10). These wrapper commands call functions of existing packages (including adegenet, ape, LEA, poppr, pcadapt and StAMPP) as well as new tools uniquely implemented in SambaR. We tested SambaR on online available SNP data sets and found that SambaR can process data sets of over 100,000 SNPs and hundreds of individuals within hours, given sufficient computing power. Newly developed tools implemented in SambaR facilitate optimization of filter settings, objective interpretation of ordination analyses, enhance comparability of diversity estimates from reduced representation library SNP data sets, and generate reduced SNP panels and structure-like plots with Bayesian population assignment probabilities. SambaR facilitates rapid population genetic analyses on biallelic SNP data sets by removing three major time sinks: file handling, software learning, and data plotting. In addition, SambaR provides a convenient platform for SNP data storage and management, as well as several new utilities, including guidance in setting appropriate data filters. The SambaR source script, manual and example data set are distributed through GitHub: https://github.com/mennodejong1986/SambaR.
+DA  - 2021///
+PY  - 2021
+DO  - 10.1111/1755-0998.13339
+DP  - Wiley Online Library
+VL  - 21
+IS  - 4
+SP  - 1369
+EP  - 1379
+LA  - en
+SN  - 1755-0998
+ST  - SambaR
+UR  - https://onlinelibrary.wiley.com/doi/abs/10.1111/1755-0998.13339
+Y2  - 2023/02/21/13:20:55
+KW  - genetic diversity
+KW  - gene flow
+KW  - population assignment test
+KW  - population genetics
+KW  - R package
+KW  - selection analyses
+KW  - SNP data
+ER  - 
+
+TY  - JOUR
+TI  - The Pop-Gen Pipeline Platform: A Software Platform for Population Genomic Analyses
+AU  - Webb, Andrew
+AU  - Knoblauch, Jared
+AU  - Sabankar, Nitesh
+AU  - Kallur, Apeksha Sukesh
+AU  - Hey, Jody
+AU  - Sethuraman, Arun
+T2  - Molecular Biology and Evolution
+AB  - The Pop-Gen Pipeline Platform (PPP) is a software platform for population genomic analyses. The PPP was designed as a collection of scripts that facilitate common population genomic workflows in a consistent and standardized Python environment. Functions were developed to encompass entire workflows, including input preparation, file format conversion, various population genomic analyses, and output generation. The platform has also been developed with reproducibility and extensibility of analyses in mind. The PPP is an open-source package that is available for download and use at https://ppp.readthedocs.io/en/latest/PPP_pages/install.html.
+DA  - 2021/08/01/
+PY  - 2021
+DO  - 10.1093/molbev/msab113
+DP  - Silverchair
+VL  - 38
+IS  - 8
+SP  - 3478
+EP  - 3485
+J2  - Molecular Biology and Evolution
+SN  - 1537-1719
+ST  - The Pop-Gen Pipeline Platform
+UR  - https://doi.org/10.1093/molbev/msab113
+Y2  - 2023/02/20/22:24:32
+ER  - 
+
+TY  - ELEC
+TI  - Kyazma - Purchasing JoinMap and/or MapQTL Licenses
+UR  - https://www.kyazma.nl/index.php/Shop/?tabset=Licensing
+Y2  - 2023/02/20/22:08:49
+ER  - 
+
+TY  - ELEC
+TI  - QTL IciMapping Version 4.2_The Quantitative Genetics Group
+UR  - https://isbreedingen.caas.cn/software/qtllcimapping/294607.htm
+Y2  - 2023/02/20/22:08:47
+ER  - 
+
+TY  - GEN
+TI  - Inference of evolutionary transitions to self-fertilization using whole-genome sequences
+AU  - Struett, Stefan
+AU  - Sellinger, Thibaut
+AU  - Glémin, Sylvain
+AU  - Tellier, Aurélien
+AU  - Laurent, Stefan
+AB  - The evolution from outcrossing to selfing is a transition that occurred recurrently throughout the eukaryote tree of life, in plants, animals, fungi and algae. Despite some short-term advantages, selfing is supposed to be an evolutionary dead-end reproductive strategy on the long-term and its tippy distribution on phylogenies suggests that most selfing species are of recent origin. However, dating such transitions is challenging while it is central for this hypothesis. We develop two methods making use of full genome polymorphism data to 1) test if a transition from outcrossing to selfing occurred, and 2) infer its age. The sequentially Markov coalescent based (teSMC) and the Approximate Bayesian Computation (tsABC) methods use a common framework based on a transition matrix summarizing the distribution of times to the most recent common ancestor along the genome, allowing to estimate changes in the ratio of population recombination and mutation rates in time. We first demonstrate that our methods can disentangle between past change in selfing rate from past changes in demographic history. Second, we assess the accuracy of our methods and show that transitions to selfing as old as approximatively 2.5Ne generations can be identified from polymorphism data. Third, our estimates are robust to the presence of linked negative selection on coding sequences. Finally, as a proof of principle, we apply both methods to three populations from Arabidopsis thaliana, recovering a transition to selfing which occurred approximately 600,000 years ago. Our methods pave the way to study recent transitions to predominant self-fertilization in selfing organisms.
+Significance statement Self-fertilization evolved recurrently from outcrossing in many groups of organisms. When, why, and at what pace such transitions occurred are central to understand the evolution of reproductive systems but dating them remains highly challenging. While experimental work can be conducted in ecological set-ups, it is difficult to reconstruct and empirically test the past ecological conditions which could have driven transitions from outcrossing to self-fertilizing reproduction. We suggest here to use full genome data of several individuals per population to estimate if and when a transition in reproductive strategy occurred. We develop two methods which can be applied to estimate the age of such transitions jointly with the species demographic history.
+DA  - 2022/08/01/
+PY  - 2022
+DO  - 10.1101/2022.07.29.502030
+DP  - bioRxiv
+LA  - en
+PB  - bioRxiv
+UR  - https://www.biorxiv.org/content/10.1101/2022.07.29.502030v1
+Y2  - 2023/02/20/21:11:14
+ER  - 
+
+TY  - JOUR
+TI  - Construction of an integrative linkage map and QTL mapping of grain yield-related traits using three related wheat RIL populations
+AU  - Cui, Fa
+AU  - Zhao, Chunhua
+AU  - Ding, Anming
+AU  - Li, Jun
+AU  - Wang, Lin
+AU  - Li, Xingfeng
+AU  - Bao, Yinguang
+AU  - Li, Junming
+AU  - Wang, Honggang
+T2  - Theoretical and Applied Genetics
+AB  - A novel high-density consensus wheat genetic map was obtained based on three related RIL populations, and the important chromosomal regions affecting yield and related traits were specified.
+DA  - 2014/03/01/
+PY  - 2014
+DO  - 10.1007/s00122-013-2249-8
+DP  - Springer Link
+VL  - 127
+IS  - 3
+SP  - 659
+EP  - 675
+J2  - Theor Appl Genet
+LA  - en
+SN  - 1432-2242
+UR  - https://doi.org/10.1007/s00122-013-2249-8
+Y2  - 2023/02/20/03:36:22
+ER  - 
+
+TY  - JOUR
+TI  - High-Density Mapping of Quantitative Trait Loci Controlling Agronomically Important Traits in Quinoa (Chenopodium quinoa Willd.)
+AU  - Maldonado-Taipe, Nathaly
+AU  - Barbier, Federico
+AU  - Schmid, Karl
+AU  - Jung, Christian
+AU  - Emrani, Nazgol
+T2  - Frontiers in Plant Science
+AB  - Quinoa is a pseudocereal originating from the Andean regions. Despite quinoa’s long cultivation history, genetic analysis of this crop is still in its infancy. We aimed to localize quantitative trait loci (QTL) contributing to the phenotypic variation of agronomically important traits. We crossed the Chilean accession PI-614889 and the Peruvian accession CHEN-109, which depicted significant differences in days to flowering, days to maturity, plant height, panicle length, and thousand kernel weight (TKW), saponin content, and mildew susceptibility. We observed sizeable phenotypic variation across F2 plants and F3 families grown in the greenhouse and the field, respectively. We used Skim-seq to genotype the F2 population and constructed a high-density genetic map with 133,923 single nucleotide polymorphism (SNPs). Fifteen QTL were found for ten traits. Two significant QTL, common in F2 and F3 generations, depicted pleiotropy for days to flowering, plant height, and TKW. The pleiotropic QTL harbored several putative candidate genes involved in photoperiod response and flowering time regulation. This study presents the first high-density genetic map of quinoa that incorporates QTL for several important agronomical traits. The pleiotropic loci can facilitate marker-assisted selection in quinoa breeding programs.
+DA  - 2022///
+PY  - 2022
+DP  - Frontiers
+VL  - 13
+SN  - 1664-462X
+UR  - https://www.frontiersin.org/articles/10.3389/fpls.2022.916067
+Y2  - 2022/07/26/12:15:39
+ER  - 
+
+TY  - JOUR
+TI  - QTL analysis of soybean seed weight across multi-genetic backgrounds and environments
+AU  - Han, Yingpeng
+AU  - Li, Dongmei
+AU  - Zhu, Dan
+AU  - Li, Haiyan
+AU  - Li, Xiuping
+AU  - Teng, Weili
+AU  - Li, Wenbin
+T2  - Theoretical and Applied Genetics
+AB  - Seed weight, measured as mass per seed, is an important yield component of soybean and is generally positively correlated with seed yield (Burton et al, Crop Sci 27:1093, 1987). In previous reports, quantitative trait loci (QTL) associated with seed weight, were identified in single genetic background. The objective of the present study was to identify QTL and epistatic QTL underlying soybean seed weight in three RIL populations (with one common male parent ‘Hefeng25’) and across three different environments. Overall, 18, 11, and 17 seed weight QTL were identified in HC (‘Hefeng25’ × ‘Conrad’), HM (‘Hefeng25’ × ‘Maple Arrow’), and HB (‘Hefeng25’ × ‘Bayfield’) populations, respectively. The amount of phenotypic variation explained by a single QTL underlying seed weight was usually less than 10 %. The environment and background-independent QTL often had higher additive (a) effects. In contrast, the environment or background-dependent QTL were probably due to weak expression of QTL. QTL by environment interaction effects were in the opposite direction of a effects and/or epistasis effects. Four QTL and one QTL could be identified (2.0 < LOD < 9.06) in the HC and HB populations, respectively, across three environments (swHCA2-1, swHCC2-1, swHCD1b-1, swHCA2-2 (linked to Satt233, Satt424, Satt460, Satt428, respectively) and swHBA1-1(Satt449). Seven QTL could be identified in all three RIL populations in at least one location. Two QTL could be identified in the three RIL populations across three environments. These two QTL may have greater potential for use in marker-assisted selection of seed weight in soybean.
+DA  - 2012/08/01/
+PY  - 2012
+DO  - 10.1007/s00122-012-1859-x
+DP  - Springer Link
+VL  - 125
+IS  - 4
+SP  - 671
+EP  - 683
+J2  - Theor Appl Genet
+LA  - en
+SN  - 1432-2242
+UR  - https://doi.org/10.1007/s00122-012-1859-x
+Y2  - 2023/02/20/03:59:25
+ER  - 
+
+TY  - JOUR
+TI  - Joint Linkage QTL Mapping for Yield and Agronomic Traits in a Composite Map of Three Common Bean RIL Populations
+AU  - Hoyos-Villegas, Valerio
+AU  - Song, Qijian
+AU  - Wright, Evan M.
+AU  - Beebe, Stephen E.
+AU  - Kelly, James D.
+T2  - Crop Science
+AB  - Bean (Phaseolus vulgaris L.) production is challenged by many limitations with drought being among the top causes of crop failure worldwide. In this study, we constructed three small-red-seeded bean recombinant inbred line (RIL) mapping populations (S48M, S94M, and S95M) with a common parent (‘Merlot’) and performed joint interval mapping analysis as a small nested association mapping (NAM) population for agronomic traits and performance under rainfed conditions in Michigan. The objective was to identify novel sources of improved performance and genomic regions associated with desirable traits under rainfed and water-sufficient conditions in small-red bean breeding materials adapted to temperate zones. A composite linkage map was constructed using single-nucleotide polymorphism (SNP) markers from the three populations and resulted in an improved version of the individual linkage maps shown by a greater genome span covered in the composite map (909 cM). A number of quantitative trait loci (QTL) of different size effects were identified for seed yield (R2 = 15.4–30.7%), seed size (R2 = 16.4–20.2%), days to flowering (R2 = 12.4–36.1%), days to maturity (R2 = 16.2%), lodging score (R2 = 10.3–12.9%), and canopy height (R2 = 17%). Our study confirmed previously reported QTL on five chromosomes and identified a new QTL for canopy height on chromosome Pv10. The use of a composite map and QTL analysis under a NAM population structure increased our ability to detect small-effect QTL that were segregating in at least two of the populations but would not have been detected using individual linkage maps.
+DA  - 2016///
+PY  - 2016
+DO  - 10.2135/cropsci2016.01.0063
+DP  - Wiley Online Library
+VL  - 56
+IS  - 5
+SP  - 2546
+EP  - 2563
+LA  - en
+SN  - 1435-0653
+UR  - https://onlinelibrary.wiley.com/doi/abs/10.2135/cropsci2016.01.0063
+Y2  - 2023/02/20/03:59:24
+ER  - 
+
+TY  - JOUR
+TI  - QTL mapping for yield-related traits in wheat based on four RIL populations
+AU  - Hu, Junmei
+AU  - Wang, Xiaoqian
+AU  - Zhang, Guangxu
+AU  - Jiang, Peng
+AU  - Chen, Wuying
+AU  - Hao, Yongchao
+AU  - Ma, Xin
+AU  - Xu, Shoushen
+AU  - Jia, Jizeng
+AU  - Kong, Lingrang
+AU  - Wang, Hongwei
+T2  - Theoretical and Applied Genetics
+AB  - Eight environmentally stable QTL for grain yield-related traits were detected by four RIL populations, and two of them were validated by a natural wheat population containing 580 diverse varieties or lines.
+DA  - 2020/03/01/
+PY  - 2020
+DO  - 10.1007/s00122-019-03515-w
+DP  - Springer Link
+VL  - 133
+IS  - 3
+SP  - 917
+EP  - 933
+J2  - Theor Appl Genet
+LA  - en
+SN  - 1432-2242
+UR  - https://doi.org/10.1007/s00122-019-03515-w
+Y2  - 2023/02/20/03:59:21
+ER  - 
+
+TY  - JOUR
+TI  - Consensus Genetic Linkage Map Construction Based on One Common Parental Line for QTL Mapping in Wheat
+AU  - Hu, Xin
+AU  - Zhang, Yingquan
+AU  - Zhang, Jingjuan
+AU  - Islam, Shahidul
+AU  - She, Maoyun
+AU  - Zhao, Yun
+AU  - Tang, Guixiang
+AU  - Jiang, Yanjie
+AU  - Rong, Junkang
+AU  - Ma, Wujun
+T2  - Agronomy
+AB  - The consensus map is used for the verification of marker order, quantitative trait locus (QTL) mapping and molecular marker-assisted selection (MAS) in wheat breeding. In this study, a wheat consensus genetic map named as Sp7A_G7A, was constructed using 5643 SNP markers in two double haploid (DH) populations of Spitfire × Bethlehem-7AS (Sp7A) and Gregory × Bethlehem-7AS (G7A), covering 4376.70 cM of 21 chromosomes (chr) with an average interval of 0.78 cM. The collinearity of the linkage maps with the consensus map of Con_map_Wang2014 and the physical map of wheat reference genome (IWGSC RefSeq v1.0) were analyzed based on the Spearman rank correlation coefficients. As results, the three constructed genetic maps of Sp7A, G7A and Sp7A_G7A showed high collinearity with the Con_map_Wang2014 and the physical map, and importantly, the collinearity level between our constructed maps and the wheat physical map is higher than that between the Con_map_Wang2014 and the physical map. The seed coat color QTL detected in both populations under multiple environments were on the region (745.73–760.14 Mbp) of the seed color gene R-B1/Tamyb10-B1 (TraesCS3B02G515900, 3B: 757,918,264–757,920,082 bp). The validated consensus map will be beneficial for QTL mapping, positional cloning, meta-QTL analysis and wheat breading.
+DA  - 2021/02//
+PY  - 2021
+DO  - 10.3390/agronomy11020227
+DP  - www.mdpi.com
+VL  - 11
+IS  - 2
+SP  - 227
+LA  - en
+PB  - Multidisciplinary Digital Publishing Institute
+SN  - 2073-4395
+UR  - https://www.mdpi.com/2073-4395/11/2/227
+Y2  - 2023/02/20/03:59:19
+KW  - collinearity
+KW  - wheat
+KW  - consensus map
+KW  - double haploid (DH) populations
+KW  - linkage map
+KW  - QTL
+KW  - seed coat color parameters
+ER  - 
+
+TY  - JOUR
+TI  - Joint QTL Linkage Mapping for Multiple-Cross Mating Design Sharing One Common Parent
+AU  - Li, Huihui
+AU  - Bradbury, Peter
+AU  - Ersoz, Elhan
+AU  - Buckler, Edward S.
+AU  - Wang, Jiankang
+T2  - PLOS ONE
+AB  - Background Nested association mapping (NAM) is a novel genetic mating design that combines the advantages of linkage analysis and association mapping. This design provides opportunities to study the inheritance of complex traits, but also requires more advanced statistical methods. In this paper, we present the detailed algorithm of a QTL linkage mapping method suitable for genetic populations derived from NAM designs. This method is called joint inclusive composite interval mapping (JICIM). Simulations were designed on the detected QTL in a maize NAM population and an Arabidopsis NAM population so as to evaluate the efficiency of the NAM design and the JICIM method. Principal Findings Fifty-two QTL were identified in the maize population, explaining 89% of the phenotypic variance of days to silking, and nine QTL were identified in the Arabidopsis population, explaining 83% of the phenotypic variance of flowering time. Simulations indicated that the detection power of these identified QTL was consistently high, especially for large-effect QTL. For rare QTL having significant effects in only one family, the power of correct detection within the 5 cM support interval was around 80% for 1-day effect QTL in the maize population, and for 3-day effect QTL in the Arabidopsis population. For smaller-effect QTL, the power diminished, e.g., it was around 50% for maize QTL with an effect of 0.5 day. When QTL were linked at a distance of 5 cM, the likelihood of mapping them as two distinct QTL was about 70% in the maize population. When the linkage distance was 1 cM, they were more likely mapped as one single QTL at an intermediary position. Conclusions Because it takes advantage of the large genetic variation among parental lines and the large population size, NAM is a powerful multiple-cross design for complex trait dissection. JICIM is an efficient and specialty method for the joint QTL linkage mapping of genetic populations derived from the NAM design.
+DA  - 2011/03/15/
+PY  - 2011
+DO  - 10.1371/journal.pone.0017573
+DP  - PLoS Journals
+VL  - 6
+IS  - 3
+SP  - e17573
+J2  - PLOS ONE
+LA  - en
+PB  - Public Library of Science
+SN  - 1932-6203
+UR  - https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0017573
+Y2  - 2023/02/20/03:59:17
+KW  - Arabidopsis thaliana
+KW  - Population genetics
+KW  - Chromosome mapping
+KW  - Gene mapping
+KW  - Genetics
+KW  - Linkage mapping
+KW  - Maize
+KW  - Quantitative trait loci
+ER  - 
+
+TY  - JOUR
+TI  - QTL mapping and genome-wide prediction of heat tolerance in multiple connected populations of temperate maize
+AU  - Inghelandt, Delphine Van
+AU  - Frey, Felix P.
+AU  - Ries, David
+AU  - Stich, Benjamin
+T2  - Scientific Reports
+AB  - Climate change will lead to increasing heat stress in the temperate regions of the world. The objectives of this study were the following: (I) to assess the phenotypic and genotypic diversity of traits related to heat tolerance of maize seedlings and dissect their genetic architecture by quantitative trait locus (QTL) mapping, (II) to compare the prediction ability of genome-wide prediction models using various numbers of KASP (Kompetitive Allele Specific PCR genotyping) single nucleotide polymorphisms (SNPs) and RAD (restriction site-associated DNA sequencing) SNPs, and (III) to examine the prediction ability of intra-, inter-, and mixed-pool calibrations. For the heat susceptibility index of five of the nine studied traits, we identified a total of six QTL, each explaining individually between 7 and 9% of the phenotypic variance. The prediction abilities observed for the genome-wide prediction models were high, especially for the within-population calibrations, and thus, the use of such approaches to select for heat tolerance at seedling stage is recommended. Furthermore, we have shown that for the traits examined in our study, populations created from inter-pool crosses are suitable training sets to predict populations derived from intra-pool crosses.
+DA  - 2019/10/08/
+PY  - 2019
+DO  - 10.1038/s41598-019-50853-2
+DP  - www.nature.com
+VL  - 9
+IS  - 1
+SP  - 14418
+J2  - Sci Rep
+LA  - en
+PB  - Nature Publishing Group
+SN  - 2045-2322
+UR  - https://www.nature.com/articles/s41598-019-50853-2
+Y2  - 2023/02/20/01:25:40
+KW  - Plant breeding
+KW  - Plant genetics
+ER  - 
+
+TY  - JOUR
+TI  - Mapping QTL for agronomic traits in breeding populations
+AU  - Würschum, Tobias
+T2  - Theoretical and Applied Genetics
+AB  - Detection of quantitative trait loci (QTL) in breeding populations offers the advantage that these QTL are of direct relevance for the improvement of crops via knowledge-based breeding. As phenotypic data are routinely generated in breeding programs and the costs for genotyping are constantly decreasing, it is tempting to exploit this information to unravel the genetic architecture underlying important agronomic traits in crops. This review characterizes the germplasm from breeding populations available for QTL detection, provides a classification of the different QTL mapping approaches that are available, and highlights important considerations concerning study design and biometrical models suitable for QTL analysis.
+DA  - 2012/07/01/
+PY  - 2012
+DO  - 10.1007/s00122-012-1887-6
+DP  - Springer Link
+VL  - 125
+IS  - 2
+SP  - 201
+EP  - 210
+J2  - Theor Appl Genet
+LA  - en
+SN  - 1432-2242
+UR  - https://doi.org/10.1007/s00122-012-1887-6
+Y2  - 2022/08/12/14:04:31
+KW  - Family Mapping
+KW  - Linkage Disequilibrium
+KW  - Quantitative Trait Locus
+KW  - Quantitative Trait Locus Analysis
+KW  - Quantitative Trait Locus Mapping
+ER  - 
+
+TY  - BLOG
+TI  - Bioinformatics Analysis of Omics Data with the Shell & R | R-bloggers
+AU  - morphoscape
+AB  - Summary In this tutorial participants will learn about biological data analysis with R and Unix/Linux tools. We begin with an introduction to bioinformatics and omics data analysis, and conclude with the walkthrough of a simple bioinformatics workflow for aligning transcriptomic sequences with genomic data. Questions What is bioinformatics? What data we will be working with? What are some databases that I can use to collect …
+DA  - 2022/07/28/T20:26:16+00:00
+PY  - 2022
+LA  - en-US
+UR  - https://www.r-bloggers.com/2022/07/bioinformatics-analysis-of-omics-data-with-the-shell-r/
+Y2  - 2022/08/01/15:37:02
+ER  - 
+
+TY  - JOUR
+TI  - Genomic Selection in Plant Breeding: Methods, Models, and Perspectives
+AU  - Crossa, José
+AU  - Pérez-Rodríguez, Paulino
+AU  - Cuevas, Jaime
+AU  - Montesinos-López, Osval
+AU  - Jarquín, Diego
+AU  - de los Campos, Gustavo
+AU  - Burgueño, Juan
+AU  - González-Camacho, Juan M.
+AU  - Pérez-Elizalde, Sergio
+AU  - Beyene, Yoseph
+AU  - Dreisigacker, Susanne
+AU  - Singh, Ravi
+AU  - Zhang, Xuecai
+AU  - Gowda, Manje
+AU  - Roorkiwal, Manish
+AU  - Rutkoski, Jessica
+AU  - Varshney, Rajeev K.
+T2  - Trends in Plant Science
+AB  - Genomic selection (GS) facilitates the rapid selection of superior genotypes and accelerates the breeding cycle. In this review, we discuss the history, principles, and basis of GS and genomic-enabled prediction (GP) as well as the genetics and statistical complexities of GP models, including genomic genotype×environment (G×E) interactions. We also examine the accuracy of GP models and methods for two cereal crops and two legume crops based on random cross-validation. GS applied to maize breeding has shown tangible genetic gains. Based on GP results, we speculate how GS in germplasm enhancement (i.e., prebreeding) programs could accelerate the flow of genes from gene bank accessions to elite lines. Recent advances in hyperspectral image technology could be combined with GS and pedigree-assisted breeding.
+DA  - 2017/11/01/
+PY  - 2017
+DO  - 10.1016/j.tplants.2017.08.011
+DP  - ScienceDirect
+VL  - 22
+IS  - 11
+SP  - 961
+EP  - 975
+J2  - Trends in Plant Science
+LA  - en
+SN  - 1360-1385
+ST  - Genomic Selection in Plant Breeding
+UR  - https://www.sciencedirect.com/science/article/pii/S136013851730184X
+Y2  - 2022/07/22/08:46:21
+KW  - genomic selection
+KW  - genomic selection and genetic gains in crop breeding populations
+KW  - genomic-enabled prediction accuracy
+KW  - model complexity
+KW  - models for genomic genotype×environment interaction
+ER  - 
+
+TY  - JOUR
+TI  - Genomic selection in plant breeding: from theory to practice
+AU  - Jannink, Jean-Luc
+AU  - Lorenz, Aaron J.
+AU  - Iwata, Hiroyoshi
+T2  - Briefings in Functional Genomics
+AB  - We intuitively believe that the dramatic drop in the cost of DNA marker information we have experienced should have immediate benefits in accelerating the delivery of crop varieties with improved yield, quality and biotic and abiotic stress tolerance. But these traits are complex and affected by many genes, each with small effect. Traditional marker-assisted selection has been ineffective for such traits. The introduction of genomic selection (GS), however, has shifted that paradigm. Rather than seeking to identify individual loci significantly associated with a trait, GS uses all marker data as predictors of performance and consequently delivers more accurate predictions. Selection can be based on GS predictions, potentially leading to more rapid and lower cost gains from breeding. The objectives of this article are to review essential aspects of GS and summarize the important take-home messages from recent theoretical, simulation and empirical studies. We then look forward and consider research needs surrounding methodological questions and the implications of GS for long-term selection.
+DA  - 2010/03/01/
+PY  - 2010
+DO  - 10.1093/bfgp/elq001
+DP  - Silverchair
+VL  - 9
+IS  - 2
+SP  - 166
+EP  - 177
+J2  - Briefings in Functional Genomics
+SN  - 2041-2649
+ST  - Genomic selection in plant breeding
+UR  - https://doi.org/10.1093/bfgp/elq001
+Y2  - 2022/07/22/07:57:22
+ER  - 
+
+TY  - JOUR
+TI  - rMVP: A Memory-efficient, Visualization-enhanced, and Parallel-accelerated Tool for Genome-wide Association Study
+AU  - Yin, Lilin
+AU  - Zhang, Haohao
+AU  - Tang, Zhenshuang
+AU  - Xu, Jingya
+AU  - Yin, Dong
+AU  - Zhang, Zhiwu
+AU  - Yuan, Xiaohui
+AU  - Zhu, Mengjin
+AU  - Zhao, Shuhong
+AU  - Li, Xinyun
+AU  - Liu, Xiaolei
+T2  - Genomics, Proteomics & Bioinformatics
+T3  - Bioinformatics Commons
+AB  - Along with the development of high-throughput sequencing technologies, both sample size and SNP number are increasing rapidly in genome-wide association studies (GWAS), and the associated computation is more challenging than ever. Here, we present a memory-efficient, visualization-enhanced, and parallel-accelerated R package called “rMVP” to address the need for improved GWAS computation. rMVP can 1) effectively process large GWAS data, 2) rapidly evaluate population structure, 3) efficiently estimate variance components by Efficient Mixed-Model Association eXpedited (EMMAX), Factored Spectrally Transformed Linear Mixed Models (FaST-LMM), and Haseman-Elston (HE) regression algorithms, 4) implement parallel-accelerated association tests of markers using general linear model (GLM), mixed linear model (MLM), and fixed and random model circulating probability unification (FarmCPU) methods, 5) compute fast with a globally efficient design in the GWAS processes, and 6) generate various visualizations of GWAS-related information. Accelerated by block matrix multiplication strategy and multiple threads, the association test methods embedded in rMVP are significantly faster than PLINK, GEMMA, and FarmCPU_pkg. rMVP is freely available at https://github.com/xiaolei-lab/rMVP.
+DA  - 2021/08/01/
+PY  - 2021
+DO  - 10.1016/j.gpb.2020.10.007
+DP  - ScienceDirect
+VL  - 19
+IS  - 4
+SP  - 619
+EP  - 628
+J2  - Genomics, Proteomics & Bioinformatics
+LA  - en
+SN  - 1672-0229
+ST  - rMVP
+UR  - https://www.sciencedirect.com/science/article/pii/S1672022921000504
+Y2  - 2022/07/21/21:50:20
+KW  - GWAS
+KW  - Memory-efficient
+KW  - Parallel-accelerated
+KW  - rMVP
+KW  - Visualization-enhanced
+ER  - 
+
+TY  - JOUR
+TI  - snpR: user friendly population genomics for SNP datasets with categorical metadata
+AU  - William Hemstrom
+AU  - Hemstrom, William
+AU  - Melissa Jones
+AU  - Jones, Melissa
+T2  - Molecular Ecology Resources
+AB  - The analysis of genomic data can be an intimidating process, particularly for researchers who are not experienced programmers. Commonly used analyses are spread out across programs, each of which require their own input formats, and data must often be wrangled and re-wrangled into new formats to split the data according to categorical metadata variables, such as population or family. Here, we introduce snpR, and R package that allows for user-friendly processing of SNP genomic data by automating data sub-setting and processing across categorical metadata, integrating approaches contained in many different packages under a single ecosystem, and allowing for iterative, efficient analysis focused on a single R object across an entire analysis pipeline.
+DA  - 2021///
+PY  - 2021
+DO  - 10.22541/au.161264719.94032617/v1
+ER  - 
+
+TY  - JOUR
+TI  - Genetic diversity of quinoa (<i>Chenopodium quinoa</i> Willd.) from Cundinamarca, Colombia
+AU  - Ana Cruz Morillo Coronado
+AU  - Elsa Helena Manjarrés Hernández
+AU  - María Camila Pedreros-Benavides
+T2  - Plant genetic resources
+AB  - Abstract Chenopodium quinoa W. is a species of South America with an exceptional nutritional content and wide agroclimatological adaptation. It has great genetic and phenotypic variability, however in Colombia there are few genetic improvement programmes that take advantage of its great genetic and productive potential. In Cundinamarca there are some adapted genotypes which have been selected by farmers. We evaluated 36 genotypes of Blanca de Jericó, Blanca Subachoque, Aurora, Púrpura and Tunkahuan from Cundinamarca, using eight ISSR markers. The analysis by the coefficient of Nei-Li at the level of similarity of 0.40 divided the population into three groups according their background genetic and the colour of oxalates. The percentage of polymorphic loci was higher than 90%. The average value of heterozygosity was 0.32, which is low given the selection processes that the evaluated germplasm has undergone. We found moderate genetic differentiation (Fst = 0.23). The analysis of molecular variance (AMOVA) showed higher variation (77%) groups than among groups (23%). The results revealed intra-population diversity, which suggests that farmers within their farms should undergo a more rigorous seed selection process. Our results demonstrate that ISSR markers are useful and powerful to assess the genetic relationships, polymorphism and genetic diversity of quinoa cultivars. The genetic characterization results reported in the present study will be promising for guiding the breeding of quinoa seed quality in Colombia.
+DA  - 2022/06/01/
+PY  - 2022
+DO  - 10.1017/s1479262123000060
+VL  - 20
+IS  - 3
+SP  - 223
+EP  - 229
+ER  - 
+
+TY  - JOUR
+TI  - Genetic diversity of Colombian quinoa (Chenopodium quinoa Willd.): implications for breeding programs
+AU  - Hernández, Elsa Helena Manjarres
+AU  - Elsa Helena Manjarrés Hernández
+AU  - Manjarres-Hernández, Elsa Helena
+AU  - Coronado, Ana Cruz Morillo
+AU  - Ana Cruz Morillo Coronado
+AU  - Conronado, Ana Cruz Morillo
+T2  - Genetic Resources and Crop Evolution
+AB  - Chenopodium quinoa Willd. is a species of great interest for global food security because of its ability to adapt to different environmental conditions and its nutritional quality. In Colombia, there are few studies on the genetic diversity of quinoa, and there are no certified seed or registered varieties. Therefore, farmers plant a mixture of genotypes, which is why maximum yield and production are not achieved. The objective of this research was to characterize the genetic diversity in Colombian quinoa crops, for which 30 accessions were evaluated using 27 microsatellite markers. A total of 144 alleles were obtained, with a range of 2–7 alleles per locus (mean = 5.33). The average Polymorphic Information Content (PIC) was 0.60, where QAAT100 (0.80), QAAT112 (0.78), QAAT076 (0.78) and QCA088 (0.77) were the most informative. The expected heterozygosity index (He = 0.69) showed high genetic diversity for the analyzed individuals. Three population groups were detected (K1, K2, K3), whose genetic distances were less than 0.33. The individuals were not grouped according to their geographical origin. The low rates of genetic differentiation in the populations may have been due to the lack of certified seeds, to non-directional selection, and to constant exchange of seeds between farmers in the main producing areas of the Andean region. This study provided preliminary information for the high genetic diversity in Colombian quinoa that can be used for the development of genetic improvement programs for this species.
+DA  - 2022/04/16/
+PY  - 2022
+DO  - 10.1007/s10722-022-01383-w
+ER  - 
+
+TY  - JOUR
+TI  - Artificial intelligence meets genomic selection: comparing deep learning and GBLUP across diverse plant datasets
+AU  - Montesinos-López, Abelardo
+AU  - Montesinos-López, Osval A.
+AU  - Ramos-Pulido, Sofia
+AU  - Mosqueda-González, Brandon Alejandro
+AU  - Guerrero-Arroyo, Edgar Alejandro
+AU  - Crossa, José
+AU  - Ortiz, Rodomiro
+T2  - Frontiers in Genetics
+AB  - To enhance the implementation of genomic selection (GS) in plant breeding, we conducted a comprehensive comparative analysis of deep learning (DL) models and genomic best linear unbiased predictor (GBLUP) methods across 14 real-world datasets derived from diverse plant breeding programs. We evaluated model performance by meticulously tuning hyperparameters specific to each dataset, aiming to maximize predictive accuracy and reliability. Our results demonstrated that DL models effectively captured complex, non-linear genetic patterns, frequently providing superior predictive performance compared to GBLUP, especially in smaller datasets. However, neither method consistently outperformed the other across all evaluated traits and scenarios. The analysis revealed that the success of DL models significantly depended on careful parameter optimization, reinforcing the importance of rigorous model tuning procedures. In the discussion, we emphasize the complementary nature of DL and GBLUP methods, highlighting that the choice between these models should be driven by the specific characteristics of the traits under study and the evaluation metrics prioritized in breeding programs. These insights contribute practical guidelines for selecting and optimizing genomic prediction models to achieve robust outcomes in plant breeding contexts.
+DA  - 2025/04/29/
+PY  - 2025
+DO  - 10.3389/fgene.2025.1568705
+DP  - DOI.org (Crossref)
+VL  - 16
+SP  - 1568705
+J2  - Front. Genet.
+SN  - 1664-8021
+ST  - Artificial intelligence meets genomic selection
+UR  - https://www.frontiersin.org/articles/10.3389/fgene.2025.1568705/full
+Y2  - 2025/10/07/01:36:05
+ER  - 
+
+TY  - CHAP
+TI  - Quinoa Diversity and Its Implications for Breeding
+AU  - Böndel, Katharina B.
+AU  - Schmid, Karl J.
+T2  - The Quinoa Genome
+A2  - Schmöckel, Sandra M.
+CY  - Cham
+DA  - 2021///
+PY  - 2021
+DO  - 10.1007/978-3-030-65237-1_7
+DP  - DOI.org (Crossref)
+SP  - 107
+EP  - 118
+LA  - en
+PB  - Springer International Publishing
+SN  - 978-3-030-65236-4 978-3-030-65237-1
+UR  - https://link.springer.com/10.1007/978-3-030-65237-1_7
+Y2  - 2025/10/09/03:57:51
+ER  - 
+
+TY  - JOUR
+TI  - Genomic prediction contributing to a promising global strategy to turbocharge gene banks
+AU  - Yu, Xiaoqing
+AU  - Li, Xianran
+AU  - Guo, Tingting
+AU  - Zhu, Chengsong
+AU  - Wu, Yuye
+AU  - Mitchell, Sharon E.
+AU  - Roozeboom, Kraig L.
+AU  - Wang, Donghai
+AU  - Wang, Ming Li
+AU  - Pederson, Gary A.
+AU  - Tesso, Tesfaye T.
+AU  - Schnable, Patrick S.
+AU  - Bernardo, Rex
+AU  - Yu, Jianming
+T2  - Nature Plants
+AB  - The 7.4 million plant accessions in gene banks are largely underutilized due to various resource constraints, but current genomic and analytic technologies are enabling us to mine this natural heritage. Here we report a proof-of-concept study to integrate genomic prediction into a broad germplasm evaluation process. First, a set of 962 biomass sorghum accessions were chosen as a reference set by germplasm curators. With high throughput genotyping-by-sequencing (GBS), we genetically characterized this reference set with 340,496 single nucleotide polymorphisms (SNPs). A set of 299 accessions was selected as the training set to represent the overall diversity of the reference set, and we phenotypically characterized the training set for biomass yield and other related traits. Cross-validation with multiple analytical methods using the data of this training set indicated high prediction accuracy for biomass yield. Empirical experiments with a 200-accession validation set chosen from the reference set confirmed high prediction accuracy. The potential to apply the prediction model to broader genetic contexts was also examined with an independent population. Detailed analyses on prediction reliability provided new insights into strategy optimization. The success of this project illustrates that a global, cost-effective strategy may be designed to assess the vast amount of valuable germplasm archived in 1,750 gene banks.
+DA  - 2016/10/03/
+PY  - 2016
+DO  - 10.1038/nplants.2016.150
+DP  - www.nature.com
+VL  - 2
+IS  - 10
+SP  - 16150
+LA  - en
+PB  - Nature Publishing Group
+SN  - 2055-0278
+UR  - https://www.nature.com/articles/nplants2016150
+Y2  - 2025/10/09/03:58:36
+KW  - Genetics
+KW  - Plant sciences
+ER  - 
+
+TY  - JOUR
+TI  - Mining genomic regions associated with agronomic and biochemical traits in quinoa through GWAS
+AU  - Rahman, Hifzur
+AU  - Vikram, Prashant
+AU  - Hu, Yulan
+AU  - Asthana, Sugandha
+AU  - Tanaji, Abhinav
+AU  - Suryanarayanan, Padmaktshni
+AU  - Quadros, Chris
+AU  - Mehta, Lovely
+AU  - Shahid, Mohammed
+AU  - Gkanogiannis, Anestis
+AU  - Thushar, Sumitha
+AU  - Balazadeh, Salma
+AU  - Mueller-Roeber, Bernd
+AU  - Becerra Lopez-Lavalle, Luis Augusto
+AU  - Wei, Tong
+AU  - Singh, Rakesh Kumar
+T2  - Scientific Reports
+AB  - Abstract
+            
+              Quinoa (
+              Chenopodium quinoa
+              Willd.), an Andean crop, is a facultative halophyte food crop recognized globally for its high nutritional value and plasticity to adapt to harsh conditions. We conducted a genome-wide association study on a diverse set of quinoa germplasm accessions. These accessions were evaluated for the following agronomic and biochemical traits: days to 50% flowering (DTF), plant height (PH), panicle length (PL), stem diameter (SD), seed yield (SY), grain diameter (GD), and thousand-grain weight (TGW). These accessions underwent genotyping-by-sequencing using the DNBSeq-G400R platform. Among all evaluated traits, TGW represented maximum broad-sense heritability. Our study revealed average SNP density of ≈ 3.11 SNPs/10 kb for the whole genome, with the lowest and highest on chromosomes Cq1B and Cq9A, respectively. Principal component analysis clustered the quinoa population in three main clusters, one clearly representing lowland Chilean accessions, whereas the other two groups corresponded to germplasm from the highlands of Peru and Bolivia. In our germplasm set, we estimated linkage disequilibrium decay to be ≈ 118.5 kb. Marker-trait analyses revealed major and consistent effect associations for DTF on chromosomes 3A, 4B, 5B, 6A, 7A, 7B and 8B, with phenotypic variance explained (PVE) as high as 19.15%. Nine associations across eight chromosomes were also found for saponin content with 20% PVE by qSPN5A.1. More QTLs were identified for PL and TGW on multiple chromosomal locations. We identified putative candidate genes in the genomic regions associated with DTF and saponin content. The consistent and major-effect genomic associations can be used in fast-tracking quinoa breeding for wider adaptation across marginal environments.
+DA  - 2024/04/22/
+PY  - 2024
+DO  - 10.1038/s41598-024-59565-8
+DP  - DOI.org (Crossref)
+VL  - 14
+IS  - 1
+SP  - 9205
+J2  - Sci Rep
+LA  - en
+SN  - 2045-2322
+UR  - https://www.nature.com/articles/s41598-024-59565-8
+Y2  - 2025/10/09/15:40:11
+ER  - 
+
+TY  - JOUR
+TI  - Growth and Physiological Responses of Quinoa to Drought and Temperature Stress
+AU  - Yang, A.
+AU  - Akhtar, S. S.
+AU  - Amjad, M.
+AU  - Iqbal, S.
+AU  - Jacobsen, S.-E.
+T2  - Journal of Agronomy and Crop Science
+AB  - Quinoa (Chenopodium quinoa Willd.), traditionally called the mother of grains, has the potential to grow under high temperatures and drought, tolerating levels regarded as stresses in other crop species. A pot experiment was conducted in a climate chamber to investigate the potential of quinoa tolerance to increasing drought and temperature. Quinoa plants were subjected to three irrigation and two temperature regimes. At low temperature, the day/night climate chamber temperature was maintained at 18/8 °C and 25/20 °C for high temperature throughout the treatment period. The irrigation treatments were full irrigation (FI), deficit irrigation (DI) and alternate root-zone drying (ARD). FI plants were irrigated daily to the level of the pot's water-holding capacity. In DI and ARD, 70 % water of FI was applied either to the whole pot or to one side of the pot alternating, respectively. The results indicated that plant height and shoot dry weight significantly decreased by ARD and DI compared to FI treatment both at low and at high temperatures. However, plants in ARD treatment showed significantly higher plant height and shoot dry weight compared to DI especially at higher temperature, which is linked to increased xylem ion content. Higher quinoa plant growth in ARD was associated with increase in water-use efficiency (WUEi) due to higher abscisic acid concentration and higher nutrient contents compared to DI. From results, it can be concluded that quinoa plant growth is favoured by high temperature (25/20 °C) and ARD is an effective irrigation strategy to increase WUE in drought prone areas.
+DA  - 2016///
+PY  - 2016
+DO  - 10.1111/jac.12167
+DP  - Wiley Online Library
+VL  - 202
+IS  - 6
+SP  - 445
+EP  - 453
+LA  - en
+SN  - 1439-037X
+UR  - https://onlinelibrary.wiley.com/doi/abs/10.1111/jac.12167
+Y2  - 2025/10/28/02:17:13
+KW  - Chenopodium quinoa
+KW  - alternate root-zone drying irrigation
+KW  - leaf abscisic acid
+KW  - leaf potential
+ER  - 
+
+TY  - JOUR
+TI  - The Resistance of Quinoa (Chenopodium quinoaWilld.) to Adverse Abiotic Factors
+AU  - Jacobsen, S.-E.
+AU  - Mujica, A.
+AU  - Jensen, C. R.
+T2  - Food Reviews International
+AB  - Quinoa (Chenopodium quinoaWilld.) has been cultivated in the Andean region for thousands of years, providing highly nutritious food to poor farmers in the Andes. The conditions for crop growth are very difficult in the high region of the Andes, where the most harmful abiotic adverse factors that affect crop production are drought, frost, soil salinity, hail, snow, wind, flooding, and heat. Quinoa can grow with only 200 mm of rainfall in pure sand. Fourteen lines with improved drought resistance have been identified, and several drought-mediating mechanisms have been found. The crop has also demonstrated unusually high salt tolerance; many varieties can grow in salt concentrations as high as those found in seawater (40 mS cm−1), and four lines have been identified with even higher tolerance. Quinoa also has a high degree of frost resistance, surviving −8°C for up to 4 hours, depending on phenological phase and variety.
+DA  - 2003/01/05/
+PY  - 2003
+DO  - 10.1081/FRI-120018872
+DP  - Taylor and Francis+NEJM
+VL  - 19
+IS  - 1-2
+SP  - 99
+EP  - 109
+PB  - Taylor & Francis
+SN  - 8755-9129
+UR  - https://doi.org/10.1081/FRI-120018872
+Y2  - 2025/10/28/02:17:17
+ER  - 
+
+TY  - JOUR
+TI  - Effects of Increasing Salinity Stress and Decreasing Water Availability on Ecophysiological Traits of Quinoa (Chenopodium quinoa Willd.) Grown in a Mediterranean-Type Agroecosystem
+AU  - Cocozza, C.
+AU  - Pulvento, C.
+AU  - Lavini, A.
+AU  - Riccardi, M.
+AU  - d'Andria, R.
+AU  - Tognetti, R.
+T2  - Journal of Agronomy and Crop Science
+AB  - Quinoa is a native Andean crop for domestic consumption and market sale, widely investigated due to its nutritional composition and gluten-free seeds. Leaf water potential (Ψleaf) and its components and stomatal conductance (gs) of quinoa, cultivar Titicaca, were investigated in Southern Italy, in field trials (2009 and 2010). This alternative crop was subjected to irrigation treatments, with the restitution of 100 %, 50 % and 25 % of the water necessary to replenish field capacity, with well water (100 W, 50 W, 25 W) and saline water (100 WS, 50 WS, 25 WS) with an electrical conductivity (ECw) of 22 dS m−1. As water and salt stress developed and Ψleaf decreased, the leaf osmotic potential (Ψπ) declined (below −2.05 MPa) to maintain turgor. Stomatal conductance decreased with the reduction in Ψleaf (with a steep drop at Ψleaf between −0.8 and 1.2 MPa) and Ψπ (with a steep drop at Ψπ between −1.2 and −1.4 MPa). Salt and drought stress, in both years, did not affect markedly the relationship between water potential components, RWC and gs. Leaf water potentials and gs were inversely related to water limitation and soil salinity experimentally imposed, showing exponential (Ψleaf and turgor pressure, Ψp, vs. gs) or linear (Ψleaf and Ψp vs. SWC) functions. At the end of the experiment, salt-irrigated plants showed a severe drop in Ψleaf (below −2 MPa), resulting in stomatal closure through interactive effects of soil water availability and salt excess to control the loss of turgor in leaves. The effects of salinity and drought resulted in strict dependencies between RWC and water potential components, showing that regulating cellular water deficit and volume is a powerful mechanism for conserving cellular hydration under stress, resulting in osmotic adjustment at turgor loss. The extent of osmotic adjustment associated with drought was not reflected in Ψπ at full turgor. As soil was drying, the association between Ψleaf and SWC reflected the ability of quinoa to explore soil volume to continue extracting available water from the soil. However, leaf ABA content did not vary under concomitant salinity and drought stress conditions in 2009, while differing between 100 W and 100 WS in 2010. Quinoa showed good resistance to water and salt stress through stomatal responses and osmotic adjustments that played a role in the maintenance of a leaf turgor favourable to plant growth and preserved crop yield in cropping systems similar to those of Southern Italy.
+DA  - 2013///
+PY  - 2013
+DO  - 10.1111/jac.12012
+DP  - Wiley Online Library
+VL  - 199
+IS  - 4
+SP  - 229
+EP  - 240
+LA  - en
+SN  - 1439-037X
+UR  - https://onlinelibrary.wiley.com/doi/abs/10.1111/jac.12012
+Y2  - 2025/10/28/02:17:20
+KW  - Chenopodium quinoa
+KW  - abscisic acid
+KW  - drought
+KW  - salinity
+KW  - stomatal conductance
+KW  - water potential
+ER  - 
+
+TY  - JOUR
+TI  - Genetic variation for tolerance to the downy mildew pathogen Peronospora variabilis in genetic resources of quinoa (Chenopodium quinoa)
+AU  - Colque-Little, Carla
+AU  - Abondano, Miguel Correa
+AU  - Lund, Ole Søgaard
+AU  - Amby, Daniel Buchvaldt
+AU  - Piepho, Hans-Peter
+AU  - Andreasen, Christian
+AU  - Schmöckel, Sandra
+AU  - Schmid, Karl
+T2  - BMC Plant Biology
+AB  - Quinoa (Chenopodium quinoa Willd.) is an ancient grain crop that is tolerant to abiotic stress and has favorable nutritional properties. Downy mildew is the main disease of quinoa and is caused by infections of the biotrophic oomycete Peronospora variabilis Gaüm. Since the disease causes major yield losses, identifying sources of downy mildew tolerance in genetic resources and understanding its genetic basis are important goals in quinoa breeding.
+DA  - 2021/01/14/
+PY  - 2021
+DO  - 10.1186/s12870-020-02804-7
+DP  - Springer Link
+VL  - 21
+IS  - 1
+SP  - 41
+J2  - BMC Plant Biol
+LA  - en
+SN  - 1471-2229
+UR  - https://doi.org/10.1186/s12870-020-02804-7
+Y2  - 2025/10/28/02:26:43
+KW  - Chenopodium quinoa
+KW  - Plant genetic resources
+KW  - Linear mixed models
+KW  - Chenopodium album
+KW  - Downy mildew
+KW  - Peronospora variabilis
+KW  - Phenotyping
+KW  - Quantitative resistance
+ER  - 
+
+TY  - JOUR
+TI  - Resultados de la Prueba Americana y Europea de la Quinua
+AU  - Mujica, A.
+AU  - Jacobsen, S. E.
+AU  - Izquierdo, J.
+AU  - Marathee, J. P.
+T2  - FAO, UNA-Puno, CIP
+DA  - 2001///
+PY  - 2001
+DP  - Google Scholar
+VL  - 51
+ER  - 
+
+TY  - JOUR
+TI  - Cultivos andinos subexplotados y su aporte a la alimentación
+AU  - Tapia, Mario E.
+DA  - 1997///
+PY  - 1997
+DP  - Google Scholar
+PB  - Fao
+UR  - https://bibliotecadigital.infor.cl/handle/20.500.12220/3020
+Y2  - 2025/10/28/04:01:44
+ER  - 
+
+TY  - GEN
+TI  - Trim Galore!: A wrapper around Cutadapt and FastQC to consistently apply adapter and quality trimming to FastQ files, with extra functionality for RRBS data
+AU  - Krueger, F.
+DA  - 2015///
+PY  - 2015
+DP  - CiNii Research
+ST  - Trim Galore!
+UR  - https://cir.nii.ac.jp/crid/1370294643762929691
+Y2  - 2025/10/28/04:52:53
+ER  - 
+
+TY  - JOUR
+TI  - Stability and adaptability of grain yield in quinoa genotypes in four locations of Iran
+AU  - Jokarfard, Vahid
+AU  - Rabiei, Babak
+AU  - Laki, Ebrahim Souri
+AU  - Börner, Andreas
+T2  - Frontiers in Plant Science
+AB  - The genotype × environment interaction is one of the effective factors in identifying and introducing cultivars with stable grain yield in different environments. There are many statistical methods for estimating genotype × environment interaction, among which AMMI and GGE-biplot analyses provide better and more interpretable results. The objective of this study was to assess the genotype × environment interaction, as well as the adaptability and stability of 40 quinoa genotypes. The experiment was carried out in a randomized complete block design with three replications in eight environments (four locations of Iran and two years). The AMMI analysis of variance showed that the main effects of genotype and environment, as well as the interaction effect of genotype × environment were significant on grain yield. Separation of genotype × environment interaction based on the principal component method showed that the first six principal components were significant and accounted for 47.6%, 22.5%, 9%, 7%, 6% and 4.3% of the genotype × environment interaction variance, respectively. Based on the AMMI model, genotypes G16, G19, G35, G30, G39, G24, and G18 were identified as high-yielding and stable genotypes with high general adaptability. In contrast, genotypes G36, G27, G38, G9, G28, G29, G23, G34, G13, and G12 were the most unstable genotypes in the studied environments. In GGE-biplot analysis, two megaenvironments were identified, and genotypes G16, G19, G25, and G17 were also identified as high-yielding and stable genotypes for these environments. Also, based on the biplot diagram of the ideal genotype, genotypes G16 ، G19, G17, and G35 were the nearest genotypes to the ideal genotype. In total, the results of various analyses showed that the three genotypes G16 and G19 were the superior genotypes of this experiment in terms of grain yield and stability. These genotypes can be introduced as high-yielding and stable genotypes to the climatic conditions of the studied areas.
+DA  - 2024/11/29/
+PY  - 2024
+DO  - 10.3389/fpls.2024.1487106
+DP  - Frontiers
+VL  - 15
+J2  - Front. Plant Sci.
+LA  - English
+PB  - Frontiers
+SN  - 1664-462X
+UR  - https://www.frontiersin.org/journals/plant-science/articles/10.3389/fpls.2024.1487106/full
+Y2  - 2025/10/31/05:17:15
+KW  - genotype × environment interaction
+KW  - grain yield
+KW  - Ideal genotype
+KW  - Mega-environment
+KW  - multivariate methods
+ER  - 
+
+TY  - JOUR
+TI  - Genetic Properties of the Maize Nested Association Mapping Population
+AU  - McMullen, Michael D.
+AU  - Kresovich, Stephen
+AU  - Villeda, Hector Sanchez
+AU  - Bradbury, Peter
+AU  - Li, Huihui
+AU  - Sun, Qi
+AU  - Flint-Garcia, Sherry
+AU  - Thornsberry, Jeffry
+AU  - Acharya, Charlotte
+AU  - Bottoms, Christopher
+AU  - Brown, Patrick
+AU  - Browne, Chris
+AU  - Eller, Magen
+AU  - Guill, Kate
+AU  - Harjes, Carlos
+AU  - Kroon, Dallas
+AU  - Lepak, Nick
+AU  - Mitchell, Sharon E.
+AU  - Peterson, Brooke
+AU  - Pressoir, Gael
+AU  - Romero, Susan
+AU  - Rosas, Marco Oropeza
+AU  - Salvo, Stella
+AU  - Yates, Heather
+AU  - Hanson, Mark
+AU  - Jones, Elizabeth
+AU  - Smith, Stephen
+AU  - Glaubitz, Jeffrey C.
+AU  - Goodman, Major
+AU  - Ware, Doreen
+AU  - Holland, James B.
+AU  - Buckler, Edward S.
+T2  - Science
+AB  - Maize genetic diversity has been used to understand the molecular basis of phenotypic variation and to improve agricultural efficiency and sustainability. We crossed 25 diverse inbred maize lines to the B73 reference line, capturing a total of 136,000 recombination events. Variation for recombination frequencies was observed among families, influenced by local (cis) genetic variation. We identified evidence for numerous minor single-locus effects but little two-locus linkage disequilibrium or segregation distortion, which indicated a limited role for genes with large effects and epistatic interactions on fitness. We observed excess residual heterozygosity in pericentromeric regions, which suggested that selection in inbred lines has been less efficient in these regions because of reduced recombination frequency. This implies that pericentromeric regions may contribute disproportionally to heterosis.
+DA  - 2009/08/07/
+PY  - 2009
+DO  - 10.1126/science.1174320
+DP  - science.org (Atypon)
+VL  - 325
+IS  - 5941
+SP  - 737
+EP  - 740
+PB  - American Association for the Advancement of Science
+UR  - https://www.science.org/doi/full/10.1126/science.1174320
+Y2  - 2025/10/31/06:23:49
+ER  - 
+
+TY  - JOUR
+TI  - snpR: User friendly population genomics for SNP data sets with categorical metadata
+AU  - Hemstrom, William
+AU  - Jones, Melissa
+T2  - Molecular Ecology Resources
+AB  - Abstract
+            The analysis of genomic data can be an intimidating process, particularly for researchers who are not experienced programmers. Commonly used analyses are spread across many programs, each requiring their own specific input formats, and so data must often be repeatedly reorganized and transformed into new formats. Analyses often require splitting data according to metadata variables such as population or family, which can be challenging to manage in large data sets. Here, we introduce snpR, a user‐friendly data analysis package in R for processing SNP genomic data. snpR is designed to automate data subsetting and analyses across categorical metadata while also streamlining repeated analyses by integrating approaches contained in many different packages in a single ecosystem. snpR facilitates iterative and efficient analyses centred on a single R object for an entire analysis pipeline.
+          , 
+            
+              see also the Perspective by
+              L. Dutoit and G. A. McCulloch
+DA  - 2023/05//
+PY  - 2023
+DO  - 10.1111/1755-0998.13721
+DP  - DOI.org (Crossref)
+VL  - 23
+IS  - 4
+SP  - 962
+EP  - 973
+J2  - Molecular Ecology Resources
+LA  - en
+SN  - 1755-098X, 1755-0998
+ST  - snpR
+UR  - https://onlinelibrary.wiley.com/doi/10.1111/1755-0998.13721
+Y2  - 2026/03/14/20:20:22
+ER  - 
+
+TY  - JOUR
+TI  - Genomic Prediction in Animals and Plants: Simulation of Data, Validation, Reporting, and Benchmarking
+AU  - Daetwyler, Hans D
+AU  - Calus, Mario P L
+AU  - Pong-Wong, Ricardo
+AU  - de los Campos, Gustavo
+AU  - Hickey, John M
+T2  - Genetics
+AB  - The genomic prediction of phenotypes and breeding values in animals and plants has developed rapidly into its own research field. Results of genomic prediction studies are often difficult to compare because data simulation varies, real or simulated data are not fully described, and not all relevant results are reported. In addition, some new methods have been compared only in limited genetic architectures, leading to potentially misleading conclusions. In this article we review simulation procedures, discuss validation and reporting of results, and apply benchmark procedures for a variety of genomic prediction methods in simulated and real example data. Plant and animal breeding programs are being transformed by the use of genomic data, which are becoming widely available and cost-effective to predict genetic merit. A large number of genomic prediction studies have been published using both simulated and real data. The relative novelty of this area of research has made the development of scientific conventions difficult with regard to description of the real data, simulation of genomes, validation and reporting of results, and forward in time methods. In this review article we discuss the generation of simulated genotype and phenotype data, using approaches such as the coalescent and forward in time simulation. We outline ways to validate simulated data and genomic prediction results, including cross-validation. The accuracy and bias of genomic prediction are highlighted as performance indicators that should be reported. We suggest that a measure of relatedness between the reference and validation individuals be reported, as its impact on the accuracy of genomic prediction is substantial. A large number of methods were compared in example simulated and real (pine and wheat) data sets, all of which are publicly available. In our limited simulations, most methods performed similarly in traits with a large number of quantitative trait loci (QTL), whereas in traits with fewer QTL variable selection did have some advantages. In the real data sets examined here all methods had very similar accuracies. We conclude that no single method can serve as a benchmark for genomic prediction. We recommend comparing accuracy and bias of new methods to results from genomic best linear prediction and a variable selection approach (e.g., BayesB), because, together, these methods are appropriate for a range of genetic architectures. An accompanying article in this issue provides a comprehensive review of genomic prediction methods and discusses a selection of topics related to application of genomic prediction in plants and animals.
+DA  - 2013/02/01/
+PY  - 2013
+DO  - 10.1534/genetics.112.147983
+DP  - Silverchair
+VL  - 193
+IS  - 2
+SP  - 347
+EP  - 365
+J2  - Genetics
+SN  - 1943-2631
+ST  - Genomic Prediction in Animals and Plants
+UR  - https://doi.org/10.1534/genetics.112.147983
+Y2  - 2026/03/16/00:59:38
+ER  - 
+
+TY  - JOUR
+TI  - Root mean square error (RMSE) or mean absolute error (MAE)? – Arguments against avoiding RMSE in the literature
+AU  - Chai, T.
+AU  - Draxler, R. R.
+T2  - Geoscientific Model Development
+AB  - Both the root mean square error (RMSE) and the mean absolute error (MAE) are regularly employed in model evaluation studies. Willmott and Matsuura (2005) have suggested that the RMSE is not a good indicator of average model performance and might be a misleading indicator of average error, and thus the MAE would be a better metric for that purpose. While some concerns over using RMSE raised by Willmott and Matsuura (2005) and Willmott et al. (2009) are valid, the proposed avoidance of RMSE in favor of MAE is not the solution. Citing the aforementioned papers, many researchers chose MAE over RMSE to present their model evaluation statistics when presenting or adding the RMSE measures could be more beneficial. In this technical note, we demonstrate that the RMSE is not ambiguous in its meaning, contrary to what was claimed by Willmott et al. (2009). The RMSE is more appropriate to represent model performance than the MAE when the error distribution is expected to be Gaussian. In addition, we show that the RMSE satisfies the triangle inequality requirement for a distance metric, whereas Willmott et al. (2009) indicated that the sums-of-squares-based statistics do not satisfy this rule. In the end, we discussed some circumstances where using the RMSE will be more beneficial. However, we do not contend that the RMSE is superior over the MAE. Instead, a combination of metrics, including but certainly not limited to RMSEs and MAEs, are often required to assess model performance.
+DA  - 2014/06/30/
+PY  - 2014
+DO  - 10.5194/gmd-7-1247-2014
+DP  - Copernicus Online Journals
+VL  - 7
+IS  - 3
+SP  - 1247
+EP  - 1250
+LA  - English
+PB  - Copernicus GmbH
+SN  - 1991-959X
+ST  - Root mean square error (RMSE) or mean absolute error (MAE)?
+UR  - https://gmd.copernicus.org/articles/7/1247/2014/
+Y2  - 2026/03/16/01:01:24
+ER  - 
+
+TY  - JOUR
+TI  - Software for Computing and Annotating Genomic Ranges
+AU  - Lawrence, Michael
+AU  - Huber, Wolfgang
+AU  - Pagès, Hervé
+AU  - Aboyoun, Patrick
+AU  - Carlson, Marc
+AU  - Gentleman, Robert
+AU  - Morgan, Martin T.
+AU  - Carey, Vincent J.
+T2  - PLOS Computational Biology
+AB  - We describe Bioconductor infrastructure for representing and computing on annotated genomic ranges and integrating genomic data with the statistical computing features of R and its extensions. At the core of the infrastructure are three packages: IRanges, GenomicRanges, and GenomicFeatures. These packages provide scalable data structures for representing annotated ranges on the genome, with special support for transcript structures, read alignments and coverage vectors. Computational facilities include efficient algorithms for overlap and nearest neighbor detection, coverage calculation and other range operations. This infrastructure directly supports more than 80 other Bioconductor packages, including those for sequence analysis, differential expression analysis and visualization.
+DA  - 2013/08/08/
+PY  - 2013
+DO  - 10.1371/journal.pcbi.1003118
+DP  - PLoS Journals
+VL  - 9
+IS  - 8
+SP  - e1003118
+J2  - PLOS Computational Biology
+LA  - en
+PB  - Public Library of Science
+SN  - 1553-7358
+UR  - https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003118
+Y2  - 2026/03/16/19:22:32
+KW  - Algorithms
+KW  - Genome annotation
+KW  - Genomics
+KW  - Mammalian genomics
+KW  - Metadata
+KW  - Sequence alignment
+KW  - Software tools
+KW  - Structural genomics
+ER  - 
+
+TY  - JOUR
+TI  - rtracklayer: an R package for interfacing with genome browsers
+AU  - Lawrence, Michael
+AU  - Gentleman, Robert
+AU  - Carey, Vincent
+T2  - Bioinformatics
+AB  - Summary: The rtracklayer package supports the integration of existing genome browsers with experimental data analyses performed in R. The user may (i) transfer annotation tracks to and from a genome browser and (ii) create and manipulate browser views to focus on a particular set of annotations in a specific genomic region. Currently, the UCSC genome browser is supported.Availability: The package is freely available from http://www.bioconductor.org/. A quick-start vignette is included with the package.Contact:  mflawren@fhcrc.org
+DA  - 2009/07/15/
+PY  - 2009
+DO  - 10.1093/bioinformatics/btp328
+DP  - Silverchair
+VL  - 25
+IS  - 14
+SP  - 1841
+EP  - 1842
+J2  - Bioinformatics
+SN  - 1367-4803
+ST  - rtracklayer
+UR  - https://doi.org/10.1093/bioinformatics/btp328
+Y2  - 2026/03/16/19:23:19
+ER  - 
+
+TY  - JOUR
+TI  - Enhancing quinoa cultivation in the Andean highlands of Peru: a breeding strategy for improved yield and early maturity adaptation to climate change using traditional cultivars
+AU  - Lozano-Isla, F.
+AU  - Apaza, J.-D.
+AU  - Mujica Sanchez, A.
+AU  - Blas Sevillano, R.
+AU  - Haussmann, B.I.G.
+AU  - Schmid, K.
+T2  - Euphytica
+DA  - 2023///
+PY  - 2023
+DO  - 10.1007/s10681-023-03155-8
+VL  - 219
+IS  - 2
+UR  - https://www.scopus.com/inward/record.uri?eid=2-s2.0-85146606294&doi=10.1007%2fs10681-023-03155-8&partnerID=40&md5=1639c94976b67e750e50d9bcaf6952c8
+DB  - Scopus
+L1  - https://link.springer.com/content/pdf/10.1007%2Fs10681-023-03155-8.pdf
+KW  - Biodiversity
+KW  - Chenopodium quinoa
+KW  - Climate change
+KW  - Food security
+KW  - Panicle indices
+KW  - Selection gain
+ER  - 
+

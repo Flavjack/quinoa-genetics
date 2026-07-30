@@ -1,0 +1,28 @@
+PLINK v2.0.0-a.7.1 64-bit (4 May 2026)
+Options in effect:
+  --allow-extra-chr
+  --double-id
+  --make-bed
+  --out genetics/pops/KAN
+  --vcf genetics/pops/nam_KAN.vcf
+
+Hostname: DESKTOP-KMQ612S
+Working directory: C:\Users\LENOVO\git\quinoa-genetics
+Start time: Thu Jul 30 12:00:36 2026
+
+Random number seed: 1785430836
+32440 MiB RAM detected; reserving 16220 MiB for main workspace.
+Using up to 32 threads (change this with --threads).
+--vcf: 6046 variants scanned.
+--vcf: genetics/pops/KAN-temporary.pgen + genetics/pops/KAN-temporary.pvar.zst
++ genetics/pops/KAN-temporary.psam written.
+60 samples (0 females, 0 males, 60 ambiguous; 60 founders) loaded from
+genetics/pops/KAN-temporary.psam.
+Note: 18 nonstandard chromosome codes present.
+6046 variants loaded from genetics/pops/KAN-temporary.pvar.zst.
+Note: No phenotype data present.
+Writing genetics/pops/KAN.fam ... done.
+Writing genetics/pops/KAN.bim ... done.
+Writing genetics/pops/KAN.bed ... done.
+
+End time: Thu Jul 30 12:00:36 2026

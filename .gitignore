@@ -10,3 +10,5 @@ xclude
 .fa
 faa$
 fa$
+/.quarto/
+**/*.quarto_ipynb

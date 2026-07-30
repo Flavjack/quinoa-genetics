@@ -1,0 +1,114 @@
+---
+title: "Phenomics Project"
+format:
+  html:
+    toc: true
+    toc-expand: true
+    toc-depth: 4
+    toc-location: left
+    number-sections: true
+    self-contained: true
+    code-fold: false
+editor_options: 
+  chunk_output_type: console
+execute: 
+  warning: false
+  message: false
+  echo: true
+---
+
+Tools required for image analysis
+
+# Resources
+
+1. Git: <a href="https://git-scm.com/" target="_blank">Version control system</a>
+
+1. Anaconda: <a href="https://www.anaconda.com/download" target="_blank">Anaconda</a>
+
+1. Label Studio: <a href="https://labelstud.io/" target="_blank">Label Studio</a>
+
+1. Labels design: <a href="https://huito.inkaverse.com/" target="_blank">Huito package</a>
+
+1. Phenoboard: <a href="https://huito.inkaverse.com/img/phenoboard.pdf" target="_blank">Phenotyping board</a>
+
+1. Scale: <a href="https://huito.inkaverse.com/img/scale.pdf" target="_blank">Phenotyping board</a>
+
+
+# Repository for Image Analysis Annotation
+
+This instructions are designed for the management, organization, and utilization of images for annotation processes in image analysis projects. The following guidelines must be observed:
+
+1. All images must be placed in the `library` folder.  
+   - The script `code` contains the instructions for moving images in blocks.
+
+1. It is necessary to ensure that images are not duplicated and are properly rotated before use.
+
+1. The website associated with this repository will display only the content defined in the `_quarto.yml`.  
+   - The website must be built using the command:  
+     ```bash
+     quarto render website
+     ```
+     
+1. The `library` folder will be hosted on the website, and each image will be assigned a unique URL.
+
+1. Image URLs can be extracted using the code provided in `Image URL for Label Studio`.
+
+1. The generated links should be employed as references for annotations in *Label Studio*.
+
+# Change or fix image path
+
+```{r}
+#| label: change/fix image path
+#| eval: false
+
+library(tidyverse)
+library(magick)
+
+imgdir <- choose.dir() 
+newdir <- choose.dir() 
+
+imgfiles <- list.files(path = imgdir
+                       , full.names = T
+                       , recursive = T
+                       )
+
+movefiles <- imgfiles %>% 
+  enframe(name = "num", value = "path") %>% 
+  mutate(imgname = gsub('.*GERM/(.+)', '\\1', path)) %>% 
+  mutate(across(imgname, ~gsub('/', '_', .))) %>% 
+  mutate(across(imgname, ~gsub('[[:space:]]', '-', .))) %>% 
+  mutate(across(imgname, ~gsub('\\(|\\)', '_', .))) %>% 
+  mutate(across(imgname, ~gsub('__', '_', .))) %>% 
+  mutate(newdir = file.path({{newdir}}, imgname)) %>% 
+  filter(str_detect(imgname, "DIA-(3|4)")) %>% 
+  filter(!str_detect(imgname, "mp4"))
+
+nrow(movefiles)
+
+walk(movefiles, \(x) {
+  
+  file.copy(from = movefiles$path, to = movefiles$newdir
+            , overwrite = T)
+})
+```
+
+# Image URL for Label Studio
+
+```{r}
+#| label: Image URL for Label Studio
+#| eval: false
+
+newdir <- "library/maiz/"
+
+imgs <- list.files(path = newdir
+                   , pattern = "jpg"
+                   , full.names = TRUE
+                   , recursive = TRUE
+                   ) %>% 
+  enframe() %>% 
+  mutate(url = file.path("https://flavjack.github.io/pheno-germination", value))
+
+imgs %>% 
+  select(url) %>% 
+  write_csv(file.path(newdir, "images4labelstudio.txt"), col_names = F)
+```
