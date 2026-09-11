@@ -1,5 +1,5 @@
 new("big.matrix.descriptor", description = list(sharedType = "FileBacked", 
     filename = "kin_kan.kin.bin", dirname = "genetics/rmvp/", 
-    totalRows = 60L, totalCols = 60L, rowOffset = c(0, 60), colOffset = c(0, 
-    60), nrow = 60, ncol = 60, rowNames = NULL, colNames = NULL, 
+    totalRows = 59L, totalCols = 59L, rowOffset = c(0, 59), colOffset = c(0, 
+    59), nrow = 59, ncol = 59, rowNames = NULL, colNames = NULL, 
     type = "double", separated = FALSE))

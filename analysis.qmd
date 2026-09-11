@@ -155,21 +155,12 @@ cd /work/workspaces/flavio/quinoagenetics/
 
 # -e stands for "exclude." It removes variants that meet the specified condition.
 # F_MISSING refers to the fraction of missing data at a variant site.
-# > 0.5 means any variants where more than 50% of the data are missing will be excluded (filtered out).
+# > 0.8 means any variants where more than 50% of the data are missing will be excluded (filtered out).
 
-bcftools filter -e 'F_MISSING > 0.5' -O z /work/workspaces/novogene-sequencing-job-2021/vcfs/quinoa_run1_all.bcf > /work/workspaces/flavio/quinoagenetics/quinoa.vcf.gz
+bcftools filter -e 'F_MISSING > 0.8' -O z xclude/quinoa_run1_all.bcf > xclude/quinoa_0.8.vcf.gz
 
 # export names to rename
-bcftools query -l quinoa.vcf.gz > genotype_names.txt
-```
-
-## Download genotype names
-
-```{bash}
-#| eval: false
-
-# local terminal to download file
-scp flaaw57@server231.ipsp.uni-hohenheim.de:/work/workspaces/flavio/quinoagenetics/genotype_names.txt genetics
+bcftools query -l xclude/quinoa_0.8.vcf.gz > xclude/genotype_names.txt
 ```
 
 ## Genotypes names to rename vcf file
@@ -177,26 +168,21 @@ scp flaaw57@server231.ipsp.uni-hohenheim.de:/work/workspaces/flavio/quinoageneti
 ```{r}
 #| eval: false
 
-vcf.names <- "genetics/genotype_names.txt" %>% 
+vcf.names <- "xclude/genotype_names.txt" %>% 
   read.csv(header = F, col.names = "name_old") %>% 
   mutate(pmatch = toupper(name_old)) %>% 
   mutate(match = gsub(".*A(.+)_F.*", "\\1", pmatch)) %>% 
   select(!pmatch)
 
-parents <- c("blanca de juli" = "BDJ"
-             , "chulpi" = "CHU"
-             , "ayrampo" = "AYR"
-             , "choclito" = "CHO")
-
-geno.names <- "genetics/camacani_plots_cs-genotyping.xlsx" %>% 
-  readxl::read_xlsx() %>% 
-  mutate(cross = recode(cross, !!!parents)) %>% 
+geno.names <- "genetics/genotype-names.csv" %>% 
+  read.csv() %>% 
   unite(match, c(plots, crossn, line), remove = F, sep = "_") %>% 
   mutate(name_new = case_when(
     cross %in% c("SAL", "PAN", "HUA", "KCA", "COL", "BDJ", "CHU", "AYR", "CHO", "PAS") ~  as.character(paste(cross, line, crossn, sep = "_"))
     , TRUE ~ as.character(paste(cross, line, sep = "_"))
   )) %>% 
-  select(match, name_new) 
+  select(match, name_new) %>% 
+  distinct(name_new, .keep_all = T)
 
 vcf.rename <- merge(vcf.names, geno.names, by = "match", all.x = T) %>% 
   mutate(name_new = case_when(
@@ -213,24 +199,15 @@ tab <- vcf.rename %>%
 vcf.rename %>% write_tsv("genetics/vcf.rename.txt")
 ```
 
-## vcf.rename file to server
-
-```{bash}
-#| eval: false
-
-scp genetics/vcf.rename.txt flaaw57@server231.ipsp.uni-hohenheim.de:/work/workspaces/flavio/quinoagenetics/
-```
-
 ## Rename VCF file
 
 ```{bash}
 #| eval: false
 
-cd /work/workspaces/flavio/quinoagenetics/
-bcftools reheader -s vcf.rename.txt quinoa.vcf.gz > quinoa_rhd.vcf.gz
+bcftools reheader -s genetics/vcf.rename.txt xclude/quinoa_0.8.vcf.gz > xclude/quinoa_0.8_rhd.vcf.gz
 
 # check rename
-bcftools query -l quinoa_rhd.vcf.gz
+bcftools query -l xclude/quinoa_0.8_rhd.vcf.gz
 ```
 
 ## Filter by Population
@@ -238,37 +215,28 @@ bcftools query -l quinoa_rhd.vcf.gz
 ```{bash}
 #| eval: false
 
-bcftools query -l quinoa_rhd.vcf.gz > genotype_renamed.txt
-cat genotype_renamed.txt
+bcftools query -l xclude/quinoa_0.8_rhd.vcf.gz > genetics/genotype_renamed.txt
+cat genetics/genotype_renamed.txt
 
 # Filter NAM populations for SAL and KAN
 
-grep -E "SALx|xKAN" genotype_renamed.txt > populations.txt
+grep -E "SALx|xKAN" genetics/genotype_renamed.txt > genetics/populations.txt
 cat populations.txt
 
 # SNPs for all populations
 
-bcftools view -S populations.txt quinoa_rhd.vcf.gz > quinoa_pops.vcf.gz
-```
-
-## Download VCF
-
-```{bash}
-#| eval: false
-
-#> local terminal and download vcf file
-
-scp flaaw57@server231.ipsp.uni-hohenheim.de:/work/workspaces/flavio/quinoagenetics/quinoa_pops.vcf.gz genetics/
+bcftools view -S genetics/populations.txt xclude/quinoa_0.8_rhd.vcf.gz > xclude/quinoa_pops.vcf.gz
 ```
 
 # snpR
 
 > https://www.nature.com/articles/s41576-024-00738-6/tables/1
+> https://doi.org/10.1111/1755-0998.13721
 
 ```{r}
 # vcffile <- choose.files()
 
-vcfile <- "G:/Mi unidad/coding/quinoa4gwas/quinoa_pops.vcf.gz"
+vcfile <- "xclude/quinoa_pops.vcf.gz"
 
 snpdt <- snpR::read_vcf(file = vcfile)
 snpdt
@@ -296,29 +264,34 @@ snp.meta(snpdt)
 # Clean genotyping data
 
 ```{r}
-# Minor allele frequency of 0.05
-# Minimum individuals 50%
-# At least 50% of loci sequenced per individual.
+# SNP filtering for population structure analyses
+# Based on Hemstrom et al. (2024)
 
-snpdt_filt <- snpR::filter_snps(x = snpdt
-                              , maf = 0.05
-                              , min_ind = 0.5
-                              , min_loci = 0.3
-                              , maf_facets = "cross"
-                              )
+snpdt_filt <- snpR::filter_snps(
+  x = snpdt
+  , maf = 0.05           # Retain SNPs with MAF ≥ 5%
+  , min_ind = 0.50       # SNPs genotyped in ≥50% of individuals
+  , min_loci = 0.50      # Individuals genotyped at ≥50% of SNPs
+  , maf_facets = "cross" # Evaluate MAF within each NAM cross
+)
 
+# Inspect applied filters
 snpR::filters(snpdt_filt)
 ```
 
 # Export data
 
 ```{r}
+#| eval: false
+
 sample.meta(snpdt_filt)
 snp.meta(snpdt_filt)
 
 npop <- sample.meta(snpdt_filt) %>% 
   group_by(cross) %>% 
   summarise(pops = n())
+
+npop %>% kable(caption = "Individual by cross")
 
 vcfdt <- format_snps(x = snpdt_filt
                      , output = "vcf"
@@ -344,11 +317,13 @@ vcfdt <- format_snps(x = snpdt_filt
 # Sequencing depth
 
 ```{r}
+#| eval: false
+
 library(vcfR)
 library(tidyverse)
 
 # Leer archivo VCF
-vcf <- read.vcfR("G:/Mi unidad/coding/quinoa4gwas/quinoa_pops.vcf.gz")
+vcf <- read.vcfR("xclude/quinoa_0.8_rhd.vcf.gz")
 
 # Extraer profundidad de cobertura (DP)
 dp <- extract.gt(vcf, element = "DP", as.numeric = TRUE) %>% 
@@ -623,14 +598,14 @@ ld <- bind_rows(ld_sal, ld_kan)
 ## Distance
 ##----------------------------
 
-ld <- ld |>
+ld <- ld %>% 
     mutate(distance = abs(POS_B - POS_A))
 
 ##----------------------------
 ## Remove different chromosomes
 ##----------------------------
 
-ld <- ld |>
+ld <- ld %>% 
     filter(`#CHROM_A` == CHROM_B)
 
 ##----------------------------
@@ -639,21 +614,21 @@ ld <- ld |>
 
 bin_size <- 50000   # 50 kb
 
-ld <- ld |>
+ld <- ld %>% 
     mutate(bin = floor(distance/bin_size)*bin_size)
 
 ##----------------------------
 ## Mean LD
 ##----------------------------
 
-ld_summary <- ld |>
-    group_by(pop, bin) |>
+ld_summary <- ld %>% 
+    group_by(pop, bin) %>% 
     summarise(
         mean_r2 = mean(UNPHASED_R2, na.rm = TRUE),
         median_r2 = median(UNPHASED_R2, na.rm = TRUE),
         n = n(),
         .groups = "drop"
-    ) |>
+    ) %>% 
     filter(n >= 50)
 
 ggplot(ld_summary,
@@ -672,261 +647,6 @@ ggplot(ld_summary,
 
     theme_classic(base_size = 14)
 ```
-
-
-```{r}
-sal <- read_tsv(
-  "genetics/pops/SAL_LD.vcor",
-  comment = "#",
-  col_names = c("CHR_A","POS_A","ID_A",
-                "CHR_B","POS_B","ID_B","R2")
-)
-
-kan <- read_tsv(
-  "genetics/pops/KAN_LD.vcor",
-  comment = "#",
-  col_names = c("CHR_A","POS_A","ID_A",
-                "CHR_B","POS_B","ID_B","R2")
-)
-
-ld <- bind_rows(
-  mutate(sal, Population="SAL"),
-  mutate(kan, Population="KAN")
-)
-
-ld <- ld %>%
-  filter(CHR_A == CHR_B) %>%
-  mutate(
-    Chromosome = CHR_A,
-    Distance = abs(POS_B - POS_A)
-  )
-
-bin_size <- 10000
-
-ld <- ld %>%
-  mutate(
-    Bin = floor(Distance/bin_size)*bin_size
-  )
-
-ld_summary <- ld %>%
-  group_by(Population, Chromosome, Bin) %>%
-  summarise(
-    median_r2 = median(R2),
-    mean_r2 = mean(R2),
-    n = n(),
-    .groups="drop"
-  ) %>%
-  filter(n >= 20)
-
-ggplot(ld_summary,
-       aes(Bin/1000,
-           median_r2))+
-
-    geom_line(linewidth=0.8)+
-
-    facet_grid(Population~Chromosome)+
-
-    theme_bw(base_size=13)+
-
-    labs(
-        x="Distance (kb)",
-        y=expression(r^2)
-    )
-
-ld %>%
-  count(Population, Chromosome) %>% 
-  view()
-
-ld %>%
-    group_by(Population, Chromosome) %>%
-    summarise(
-        SNP_pairs=n(),
-        Mean_r2=mean(R2),
-        Median_r2=median(R2)
-    ) %>% 
-  view()
-
-
-```
-
-```{r}
-sal_map <- read_table(
-  "genetics/pops/SAL.bim",
-  col_names = c("CHR","SNP","CM","POS","A1","A2"),
-  show_col_types = FALSE
-)
-
-kan_map <- read_table(
-  "genetics/pops/KAN.bim",
-  col_names = c("CHR","SNP","CM","POS","A1","A2"),
-  show_col_types = FALSE
-)
-
-calc_spacing <- function(map){
-
-  map %>%
-    arrange(CHR, POS) %>%
-    group_by(CHR) %>%
-    mutate(
-      spacing = POS - lag(POS)
-    ) %>%
-    ungroup()
-
-}
-
-sal_spacing <- calc_spacing(sal_map)
-kan_spacing <- calc_spacing(kan_map)
-
-sal_spacing %>%
-group_by(CHR) %>%
-summarise(
-    SNPs=n(),
-    Mean_spacing=mean(spacing,na.rm=TRUE),
-    Median_spacing=median(spacing,na.rm=TRUE),
-    Max_spacing=max(spacing,na.rm=TRUE)
-)
-
-
-ggplot(
-    sal_spacing,
-    aes(spacing/1000)
-)+
-geom_histogram(
-    bins=60
-)+
-facet_wrap(~CHR,scales="free_y")+
-theme_bw()+
-labs(
-    x="Distance between adjacent SNPs (kb)"
-)
-
-ld %>%
-  mutate(
-    class = cut(
-      Distance,
-      breaks = c(
-        0,
-        1000,
-        5000,
-        10000,
-        25000,
-        50000,
-        100000,
-        250000,
-        500000,
-        1000000,
-        Inf
-      ),
-      include.lowest = TRUE
-    )
-  ) %>%
-  count(Population, class) %>% 
-  view()
-
-
-ld %>%
-mutate(
-
-group=cut(
-Distance,
-breaks=c(
-0,
-1000,
-5000,
-10000,
-25000,
-50000,
-100000,
-250000,
-500000,
-1000000,
-Inf
-)
-
-)
-
-) %>%
-
-group_by(Population,group)%>%
-
-summarise(
-
-n=n(),
-
-mean_r2=mean(R2),
-
-median_r2=median(R2),
-
-q90=quantile(R2,.90),
-
-q95=quantile(R2,.95),
-
-q99=quantile(R2,.99)
-
-) %>% 
-  view()
-
-ld_summary2 <- ld_summary %>%
-  mutate(
-    Distance = case_when(
-      Bin ==       0 ~ "0–1",
-      Bin ==    1000 ~ "1–5",
-      Bin ==    5000 ~ "5–10",
-      Bin ==   10000 ~ "10–25",
-      Bin ==   25000 ~ "25–50",
-      Bin ==   50000 ~ "50–100",
-      Bin ==  100000 ~ "100–250",
-      Bin ==  250000 ~ "250–500",
-      Bin ==  500000 ~ "500–1000",
-      TRUE           ~ ">1000"
-    ),
-    Distance = factor(
-      Distance,
-      levels = c(
-        "0–1",
-        "1–5",
-        "5–10",
-        "10–25",
-        "25–50",
-        "50–100",
-        "100–250",
-        "250–500",
-        "500–1000",
-        ">1000"
-      )
-    )
-  )
-
-ggplot(ld_summary2,
-       aes(Distance,
-           median_r2,
-           colour=Population,
-           group=Population))+
-
-geom_point(size=3)+
-
-geom_line(linewidth=1.3)+
-
-theme_classic(base_size=15)+
-
-scale_colour_manual(values=c(
-"SAL"="#1b9e77",
-"KAN"="#d95f02"
-))+
-
-labs(
-x="Physical distance (kb)",
-y=expression("Median linkage disequilibrium ("*r^2*")")
-)+
-
-theme(
-legend.position="top",
-axis.text.x=element_text(angle=45,hjust=1)
-)
-
-```
-
-
 
 ```{r}
 fig1 <- list(p1a, p1b, p1c) %>% 
@@ -979,7 +699,8 @@ tab <- list(tab_nam, tab_cross)  %>%
   tibble::add_row(Population = "Cross", .before = 4) %>% 
   dplyr::rename(poly = "prop_poly") %>% 
   dplyr::select(!pi) %>% 
-  mutate(n = c(NA, 60, 65, NA, 18, 21, 21, 19, 26, 20))
+  mutate(n = c(NA, 59, 59, NA, 17, 21, 21, 16, 24, 19)) %>% 
+  rename(Ho = ho, He = he, FIS = fis)
 
 tab %>% kable()
   
@@ -989,7 +710,6 @@ tab %>% kable()
 
 snpdt_filt <- calc_genetic_distances(snpdt_filt, "cross")
 get.snpR.stats(snpdt_filt, "cross", "genetic_distance")
-
 ```
 
 # Specific Objective 2
@@ -1159,7 +879,7 @@ gwas_rmvp <- base::merge(x = gwas_sal, y = gwas_kan
                   , by = c("SNP", "CHROM", "POS")
                   ) %>% arrange(CHROM)
 
-alpha_bon <- 0.05/6046 # Bonferroni
+alpha_bon <- 0.05/6054 # Bonferroni
 
 qtl <- gwas_rmvp %>% 
   pivot_longer(!c(1:POS), values_to = "p-value") %>% 
@@ -1521,11 +1241,11 @@ plot_qq %>%
          )
 ```
 
-## Gene ontology
+## Gene Ontology
 
 ```{r}
-if(!requireNamespace("BiocManager")) install.packages("BiocManager")
-BiocManager::install(c("GenomicRanges","rtracklayer"))
+# if(!requireNamespace("BiocManager")) install.packages("BiocManager")
+# BiocManager::install(c("GenomicRanges","rtracklayer"))
 
 library(data.table)
 library(dplyr)
@@ -1534,7 +1254,7 @@ library(rtracklayer)
 
 # browseURL("https://genomevolution.org/coge/GenomeInfo.pl?gid=60716")
 
-gff <- BiocIO::import("files/quinoa_QQ74.gff3")
+gff <- BiocIO::import("genetics/quinoa_QQ74.gff3")
 genes <- gff[gff$type == "gene"]
 
 qtl
@@ -1580,7 +1300,7 @@ trait2gene <- base::merge(candidate_genes, qtl) %>%
 qtl$SNP %>% length() 
 trait2gene$SNP %>% factor() %>% nlevels() 
 
-# trait2gene %>% write_sheet(ss = gs, sheet = "STable")
+# trait2gene %>% write_sheet(ss = gs, sheet = "STable4")
 
 trait2gene %>% kable()
 ```
@@ -1595,12 +1315,50 @@ https://pbgworks.org/sites/pbgworks.org/files/Introduction%20to%20Genomic%20Sele
 set.seed(as.numeric(1989-19-08))
 ```
 
-# KAN Genomic Prediction
-
-## Import data
-
 ```{r}
-genotyping <- nam_pop %>%
+library(snpR)
+library(tidyverse)
+
+vcfile <- "genetics/pops/quinoa.vcf"
+
+snpdt <- snpR::read_vcf(file = vcfile)
+snpdt
+
+sample_meta <- snpdt %>% 
+  names() %>% 
+  gsub("_.*", "", .) %>% 
+  enframe(value = "cross") %>% 
+  mutate(pop = case_when(
+    str_detect(cross, "xKAN") ~ "KAN"
+    , str_detect(cross, "KAN") ~ "KAN"
+    , str_detect(cross, "SALx") ~ "SAL"
+    , str_detect(cross, "SAL") ~ "SAL"
+  ))
+  
+sample.meta(snpdt)$cross <- factor(sample_meta$cross
+                                   , levels = c("HUAxKAN", "NCOxKAN", "PASxKAN"
+                                                , "SALxHUA", "SALxNCO", "SALxPAN"))
+sample.meta(snpdt)$pop <- sample_meta$pop
+
+sample.meta(snpdt)
+snp.meta(snpdt)
+
+vcfdt <- format_snps(x = snpdt
+                     , output = "sn"
+                     , interpolate = ""
+                     , chr = "CHROM"
+                     , position = "position"
+                     , facets = "pop"
+                     , verbose = TRUE
+                     # , outfile = "genetics/pops/nam"
+                     ) %>% 
+  mutate(ID = paste0("marker", "_", row.names(.))) %>%
+  pivot_longer(!c(1:FILTER)
+               , names_to = "cross"
+               , values_to = "gt"
+               ) 
+
+genotyping <- vcfdt %>%
   dplyr::select(id = cross, marker = ID, alleles = gt) %>% 
   mutate(alleles = case_when(
     alleles %in% 0 ~ "-1"
@@ -1611,6 +1369,8 @@ genotyping <- nam_pop %>%
   pivot_wider(names_from = marker
               , values_from = alleles)
 ```
+
+# KAN Genomic Prediction
 
 ```{r}
 geno <- genotyping %>% 
@@ -1704,8 +1464,6 @@ GS_KAN <- traits %>%
 ```
 
 # SAL Genomic Prediction
-
-## Import data
 
 ```{r}
 geno <- genotyping %>% 
@@ -1919,123 +1677,3 @@ eva-sub-cli.py --metadata_xlsx <metadata file> --submission_dir <submission dire
 ```
 
 
-```{r}
-knitr::knit_exit()
-```
-
-## QTL mapping using R/qtl2
-
-```{r}
-library(snpR)
-library(tidyverse)
-library(qtl2)
-
-vcfile <- "G:/Mi unidad/coding/quinoa4gwas/quinoa_pops.vcf.gz"
-
-snpdt <- snpR::read_vcf(file = vcfile)
-snpdt
-
-sample_meta <- snpdt %>% 
-  names() %>% 
-  gsub("_.*", "", .) %>% 
-  enframe(value = "cross") %>% 
-  mutate(pop = case_when(
-    str_detect(cross, "xKAN") ~ "KAN"
-    , str_detect(cross, "KAN") ~ "KAN"
-    , str_detect(cross, "SALx") ~ "SAL"
-    , str_detect(cross, "SAL") ~ "SAL"
-  ))
-  
-sample.meta(snpdt)$cross <- factor(sample_meta$cross
-                                   , levels = c("HUAxKAN", "NCOxKAN", "PASxKAN"
-                                                , "SALxHUA", "SALxNCO", "SALxPAN"))
-sample.meta(snpdt)$pop <- sample_meta$pop
-
-sample.meta(snpdt)
-snp.meta(snpdt)
-
-snpdt_filt <- snpR::filter_snps(x = snpdt
-                              , maf = 0.05
-                              , min_ind = 0.5
-                              , min_loci = 0.3
-                              , maf_facets = "cross"
-                              )
-
-vcfdt <- format_snps(x = snpdt_filt
-                     , output = "sn"
-                     , interpolate = ""
-                     , chr = "CHROM"
-                     , position = "position"
-                     , facets = "pop"
-                     , verbose = TRUE
-                     # , outfile = "genetics/pops/nam"
-                     ) %>% 
-  mutate(ID = paste0("marker", "_", row.names(.))) %>%
-  pivot_longer(!c(1:FILTER)
-               , names_to = "cross"
-               , values_to = "gt"
-               ) 
-
-nam_pop <- vcfdt %>% 
-  filter(str_detect(cross, "SALx")) 
-
-gmap <- nam_pop %>%
-  pivot_wider(names_from = cross, values_from = gt) %>% 
-  dplyr::select(marker = ID, chr = CHROM, pos = position) %>% 
-  mutate(across(pos, ~ as.numeric(.))) %>% 
-  arrange(chr, pos) %>% 
-  # mutate(chr = as.integer(as.factor(chr))) %>% 
-  # mutate(pos = pos/1e6) %>% # bp -> Mbp
-  distinct(chr, pos, .keep_all = TRUE)
-
-gmap %>% write_csv("genetics/rqtl2/SAL_gmap.csv")
-
-geno <- nam_pop %>%
-  dplyr::select(id = cross, marker = ID, alleles = gt) %>% 
-  mutate(alleles = case_when(
-    alleles %in% 0 ~ "AA"
-    , alleles %in% 1 ~ "AB"
-    , alleles %in% 2 ~ "BB"
-  )) %>% 
-  pivot_wider(names_from = marker
-              , values_from = alleles) 
-
-geno %>% write_csv("genetics/rqtl2/SAL_geno.csv")
-
-pheno <- read_csv("genetics/mlt-sal.csv") %>% 
-  rename(id = line)
-
-pheno %>% write_csv("genetics/rqtl2/SAL_pheno.csv")
-
-crossinfo <- pheno %>% 
-  dplyr::select(id) %>% 
-  mutate(cross = gsub("_[0-9]+$", "", id)) %>% 
-  mutate(cross = as.integer(as.factor(cross)))
-
-crossinfo$cross %>% unique()
-
-crossinfo %>% write_csv("genetics/rqtl2/SAL_crossinfo.csv")
-```
-
-```{r}
-ncores <- floor(parallel::detectCores()*0.8)
-
-namqtl <- read_cross2("genetics/rqtl2/SAL.yaml")
-
-map <- insert_pseudomarkers(namqtl$gmap, step = 0, cores = ncores)
-
-pr <- calc_genoprob(cross = namqtl, map = map, cores = ncores
-                    , quiet = F)
-
-apr <- genoprob_to_alleleprob(pr, cores = ncores)
-
-kinship <- calc_kinship(apr, "loco", cores = ncores)
-
-out <- scan1(apr, namqtl$pheno, kinship, cores = ncores)
-
-par(mar=c(5.1, 4.1, 1.1, 1.1))
-ymx <- maxlod(out) # overall maximum LOD score
-plot(out, map, lodcolumn=5, col="slateblue", ylim=c(0, ymx*1.5))
-
-
-```

@@ -8,21 +8,21 @@ Options in effect:
 
 Hostname: DESKTOP-KMQ612S
 Working directory: C:\Users\LENOVO\git\quinoa-genetics
-Start time: Thu Jul 30 12:00:36 2026
+Start time: Thu Sep 10 22:46:48 2026
 
-Random number seed: 1785430836
+Random number seed: 1789098408
 32440 MiB RAM detected; reserving 16220 MiB for main workspace.
 Using up to 32 threads (change this with --threads).
---vcf: 6046 variants scanned.
+--vcf: 6054 variants scanned.
 --vcf: genetics/pops/KAN-temporary.pgen + genetics/pops/KAN-temporary.pvar.zst
 + genetics/pops/KAN-temporary.psam written.
-60 samples (0 females, 0 males, 60 ambiguous; 60 founders) loaded from
+59 samples (0 females, 0 males, 59 ambiguous; 59 founders) loaded from
 genetics/pops/KAN-temporary.psam.
 Note: 18 nonstandard chromosome codes present.
-6046 variants loaded from genetics/pops/KAN-temporary.pvar.zst.
+6054 variants loaded from genetics/pops/KAN-temporary.pvar.zst.
 Note: No phenotype data present.
 Writing genetics/pops/KAN.fam ... done.
 Writing genetics/pops/KAN.bim ... done.
 Writing genetics/pops/KAN.bed ... done.
 
-End time: Thu Jul 30 12:00:36 2026
+End time: Thu Sep 10 22:46:49 2026

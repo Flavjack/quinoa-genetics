@@ -10,15 +10,15 @@ Options in effect:
 
 Hostname: DESKTOP-KMQ612S
 Working directory: C:\Users\LENOVO\git\quinoa-genetics
-Start time: Thu Jul 30 12:06:24 2026
+Start time: Thu Sep 10 22:47:02 2026
 
-Random number seed: 1785431184
+Random number seed: 1789098422
 32440 MiB RAM detected; reserving 16220 MiB for main workspace.
 Using up to 32 threads (change this with --threads).
-60 samples (0 females, 0 males, 60 ambiguous; 60 founders) loaded from
+59 samples (0 females, 0 males, 59 ambiguous; 59 founders) loaded from
 genetics/pops/KAN.fam.
 Note: 18 nonstandard chromosome codes present.
-6046 variants loaded from genetics/pops/KAN.bim.
+6054 variants loaded from genetics/pops/KAN.bim.
 Note: No phenotype data present.
 Calculating allele frequencies... done.
 Running --r2-unphased with the following filters:
@@ -27,4 +27,4 @@ Running --r2-unphased with the following filters:
   --ld-window-r2: 0
 --r2-unphased: Results written to genetics/pops/KAN_LD.vcor .
 
-End time: Thu Jul 30 12:06:24 2026
+End time: Thu Sep 10 22:47:02 2026

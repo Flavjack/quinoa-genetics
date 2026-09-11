@@ -1,5 +1,5 @@
 new("big.matrix.descriptor", description = list(sharedType = "FileBacked", 
     filename = "dt_sal.geno.bin", dirname = "genetics/rmvp/", 
-    totalRows = 65L, totalCols = 6046L, rowOffset = c(0, 65), 
-    colOffset = c(0, 6046), nrow = 65, ncol = 6046, rowNames = NULL, 
+    totalRows = 59L, totalCols = 6054L, rowOffset = c(0, 59), 
+    colOffset = c(0, 6054), nrow = 59, ncol = 6054, rowNames = NULL, 
     colNames = NULL, type = "char", separated = FALSE))
