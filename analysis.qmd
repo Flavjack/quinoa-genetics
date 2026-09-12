@@ -1593,6 +1593,10 @@ plot <- grid %>%
          )
 ```
 
+```{r}
+knitr::knit_exit()
+```
+
 # European Variation Archive (EVA)
 
 > https://www.ebi.ac.uk/eva/

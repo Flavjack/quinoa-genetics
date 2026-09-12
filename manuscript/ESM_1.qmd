@@ -1,0 +1,1683 @@
+---
+title: "Nested Association Mapping (NAM) in quinoa (_Chenopodium quinoa_) for yield-related traits in the Peruvian Highlands"
+format:
+  html:
+    toc: true
+    toc-location: left
+    toc-expand: 4
+    number-sections: true
+    self-contained: true
+    output-file: "ESM_1"
+editor_options: 
+  chunk_output_type: console
+execute: 
+  warning: false
+  echo: true
+---
+
+# Project Setup
+
+```{r}
+#| label:  setup
+
+cran <- c("parallel", "sommer")
+git <- c("hemstrow/snpR") # https://github.com/hemstrow/snpR
+
+suppressPackageStartupMessages({
+  for (pkg in cran) { 
+    if( !require(pkg, character.only = TRUE) ) {
+      install.packages(pkg)
+      library(pkg, character.only = TRUE)
+    } 
+  }
+  
+  for (pkg in git) {
+    if( !require(sub(".*/", "", pkg), character.only = TRUE) ) {
+      pak::pkg_install(pkg, upgrade = TRUE)
+      library(sub(".*/", "", pkg), character.only = TRUE)
+    }
+  }
+}); remove(cran, git, pkg)
+
+# pak::pkg_install("hemstrow/snpR")
+
+ncores <- floor(parallel::detectCores()*0.8)
+set.seed(2025)
+
+library(rrBLUP)
+library(vcfR)
+library(data.table)
+library(rsample)
+library(gtsummary)
+
+source('https://inkaverse.com/setup.r')
+```
+
+For the large files was created a `xclude` folder and add the name to the `.gitignore` to avoid upload files saved in this folder to the server
+
+# Phenotypic data
+
+```{r}
+url <- "https://docs.google.com/spreadsheets/d/1WQKAOnxO9on7YoF9yC2WV7eHcChZJ5FR6DVyg0tJK1o/edit#gid=0"
+gs <- url %>% as_sheets_id()
+
+fb <- gs %>%
+  range_read("STable2") %>% 
+  dplyr::select(!c(trial, pop, num, type)) %>% 
+  separate_wider_delim(line
+                       , delim = "_"
+                       , names = c("cross", "nline")
+                       , cols_remove = FALSE
+                       , too_few = "align_start"
+                       ) %>% 
+  mutate(pop = case_when(
+    str_detect(cross, "SALx", ) ~ "SAL"
+    , str_detect(cross, "xKAN", ) ~ "KAN"
+    , .default = cross
+  ), .before = "cross")
+  
+
+fb %>% web_table(caption = "Phenotypic data")
+
+traits <- gs %>%
+  range_read("STable1") %>% 
+  mutate(trait = paste0(traits, " ", "(", units, ")", "\nstage: ", phenology))
+
+traitnames <- traits %>% dplyr::select(abbreviations, trait) %>% deframe()
+```
+
+```{r}
+fbdist <- fb %>% 
+  drop_na(nline) %>% 
+  pivot_longer(!c(pop:line), names_to = "trait") %>% 
+  separate_wider_delim(trait
+                       , delim = "_"
+                       , names = c("variable", "phenology")
+                       , cols_remove = FALSE
+                       ) %>% 
+  mutate(label = dplyr::recode(trait, !!!traitnames))
+
+fbdist$trait %>% unique() %>% dput()
+
+order <- c("ndflw_flw"
+           , "plth_flw"
+           , "pnlg_flw", "pnwd_flw"
+           , "ndpm_mtr"
+           , "plth_mtr"
+           , "pnlg_mtr", "pnwd_mtr"
+           , "mstd_mtr"
+           , "sdyp_hrv", "yplt_hrv", "wl_mtr")
+
+lb <- fbdist %>% 
+  dplyr::select(trait, label) %>% 
+  dplyr::distinct() %>% 
+  deframe()
+
+dist <- fbdist %>% 
+  mutate(trait = factor(trait, levels = order)) %>% 
+  arrange(trait) %>% 
+  plot_raw(type = "box"
+         , x = "pop"
+         , y = "value"
+         , legend = "none"
+         , xlab = "Population"
+         , ylab = ""
+           ) +
+  facet_wrap(~ trait, scales = "free_y"
+             , labeller = as_labeller(lb)
+             , nrow = 3
+             ) + 
+  geom_violin(trim=FALSE)+
+  geom_boxplot(width=0.1)
+
+dist$layers[[1]] <- NULL
+dist$layers[[1]] <- NULL
+
+fig <- dist %>% 
+  ggsave2(filename = "manuscript/SFigure-02.jpg"
+          , units = "cm", width = 35, height = 15)
+
+fig %>% include_graphics()
+```
+
+# Genotypic data
+
+Genotypic data is in a BCF file which has more than 2 Gb large and harbors >900.000 SNPs. In order to keep the running times manageable, the number of SNPs has to be reduce.
+
+The snp pruning were performed in the server of the Crop Biodiversity and Breeding Informatics groups at University of Hohenheim.
+
+```{bash}
+#| eval: false
+
+ssh flaaw57@server231.ipsp.uni-hohenheim.de
+cd /work/workspaces/novogene-sequencing-job-2021/vcfs/
+cd /work/workspaces/flavio/quinoagenetics/
+
+# -e stands for "exclude." It removes variants that meet the specified condition.
+# F_MISSING refers to the fraction of missing data at a variant site.
+# > 0.8 means any variants where more than 50% of the data are missing will be excluded (filtered out).
+
+bcftools filter -e 'F_MISSING > 0.8' -O z xclude/quinoa_run1_all.bcf > xclude/quinoa_0.8.vcf.gz
+
+# export names to rename
+bcftools query -l xclude/quinoa_0.8.vcf.gz > xclude/genotype_names.txt
+```
+
+## Genotypes names to rename vcf file
+
+```{r}
+#| eval: false
+
+vcf.names <- "xclude/genotype_names.txt" %>% 
+  read.csv(header = F, col.names = "name_old") %>% 
+  mutate(pmatch = toupper(name_old)) %>% 
+  mutate(match = gsub(".*A(.+)_F.*", "\\1", pmatch)) %>% 
+  select(!pmatch)
+
+geno.names <- "genetics/genotype-names.csv" %>% 
+  read.csv() %>% 
+  unite(match, c(plots, crossn, line), remove = F, sep = "_") %>% 
+  mutate(name_new = case_when(
+    cross %in% c("SAL", "PAN", "HUA", "KCA", "COL", "BDJ", "CHU", "AYR", "CHO", "PAS") ~  as.character(paste(cross, line, crossn, sep = "_"))
+    , TRUE ~ as.character(paste(cross, line, sep = "_"))
+  )) %>% 
+  select(match, name_new) %>% 
+  distinct(name_new, .keep_all = T)
+
+vcf.rename <- merge(vcf.names, geno.names, by = "match", all.x = T) %>% 
+  mutate(name_new = case_when(
+    is.na(name_new) ~ name_old
+    , TRUE ~ name_new
+  )) %>% 
+  select(!match) %>% 
+  mutate(name_new = gsub("KCA", "KAN", name_new)) %>% 
+  mutate(name_new = gsub("COL", "NCO", name_new))
+
+tab <- vcf.rename %>% 
+  distinct(name_new) 
+
+vcf.rename %>% write_tsv("genetics/vcf.rename.txt")
+```
+
+## Rename VCF file
+
+```{bash}
+#| eval: false
+
+bcftools reheader -s genetics/vcf.rename.txt xclude/quinoa_0.8.vcf.gz > xclude/quinoa_0.8_rhd.vcf.gz
+
+# check rename
+bcftools query -l xclude/quinoa_0.8_rhd.vcf.gz
+```
+
+## Filter by Population
+
+```{bash}
+#| eval: false
+
+bcftools query -l xclude/quinoa_0.8_rhd.vcf.gz > genetics/genotype_renamed.txt
+cat genetics/genotype_renamed.txt
+
+# Filter NAM populations for SAL and KAN
+
+grep -E "SALx|xKAN" genetics/genotype_renamed.txt > genetics/populations.txt
+cat populations.txt
+
+# SNPs for all populations
+
+bcftools view -S genetics/populations.txt xclude/quinoa_0.8_rhd.vcf.gz > xclude/quinoa_pops.vcf.gz
+```
+
+# snpR
+
+> https://www.nature.com/articles/s41576-024-00738-6/tables/1
+> https://doi.org/10.1111/1755-0998.13721
+
+```{r}
+# vcffile <- choose.files()
+
+vcfile <- "xclude/quinoa_pops.vcf.gz"
+
+snpdt <- snpR::read_vcf(file = vcfile)
+snpdt
+
+sample_meta <- snpdt %>% 
+  names() %>% 
+  gsub("_.*", "", .) %>% 
+  enframe(value = "cross") %>% 
+  mutate(pop = case_when(
+    str_detect(cross, "xKAN") ~ "KAN"
+    , str_detect(cross, "KAN") ~ "KAN"
+    , str_detect(cross, "SALx") ~ "SAL"
+    , str_detect(cross, "SAL") ~ "SAL"
+  ))
+  
+sample.meta(snpdt)$cross <- factor(sample_meta$cross
+                                   , levels = c("HUAxKAN", "NCOxKAN", "PASxKAN"
+                                                , "SALxHUA", "SALxNCO", "SALxPAN"))
+sample.meta(snpdt)$pop <- sample_meta$pop
+
+sample.meta(snpdt)
+snp.meta(snpdt)
+```
+
+# Clean genotyping data
+
+```{r}
+# SNP filtering for population structure analyses
+# Based on Hemstrom et al. (2024)
+
+snpdt_filt <- snpR::filter_snps(
+  x = snpdt
+  , maf = 0.05           # Retain SNPs with MAF ≥ 5%
+  , min_ind = 0.50       # SNPs genotyped in ≥50% of individuals
+  , min_loci = 0.50      # Individuals genotyped at ≥50% of SNPs
+  , maf_facets = "cross" # Evaluate MAF within each NAM cross
+)
+
+# Inspect applied filters
+snpR::filters(snpdt_filt)
+```
+
+# Export data
+
+```{r}
+#| eval: false
+
+sample.meta(snpdt_filt)
+snp.meta(snpdt_filt)
+
+npop <- sample.meta(snpdt_filt) %>% 
+  group_by(cross) %>% 
+  summarise(pops = n())
+
+npop %>% kable(caption = "Individual by cross")
+
+vcfdt <- format_snps(x = snpdt_filt
+                     , output = "vcf"
+                     , chr = "CHROM"
+                     , position = "position"
+                     , facets = "pop"
+                     , verbose = TRUE
+                     , outfile = "genetics/pops/nam"
+                     )
+
+snpR::citations(snpdt_filt)
+snpR::filters(snpdt_filt)
+
+vcfdt <- format_snps(x = snpdt_filt
+                     , output = "vcf"
+                     , chr = "CHROM"
+                     , position = "position"
+                     , verbose = TRUE
+                     , outfile = "genetics/pops/quinoa.vcf"
+                     )
+```
+
+# Sequencing depth
+
+```{r}
+#| eval: false
+
+library(vcfR)
+library(tidyverse)
+
+# Leer archivo VCF
+vcf <- read.vcfR("xclude/quinoa_0.8_rhd.vcf.gz")
+
+# Extraer profundidad de cobertura (DP)
+dp <- extract.gt(vcf, element = "DP", as.numeric = TRUE) %>% 
+  data.frame() %>% 
+  rownames_to_column("marker") %>% 
+  pivot_longer(!marker, values_to = "dp") %>% 
+  drop_na(dp)
+
+ggplot(dp, aes(x = dp)) +
+  geom_histogram() +
+  scale_x_continuous(expand = c(0, 0), n.breaks = 20, limits = c(0, 40)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(0, 2500000), n.breaks = 10) +
+  labs(x = "Sequencing depth",
+       y = "Frequency") +
+  theme_minimal()
+```
+
+# Breeding scheme
+
+```{r}
+#| label: Image pdf to jpeg
+
+library(tidyverse)
+library(magick)
+
+pdf4pub <- list.files("files/", pattern = "Fig.*pdf", full.names = T) 
+
+path <- "manuscript/"
+
+imgs <- 1:length(pdf4pub) %>% map(\(x) {
+  
+  filename <- pdf4pub[x] %>% 
+    basename() %>% 
+    gsub(".pdf", "\\1.jpeg", .) 
+  
+  pdf4pub[x] %>% 
+    image_read_pdf() %>% 
+    image_write(format = "jpeg", file.path(path, "Figure-01.jpg"))
+})
+```
+
+# Objectives Specific 1
+
+## PCA
+
+```{r}
+pca <- plot_clusters(snpdt_filt, facets = c("pop.cross")
+                     , check_duplicates = TRUE
+                     , plot_type = "pca"
+                     , shape_has_more_levels = FALSE 
+                     )
+
+paleta <- c("#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#66a61e", "#e6ab02")
+
+p1a <- pca$plots$pca +
+  geom_point(aes(shape = pop, color = cross), size = 1.7) +
+  scale_shape_manual(values = c("KAN" = 16, "SAL" = 17)) +
+  scale_color_manual(values = paleta) +
+  labs(
+    color = "Cross",
+    shape = "Population"
+  ) +
+  theme_minimal()
+
+p1a
+```
+
+## Population structure
+
+```{r}
+popstr_k <- snpR::plot_structure(x = snpdt_filt
+                               , facet = "cross"
+                               , k = 2:10
+                               , method = "snmf"
+                               , reps = 20
+                               , clumpp = FALSE
+                               , clumpp_path = "C:/CLUMPP/CLUMPP.exe"
+                               )
+
+plot_sfa <- popstr_k$plot
+
+# Calcular la entropía cruzada promedio y desviación estándar por cada K
+k_summary <- popstr_k$K_plot %>%
+  group_by(k) %>%
+  summarise(
+    mean_entropy = mean(Cross.Entropy, na.rm = TRUE),
+    sd_entropy = sd(Cross.Entropy, na.rm = TRUE)
+  )
+
+# Visualizar la curva de entropía cruzada
+plot_sfb <- ggplot(k_summary, aes(x = k, y = mean_entropy)) +
+  geom_line(color = "blue", linewidth = 1) +
+  geom_point(size = 3) +
+  labs(
+    title = "Optimal K value selection with sNMF",
+    x = "Number of clusters (K)",
+    y = "Mean cross-entropy"
+  ) +
+  theme_minimal(base_size = 14) +
+  scale_x_continuous(breaks = k_summary$k) +
+  theme(panel.grid.minor = element_blank())
+
+list(plot_sfa + 
+       scale_fill_brewer(type = "qual", palette = "Paired") + 
+       theme(
+      legend.position = "top",
+      legend.direction = "horizontal",
+      legend.box = "horizontal"
+      )
+     , plot_sfb 
+     ) %>% 
+  plot_grid(plotlist = ., ncol = 1, rel_heights = c(1, 0.3)) %>% 
+  ggsave2(plot = ., "manuscript/SFigure-01.jpg"
+                 , width = 35, height = 30, units = "cm")
+
+popstr <- snpR::plot_structure(x = snpdt_filt
+                               , facet = "cross"
+                               , k = 3
+                               , method = "snmf"
+                               , clumpp = FALSE
+                               , reps = 1
+                               )
+
+p1b <- popstr$plot +
+  scale_fill_brewer(type = "qua", palette = "Accent")
+
+p1b
+```
+
+## FST
+
+```{r}
+# Calculate pairwise fst
+x <- calc_pairwise_fst(snpdt_filt, c("cross"))
+
+# plot
+p1c <- plot_pairwise_fst_heatmap(x, "cross")
+p1c
+```
+
+### PopCluster: Population Structure 
+
+> https://doi.org/10.1038/s41437-022-00535-z
+> https://www.zsl.org/about-zsl/resources/software/popcluster
+
+## Data convertion
+
+```{bash}
+#| eval: false
+
+echo 1 | "C:\ZSL\PopCluster1\vcf2dat.exe" genetics\\pops\\nam_KAN.vcf
+
+echo 1 | "C:\ZSL\PopCluster1\vcf2dat.exe" genetics\\pops\\nam_SAL.vcf
+
+echo 1 | "C:\ZSL\PopCluster1\vcf2dat.exe" genetics\\pops\\quinoa.vcf
+```
+
+## Clean data
+
+```{r}
+#| eval: false
+
+rm <- list.files(path = "genetics/pops/"
+                 , full.names = T
+                 , recursive = T
+                 ) %>% 
+  discard(~ str_detect(string = .x, pattern = ".dat|.PcPjt|.txt|.vcf")) 
+
+unlink(rm)
+```
+
+## Run analysis
+
+```{bash}
+#| eval: false
+
+open "C:\ZSL\PopCluster1\PopCluster.pdf"
+
+PopClusterWin -help
+
+"C:\ZSL\PopCluster1\PopClusterWin.exe" INP:genetics\\pops\\KANpc.PcPjt MPI:20 OMP:1
+
+"C:\ZSL\PopCluster1\PopClusterWin.exe" INP:genetics\\pops\\SALpc.PcPjt MPI:20 OMP:1
+
+"C:\ZSL\PopCluster1\PopClusterWin.exe" INP:genetics\\pops\\quinoa.PcPjt MPI:20 OMP:1 
+
+open "C:\ZSL\PopCluster1\PopCluster.exe"
+```
+
+```{r}
+#| eval: false
+
+ktest <- 10
+
+kvalue <- read.table("genetics/pops/popcluster/quinoa.K", 
+                             header = TRUE, 
+                             nrows = ktest, 
+                             stringsAsFactors = FALSE, 
+                             sep = "", 
+                             na.strings = c("-", "NA")) %>% 
+  pivot_longer(!c(K, BestRun), names_to = "index")
+
+plot <- kvalue %>% 
+  filter(index %in% c("DLK1", "DLK2", "FST.FIS")) %>% 
+  plot_smr(type = "line"
+           , x = "K"
+           , y = "value"
+           , group = "index"
+           , ylab = "KEstimator"
+           ) +
+  scale_x_continuous(n.breaks = ktest)
+
+plot
+```
+
+## LD decay
+
+```{bash}
+# vcf to bed
+
+plink2 \
+    --vcf genetics/pops/nam_SAL.vcf \
+    --allow-extra-chr \
+    --double-id \
+    --make-bed \
+    --out genetics/pops/SAL
+    
+plink2 \
+    --vcf genetics/pops/nam_KAN.vcf \
+    --allow-extra-chr \
+    --double-id \
+    --make-bed \
+    --out genetics/pops/KAN
+
+# LD calculation
+
+plink2 \
+    --bfile genetics/pops/SAL \
+    --allow-extra-chr \
+    --r2-unphased \
+    --ld-window 99999 \
+    --ld-window-kb 10000 \
+    --ld-window-r2 0 \
+    --out genetics/pops/SAL_LD
+
+plink2 \
+    --bfile genetics/pops/KAN \
+    --allow-extra-chr \
+    --r2-unphased \
+    --ld-window 99999 \
+    --ld-window-kb 10000 \
+    --ld-window-r2 0 \
+    --out genetics/pops/KAN_LD
+```
+
+```{r}
+##----------------------------
+## Read LD files
+##----------------------------
+
+ld_sal <- read_table("genetics/pops/SAL_LD.vcor",
+                     show_col_types = FALSE) |>
+    mutate(pop = "SAL")
+
+ld_kan <- read_table("genetics/pops/KAN_LD.vcor",
+                     show_col_types = FALSE) |>
+    mutate(pop = "KAN")
+
+ld <- bind_rows(ld_sal, ld_kan)
+
+##----------------------------
+## Distance
+##----------------------------
+
+ld <- ld %>% 
+    mutate(distance = abs(POS_B - POS_A))
+
+##----------------------------
+## Remove different chromosomes
+##----------------------------
+
+ld <- ld %>% 
+    filter(`#CHROM_A` == CHROM_B)
+
+##----------------------------
+## Create bins
+##----------------------------
+
+bin_size <- 50000   # 50 kb
+
+ld <- ld %>% 
+    mutate(bin = floor(distance/bin_size)*bin_size)
+
+##----------------------------
+## Mean LD
+##----------------------------
+
+ld_summary <- ld %>% 
+    group_by(pop, bin) %>% 
+    summarise(
+        mean_r2 = mean(UNPHASED_R2, na.rm = TRUE),
+        median_r2 = median(UNPHASED_R2, na.rm = TRUE),
+        n = n(),
+        .groups = "drop"
+    ) %>% 
+    filter(n >= 50)
+
+ggplot(ld_summary,
+       aes(bin/1000,
+           mean_r2,
+           colour = pop))+
+
+    geom_line(linewidth = 1.2)+
+
+    geom_hline(yintercept = 0.2,
+               linetype = 2)+
+
+    labs(x="Physical distance (kb)",
+         y=expression(r^2),
+         colour="Population")+
+
+    theme_classic(base_size = 14)
+```
+
+```{r}
+fig1 <- list(p1a, p1b, p1c) %>% 
+  plot_grid(plotlist = ., ncol = 2, labels = "auto") %>% 
+  ggsave(plot = .
+         , filename = "manuscript/Figure-02.jpg"
+         , units = "cm", width = 35, height = 20)
+```
+
+## Diversity indices
+
+```{r}
+# cross
+
+snpdt_filt <- calc_pi(snpdt_filt, "cross")
+snpdt_filt <- calc_ho(snpdt_filt, "cross")
+snpdt_filt <- calc_he(snpdt_filt, "cross")
+snpdt_filt <- calc_fis(snpdt_filt, "cross")
+snpdt_filt <- calc_prop_poly(snpdt_filt, "cross")
+
+stats <- get.snpR.stats(snpdt_filt, "cross"
+                        , stats = c("pi", "he", "ho", "fis", "prop_poly"))
+
+tab_cross <- stats$weighted.means %>% 
+  dplyr::select(subfacet, matches("weighted|prop")) %>% 
+  rename_with(~ gsub("weighted_mean_", "", .)) %>% 
+  rename("Population" = subfacet) %>% 
+  mutate(across(where(is.numeric), ~ round(., 2)))
+
+# NAM
+
+snpdt_filt <- calc_pi(snpdt_filt, "pop")
+snpdt_filt <- calc_ho(snpdt_filt, "pop")
+snpdt_filt <- calc_he(snpdt_filt, "pop")
+snpdt_filt <- calc_fis(snpdt_filt, "pop")
+snpdt_filt <- calc_prop_poly(snpdt_filt, "pop")
+
+stats <- get.snpR.stats(snpdt_filt, "pop"
+                        , stats = c("pi", "he", "ho", "fis", "prop_poly"))
+
+tab_nam <- stats$weighted.means %>% 
+  dplyr::select(subfacet, matches("weighted|prop")) %>% 
+  rename_with(~ gsub("weighted_mean_", "", .)) %>% 
+  rename("Population" = subfacet) %>% 
+  mutate(across(where(is.numeric), ~ round(., 2)))
+
+tab <- list(tab_nam, tab_cross)  %>% 
+  bind_rows() %>% 
+  tibble::add_row(Population = "NAM", .before = 1) %>%
+  tibble::add_row(Population = "Cross", .before = 4) %>% 
+  dplyr::rename(poly = "prop_poly") %>% 
+  dplyr::select(!pi) %>% 
+  mutate(n = c(NA, 59, 59, NA, 17, 21, 21, 16, 24, 19)) %>% 
+  rename(Ho = ho, He = he, FIS = fis)
+
+tab %>% kable()
+  
+# tab %>% googlesheets4::sheet_write(ss = gs, "Table1")
+
+#> genetic distance
+
+snpdt_filt <- calc_genetic_distances(snpdt_filt, "cross")
+get.snpR.stats(snpdt_filt, "cross", "genetic_distance")
+```
+
+# Specific Objective 2
+
+> rMVP: Memory-efficient, Visualization-enhanced, and Parallel-accelerated Genome-Wide Association Study
+
+- https://github.com/xiaolei-lab/rMVP
+- https://github.com/YinLiLin/CMplot
+
+```{r}
+library(tidyverse)
+library(NAM)
+library(vcfR)
+library(CMplot)
+library(rMVP)
+```
+
+### SALCEDO NAM
+
+```{r}
+pheno <- fb %>% 
+  filter(grepl("SALx", line)) %>%
+  dplyr::select(!c(pop, cross, nline)) %>%
+  write_csv("genetics//mlt-sal.csv")
+
+MVP.Data(fileVCF = "genetics/pops/nam_SAL.vcf"
+         , filePhe = "genetics/mlt-sal.csv"
+         , sep.phe = ","
+         , priority = "speed"
+         , fileKin = FALSE
+         , filePC = FALSE
+         , out = "genetics/rmvp/dt_sal"
+         , ncpus = ncores
+         )
+```
+
+### Kinship
+
+```{r}
+MVP.Data.Kin(fileKin = TRUE
+             , mvp_prefix = 'genetics/rmvp/dt_sal'
+             , out = 'genetics/rmvp/kin_sal')
+```
+
+### Data input
+
+```{r}
+genotype <- attach.big.matrix("genetics/rmvp/dt_sal.geno.desc")
+phenotype <- read.table("genetics/rmvp/dt_sal.phe", head = TRUE)
+mapping <- read.table("genetics/rmvp/dt_sal.geno.map", head = TRUE)
+kinship <- attach.big.matrix("genetics/rmvp/kin_sal.kin.desc")
+```
+
+##  GWAS
+
+```{r}
+mvp <- 2:length(phenotype) %>% map(\(x) {
+  
+  gc()  
+  
+  MVP(phe = phenotype %>% dplyr::select(1, all_of(x))
+    , geno = genotype
+    , map = mapping
+    , K = kinship
+    , vc.method = "EMMA"
+    , method = c("FarmCPU")
+    , maxLoop = 20
+    , outpath = "genetics/gwas/"
+    , file.output = FALSE
+    , file.type = "csv"
+    , ncpus = ncores
+    )
+})
+
+# FarmCPU p-values 
+
+gwas_sal <- 1:length(mvp) %>% map(\(x) {
+  
+  bind_cols(mvp[[x]]$map, mvp[[x]]$farmcpu.results) %>% 
+    dplyr::select(!c(Effect, SE)) %>% 
+    rownames_to_column()
+  
+}) %>% 
+  Reduce(function(...) merge(..., all = TRUE), .) %>% 
+  arrange(as.numeric(rowname)) %>% 
+  dplyr::select(!c(rowname, MAF, A1, A2)) %>% 
+  rename_with(~ gsub(".FarmCPU", "-SAL", .))
+```
+
+## KANCOLLA NAM
+
+```{r}
+pheno <- fb %>% 
+  filter(grepl("xKAN", line)) %>% 
+  dplyr::select(!c(pop, cross, nline)) %>%
+  write_csv("genetics//mlt-kan.csv")
+
+MVP.Data(fileVCF = "genetics/pops/nam_KAN.vcf"
+         , filePhe = "genetics/mlt-kan.csv"
+         , sep.phe = ","
+         , priority = "speed"
+         , fileKin = FALSE
+         , filePC = FALSE
+         , out = "genetics/rmvp/dt_kan"
+         , ncpus = ncores
+         )
+```
+
+### Kinship
+
+```{r}
+MVP.Data.Kin(fileKin = TRUE
+             , mvp_prefix = 'genetics/rmvp/dt_kan'
+             , out = 'genetics/rmvp/kin_kan')
+```
+
+### Data input
+
+```{r}
+genotype <- attach.big.matrix("genetics/rmvp/dt_kan.geno.desc")
+phenotype <- read.table("genetics/rmvp/dt_kan.phe", head = TRUE)
+mapping <- read.table("genetics/rmvp/dt_kan.geno.map", head = TRUE)
+kinship <- attach.big.matrix("genetics/rmvp/kin_kan.kin.desc")
+```
+
+##  GWAS
+
+```{r}
+mvp <- 2:length(phenotype) %>% map(\(x) {
+  
+  gc()  
+  
+  MVP(phe = phenotype %>% dplyr::select(1, all_of(x))
+    , geno = genotype
+    , map = mapping
+    , K = kinship
+    , vc.method = "EMMA"
+    , method = c("FarmCPU")
+    , maxLoop = 20
+    , outpath = "genetics/gwas/"
+    , file.output = FALSE
+    , file.type = "csv"
+    , ncpus = ncores
+    )
+    
+})
+
+# FarmCPU p-values 
+
+gwas_kan <- 1:length(mvp) %>% map(\(x) {
+  
+  bind_cols(mvp[[x]]$map, mvp[[x]]$farmcpu.results) %>% 
+    dplyr::select(!c(Effect, SE)) %>% 
+    rownames_to_column()
+  
+}) %>% 
+  Reduce(function(...) merge(..., all = TRUE), .) %>% 
+  arrange(as.numeric(rowname)) %>% 
+  dplyr::select(!c(rowname, MAF, A1, A2)) %>% 
+  rename_with(~ gsub(".FarmCPU", "-KAN", .))
+```
+
+## Merge GWAS NAM populations
+
+```{r}
+gwas_rmvp <- base::merge(x = gwas_sal, y = gwas_kan
+                  , by = c("SNP", "CHROM", "POS")
+                  ) %>% arrange(CHROM)
+
+alpha_bon <- 0.05/6054 # Bonferroni
+
+qtl <- gwas_rmvp %>% 
+  pivot_longer(!c(1:POS), values_to = "p-value") %>% 
+  separate(name, c("Trait", "Population"), sep = "-") %>% 
+  arrange(Trait, Population) %>% 
+  mutate(log10 = -log10(`p-value`)) %>% 
+  mutate(alpha = case_when(
+    `p-value` <= alpha_bon ~ "Bonferroni"
+  )) %>% 
+  drop_na(alpha) %>% 
+  mutate(Trait = dplyr::recode(Trait, !!!traitnames))
+  
+qtl %>% kable()
+
+# qtl %>% dplyr::select(Trait, Population, everything()) %>% dplyr::select(!`p-value`) %>% write_sheet(ss = gs, sheet = "STable3")
+
+qtl %>% 
+  group_by(Population) %>% 
+  summarise(n = n())
+
+qtl %>% 
+  group_by(Trait, Population) %>% 
+  summarise(n = n())
+```
+
+## SNP density-plot
+
+```{r}
+dsp <- ~ {
+  
+  CMplot(gwas_rmvp
+       , plot.type = "d"
+       , bin.size = 1e6 
+       , chr.den.col = c("darkgreen", "yellow", "red")
+       , file.output = F
+       )
+  }
+
+dsp %>% 
+  plot_grid(plotlist = .) %>% 
+  ggsave2(filename = "manuscript/SFigure-03.jpg"
+         , width = 20
+         , height = 20
+         , units = "cm"
+         )
+```
+
+## Manhatan
+
+```{r}
+plot_mh <- 4:15 %>% map(\(x) {
+  
+  \() {
+    
+    trait <- names(gwas_rmvp)[x] %>% gsub("-.*", "", .)
+    
+    title <- traitnames %>% enframe() %>% 
+      filter(name %in% trait) %>% dplyr::select(value) %>% 
+      as_vector()
+    
+    CMplot(Pmap = gwas_rmvp %>% dplyr::select(1:3, starts_with({{trait}}))
+       , plot.type = "m"
+       , multraits = TRUE
+       , LOG10=TRUE
+       , threshold=c(alpha_bon)
+       , main = title
+       , main.cex = 1
+       , legend.pos="middle"
+       , chr.labels.angle = 75
+       , file.output=FALSE
+       , verbose=TRUE
+       , threshold.col=c("black", "red")
+       , col = c("#FD9135","#33AEAF")
+      ) 
+    
+  }
+
+})
+
+plot_mh[c(1:4, 6:8, 11)] %>% 
+  plot_grid(plotlist = ., ncol = 4, labels = "auto") %>% 
+  ggsave2(filename = "manuscript/Figure-03.jpg"
+         , width = 60
+         , height = 30
+         , units = "cm"
+         )
+```
+
+## Q-Q plot
+
+```{r}
+plot_qq <- 4:15 %>% map(\(x) {
+  
+  \() {
+    
+    trait <- names(gwas_rmvp)[x] %>% gsub("-.*", "", .) 
+    
+    CMplot(Pmap = gwas_rmvp %>% dplyr::select(1:3, starts_with({{trait}}))
+       , plot.type = "q"
+       , col = c("red", "blue")
+       , multraits = TRUE
+       , threshold = alpha_bon
+       , signal.pch = c(15)
+       , signal.cex = 1.2
+       , signal.col = "red"
+       , conf.int = FALSE
+       , box = FALSE
+       , axis.cex = 1
+       , file.output = FALSE
+       , verbose=TRUE
+       )
+  }
+
+})
+
+plot_qq %>% 
+  plot_grid(plotlist = ., ncol = 4, labels = "auto") %>% 
+  ggsave2(filename = "manuscript/SFigure-04.jpg"
+         , width = 60
+         , height = 40
+         , units = "cm"
+         )
+```
+
+# NAM: Nested Association Mapping
+
+> https://cran.r-project.org/web/packages/NAM/index.html
+
+## SALCEDO NAM
+
+```{r}
+pheno <- fb %>% 
+  filter(grepl("SALx", line))
+
+vcfdt  <- "genetics/pops/nam_SAL.vcf" %>% 
+  vcfR::read.vcfR()
+
+info <- vcfdt %>% 
+  vcfR::getFIX() %>% 
+  as.data.frame() %>% 
+  mutate(across(ID, ~ gsub("_", "",. ))) %>% 
+  rowid_to_column()
+
+chr <- info %>% 
+  as.data.frame() %>% 
+  mutate(chrome = gsub(".*([0-9]+[A-Z]+).*", "\\1", CHROM)) %>% 
+  group_by(chrome) %>% 
+  summarise(n = n()) %>% 
+  deframe()
+  
+gwsdt <- vcfdt %>% 
+  extract.gt() %>% 
+  as.data.frame() %>% 
+  mutate(across(everything(.), ~ case_when(
+    . %in% "1/1" ~ 2
+    , . %in% "0/1" ~ 1
+    , . %in% "1/0" ~ 1
+    , . %in% "0/0" ~ 0
+  ))) %>% 
+  rownames_to_column() %>% 
+  arrange(rowname) %>% 
+  pivot_longer(!rowname, names_to = "geno", values_to = "col") %>% 
+  pivot_wider(names_from = "rowname", values_from = "col") %>% 
+  separate(geno, c("family", "line"), remove = F) %>% 
+  dplyr::select(!line) %>% 
+  mutate(fam = case_when(
+    family %in% "SALxPAN" ~ 1
+    , family %in% "SALxNCO" ~ 2
+    , family %in% "SALxHUA" ~ 3
+  ), .after = family) %>% 
+  merge(., pheno, by.x = "geno", by.y = "line")
+
+rsl <- (length(gwsdt) - 11):length(gwsdt) %>% map(\(x) {
+  
+  trait <- gwsdt[x]
+  
+  nam_gwas = gwas(y = trait
+                , gen = gwsdt %>% dplyr::select(starts_with("SNP_"))
+                , fam = gwsdt$fam
+                , chr = chr
+                )
+  
+  plot(nam_gwas, alpha = alpha_bon
+         , main = names(trait)
+         ) %>% print
+  
+  nam_gwas$PolyTest %>% mutate(trait = names(trait)) %>% 
+    rownames_to_column("ID")
+  
+}) 
+
+gwas_sal_nam <- rsl %>% 
+  bind_rows() %>% 
+  dplyr::select(ID, pval, trait) %>% 
+  pivot_wider(names_from = trait, values_from = pval) %>% 
+  base::merge(info, ., by = "ID") %>% 
+  arrange(rowid) %>% 
+  dplyr::select(!c(rowid, REF:FILTER))
+```
+
+## KANCOLLA NAM
+
+```{r}
+pheno <- fb %>% 
+  filter(grepl("xKAN", line))
+
+vcfdt  <- "genetics/pops/nam_KAN.vcf" %>% 
+  vcfR::read.vcfR()
+
+info <- vcfdt %>% 
+  vcfR::getFIX() %>% 
+  as.data.frame() %>% 
+  mutate(across(ID, ~ gsub("_", "",. ))) %>% 
+  rowid_to_column()
+
+chr <- info %>% 
+  as.data.frame() %>% 
+  mutate(chrome = gsub(".*([0-9]+[A-Z]+).*", "\\1", CHROM)) %>% 
+  group_by(chrome) %>% 
+  summarise(n = n()) %>% 
+  deframe()
+  
+gwsdt <- vcfdt %>% 
+  extract.gt() %>% 
+  as.data.frame() %>% 
+  mutate(across(everything(.), ~ case_when(
+    . %in% "1/1" ~ 2
+    , . %in% "0/1" ~ 1
+    , . %in% "1/0" ~ 1
+    , . %in% "0/0" ~ 0
+  ))) %>% 
+  rownames_to_column() %>% 
+  arrange(rowname) %>% 
+  pivot_longer(!rowname, names_to = "geno", values_to = "col") %>% 
+  pivot_wider(names_from = "rowname", values_from = "col") %>% 
+  separate(geno, c("family", "line"), remove = F) %>% 
+  dplyr::select(!line) %>% 
+  mutate(fam = case_when(
+    family %in% "HUAxKAN" ~ 1
+    , family %in% "NCOxKAN" ~ 2
+    , family %in% "PASxKAN" ~ 3
+  ), .after = family) %>% 
+  merge(., pheno, by.x = "geno", by.y = "line")
+
+rsl <- (length(gwsdt) - 11):length(gwsdt) %>% map(\(x) {
+  
+  trait <- gwsdt[x]
+  
+  nam_gwas = gwas(y = trait
+                , gen = gwsdt %>% dplyr::select(starts_with("SNP_"))
+                , fam = gwsdt$fam
+                , chr = chr
+                )
+  
+  plot(nam_gwas, alpha = 0.05/nrow(info)
+         , main = names(trait)
+         ) %>% print
+  
+  nam_gwas$PolyTest %>% mutate(trait = names(trait)) %>% 
+    rownames_to_column("ID")
+  
+}) 
+
+gwas_kan_nam <- rsl %>% 
+  bind_rows() %>% 
+  dplyr::select(ID, pval, trait) %>% 
+  pivot_wider(names_from = trait, values_from = pval) %>% 
+  base::merge(info, ., by = "ID") %>% 
+  arrange(rowid) %>% 
+  dplyr::select(!c(rowid, REF:FILTER))
+```
+
+## Merge GWAS NAM populations
+
+p-val in the NAM package is the -log(p-value)
+
+```{r}
+gwas_nam <- base::merge(x = gwas_sal_nam, y = gwas_kan_nam
+                        , by = c("ID", "CHROM", "POS")
+                        ) %>% 
+  rename_with(~ gsub("\\.x", "-SAL", .)) %>% 
+  rename_with(~ gsub("\\.y", "-KAN", .)) %>% 
+  arrange(CHROM) 
+```
+
+## Manhatan
+
+```{r}
+plot_mh <- 4:15 %>% map(\(x) {
+  
+  \() {
+    
+    trait <- names(gwas_nam)[x] %>% gsub("-.*", "", .)
+    
+    title <- traitnames %>% enframe() %>% 
+      filter(name %in% trait) %>% dplyr::select(value) %>% 
+      as_vector()
+    
+    CMplot(Pmap = gwas_nam %>% dplyr::select(1:3, starts_with({{trait}}))
+       , plot.type = "m"
+       , multraits = TRUE
+       , LOG10 = FALSE
+       , threshold = c(alpha_bon)
+       , main = title
+       , main.cex = 1
+       , legend.pos="middle"
+       , chr.labels.angle = 75
+       , file.output=FALSE
+       , verbose=TRUE
+       , threshold.col=c("black", "red")
+       , col = c("#FD9135","#33AEAF")
+      ) 
+  }
+})
+
+plot_mh %>% 
+  plot_grid(plotlist = ., ncol = 4, labels = "auto") %>% 
+  ggsave2(filename = "manuscript/SFigure-05.jpg"
+         , width = 70
+         , height = 40
+         , units = "cm"
+         )
+```
+
+## Q-Q plot
+
+```{r}
+plot_qq <- 4:15 %>% map(\(x) {
+  
+  \() {
+    
+    trait <- names(gwas_nam)[x] %>% gsub("-.*", "", .)
+    
+    CMplot(Pmap = gwas_nam %>% dplyr::select(1:3, starts_with({{trait}}))
+           , plot.type = "q"
+           , col = c("red", "blue")
+           , multraits = TRUE
+           , LOG10= F
+           , threshold = c(6)
+           , ylab.pos = 2
+           , signal.pch = c(15)
+           , signal.cex = 1.2
+           , signal.col = "red"
+           , conf.int = FALSE
+           , box = FALSE
+           , axis.cex = 1
+           , file.output = FALSE
+       )
+  }
+
+})
+
+plot_qq %>% 
+  plot_grid(plotlist = ., ncol = 4, labels = "auto") %>% 
+  ggsave2(filename = "manuscript/SFigure-06.jpg"
+         , width = 70
+         , height = 40
+         , units = "cm"
+         )
+```
+
+## Gene Ontology
+
+```{r}
+# if(!requireNamespace("BiocManager")) install.packages("BiocManager")
+# BiocManager::install(c("GenomicRanges","rtracklayer"))
+
+library(data.table)
+library(dplyr)
+library(GenomicRanges)
+library(rtracklayer)
+
+# browseURL("https://genomevolution.org/coge/GenomeInfo.pl?gid=60716")
+
+gff <- BiocIO::import("genetics/quinoa_QQ74.gff3")
+genes <- gff[gff$type == "gene"]
+
+qtl
+
+gr_snps <- GRanges(
+  seqnames = qtl$CHROM,
+  ranges = IRanges(start = qtl$POS,
+                   end = qtl$POS),
+  SNP = qtl$SNP
+)
+
+window_size <- 100000 # ±100 kb
+
+gr_windows <- resize(gr_snps,
+                     width = window_size*2 + 1,
+                     fix = "center")
+
+hits <- findOverlaps(gr_windows, genes)
+
+candidate_genes <- data.frame(
+  SNP = gr_windows$SNP[queryHits(hits)],
+  gene_id = genes$ID[subjectHits(hits)],
+  CHROM = seqnames(genes)[subjectHits(hits)],
+  gene_start = start(genes)[subjectHits(hits)],
+  gene_end = end(genes)[subjectHits(hits)],
+  annotation = genes$note[subjectHits(hits)]
+) %>% 
+  drop_na(annotation)
+
+candidate_genes %>% kable()
+
+trait2gene <- base::merge(candidate_genes, qtl) %>% 
+  dplyr::select(Trait, Population, SNP, CHROM
+                , gene_id, 
+                , POS
+                , gene_start
+                , gene_end
+                , annotation
+                , !c(`p-value`, log10, alpha)
+                ) %>% 
+  arrange(CHROM, Trait)
+
+qtl$SNP %>% length() 
+trait2gene$SNP %>% factor() %>% nlevels() 
+
+# trait2gene %>% write_sheet(ss = gs, sheet = "STable4")
+
+trait2gene %>% kable()
+```
+
+## Specific Objective 3
+
+> Reference
+
+https://pbgworks.org/sites/pbgworks.org/files/Introduction%20to%20Genomic%20Selection%20in%20R.pdf
+
+```{r}
+set.seed(as.numeric(1989-19-08))
+```
+
+```{r}
+library(snpR)
+library(tidyverse)
+
+vcfile <- "genetics/pops/quinoa.vcf"
+
+snpdt <- snpR::read_vcf(file = vcfile)
+snpdt
+
+sample_meta <- snpdt %>% 
+  names() %>% 
+  gsub("_.*", "", .) %>% 
+  enframe(value = "cross") %>% 
+  mutate(pop = case_when(
+    str_detect(cross, "xKAN") ~ "KAN"
+    , str_detect(cross, "KAN") ~ "KAN"
+    , str_detect(cross, "SALx") ~ "SAL"
+    , str_detect(cross, "SAL") ~ "SAL"
+  ))
+  
+sample.meta(snpdt)$cross <- factor(sample_meta$cross
+                                   , levels = c("HUAxKAN", "NCOxKAN", "PASxKAN"
+                                                , "SALxHUA", "SALxNCO", "SALxPAN"))
+sample.meta(snpdt)$pop <- sample_meta$pop
+
+sample.meta(snpdt)
+snp.meta(snpdt)
+
+vcfdt <- format_snps(x = snpdt
+                     , output = "sn"
+                     , interpolate = ""
+                     , chr = "CHROM"
+                     , position = "position"
+                     , facets = "pop"
+                     , verbose = TRUE
+                     # , outfile = "genetics/pops/nam"
+                     ) %>% 
+  mutate(ID = paste0("marker", "_", row.names(.))) %>%
+  pivot_longer(!c(1:FILTER)
+               , names_to = "cross"
+               , values_to = "gt"
+               ) 
+
+genotyping <- vcfdt %>%
+  dplyr::select(id = cross, marker = ID, alleles = gt) %>% 
+  mutate(alleles = case_when(
+    alleles %in% 0 ~ "-1"
+    , alleles %in% 1 ~ "0"
+    , alleles %in% 2 ~ "1"
+  )) %>% 
+  mutate(across(alleles, ~ as.numeric(.))) %>% 
+  pivot_wider(names_from = marker
+              , values_from = alleles)
+```
+
+# KAN Genomic Prediction
+
+```{r}
+geno <- genotyping %>% 
+  filter(str_detect(id, "xKAN")) %>% 
+  column_to_rownames("id")
+  
+pheno <- "genetics/mlt-kan.csv" %>% 
+  read.csv(.) %>% 
+  dplyr::rename(genotypes = line)
+```
+
+## Impute missing values
+
+```{r}
+# A.mat() can perform imputation as part of its relationship matrix calculation.
+# However, for direct marker-based prediction (RR-BLUP), pre-imputation is
+# often done. We can use the 'mean' method for a simple imputation strategy.
+
+imputed_markers <- A.mat(geno
+                         , max.missing = 0.5
+                         , impute.method = "mean"
+                         , return.imputed = T) %>% 
+  pluck("imputed")
+```
+
+## Check data
+
+```{r}
+# Ensure sample IDs match in both genotype and phenotype data
+common_samples <- intersect(rownames(imputed_markers), pheno$geno)
+imputed_markers <- imputed_markers[common_samples, ]
+
+phenotyping4gp <- pheno[pheno$geno %in% common_samples, ] %>% 
+  tibble(.) %>% 
+  column_to_rownames("genotypes")
+
+traits <- colnames(phenotyping4gp)[1:length(phenotyping4gp)]
+```
+
+## Itinerations
+
+```{r}
+run_iteration <- function(trait, rep, data = phenotyping4gp) {
+  # Split 60/40
+  split_data <- initial_split(data, prop = 0.6)
+
+  pheno_train <- training(split_data) %>% as.matrix()
+  pheno_valid <- testing(split_data)  %>% as.matrix()
+
+  geno_train <- imputed_markers[row.names(pheno_train), ]
+  geno_valid <- imputed_markers[row.names(pheno_valid), ]
+
+  # Modelo GBLUP con rrBLUP
+  response <- mixed.solve(
+    y = pheno_train[, trait],
+    Z = geno_train,
+    K = NULL,
+    SE = FALSE,
+    return.Hinv = FALSE
+  )
+  
+  e <- as.matrix(response$u)
+  response_predic <- as.vector((geno_valid %*% e)[, 1]) + as.numeric(response$beta)
+
+  # Accuracy
+  acc <- cor(response_predic, pheno_valid[, trait], use = "complete")
+  
+  # Normalized Root Mean Square Error (NRMSE)
+  rmse <- sqrt(mean((pheno_valid[, trait] - response_predic)^2, na.rm = TRUE))
+  nrmse <- rmse / sd(pheno_valid[, trait], na.rm = TRUE)
+
+  tibble(
+    trait = trait,
+    replication = rep,
+    ntrain = nrow(pheno_train),
+    nvalid = nrow(pheno_valid),
+    accuracy = acc, # range: [-1 to +1]
+    nrmse = nrmse # range: [0, >1] where: 0 high precision accuracy
+  )
+}
+```
+
+```{r}
+GS_KAN <- traits %>%
+  set_names() %>%
+  map(\(trait) {
+    map_dfr(1:300, \(rep) run_iteration(trait, rep))
+  }) %>% 
+  bind_rows() %>% 
+  mutate(pop = "KAN", .before = "trait")
+```
+
+# SAL Genomic Prediction
+
+```{r}
+geno <- genotyping %>% 
+  filter(str_detect(id, "SALx")) %>% 
+  column_to_rownames("id")
+  
+pheno <- "genetics/mlt-sal.csv" %>% 
+  read.csv(.) %>% 
+  dplyr::rename(genotypes = line)
+```
+
+## Impute missing values
+
+```{r}
+# A.mat() can perform imputation as part of its relationship matrix calculation.
+# However, for direct marker-based prediction (RR-BLUP), pre-imputation is
+# often done. We can use the 'mean' method for a simple imputation strategy.
+imputed_markers <- A.mat(geno
+                         , max.missing = 0.5
+                         , impute.method = "mean"
+                         , return.imputed = T) %>% 
+  pluck("imputed")
+```
+
+## Check data
+
+```{r}
+# Ensure sample IDs match in both genotype and phenotype data
+common_samples <- intersect(rownames(imputed_markers), pheno$geno)
+imputed_markers <- imputed_markers[common_samples, ]
+
+phenotyping4gp <- pheno[pheno$geno %in% common_samples, ] %>% 
+  tibble(.) %>% 
+  column_to_rownames("genotypes")
+```
+
+## Itinerations
+
+```{r}
+traits <- colnames(phenotyping4gp)[1:length(phenotyping4gp)]
+
+# run_iteration()
+
+GS_SAL <- traits %>%
+  set_names() %>%
+  map(\(trait) {
+    map_dfr(1:300, \(rep) run_iteration(trait, rep))
+  }) %>% 
+  bind_rows() %>% 
+  mutate(pop = "SAL", .before = "trait")
+```
+
+# Genomic Prediction merge data
+
+```{r}
+gensel <- list(GS_KAN, GS_SAL) %>% 
+  bind_rows() 
+
+gs_smr <- gensel %>%
+  select(trait, pop, accuracy, nrmse) %>%
+  tbl_strata(
+    strata = trait,
+    .tbl = ~ tbl_summary(
+      data = .x,
+      by = pop,                                  
+      type = all_continuous() ~ "continuous2",    
+      statistic = all_continuous() ~ c("{mean}", "{sd}", "{min}", "{max}"),
+      digits = all_continuous() ~ 2,
+      label = list(
+        accuracy ~ "Accuracy",
+        nrmse    ~ "NRMSE"
+      )
+    ) |>
+      add_overall(last = TRUE) |>                 # columna "Overall" dentro de cada trait
+      add_p(test = all_continuous() ~ "t.test") |>   
+      modify_header(label ~ "**Metric**") 
+  )
+
+gs_smr
+
+gtsummary::as_hux_xlsx(gs_smr, file = "files/STable4.xlsx")
+
+# gs_smr %>% gtsummary::as_tibble() %>% write_sheet(gs, "STable4")
+
+grid <- gensel %>% 
+  inti::plot_raw(x = "pop", y = "accuracy", group = "trait"
+                 , legend = "none") +
+  geom_point(shape = 16, color = "grey50", alpha = 0.3, size = 1) +
+  facet_wrap(. ~ trait, ncol = 3
+              , labeller = labeller(trait = traitnames)
+              ) +
+  labs(x = "Population", y = "Accuracy") +
+  theme(
+    strip.background = element_rect(fill = "grey95", colour = NA)
+  )
+
+grid <- gensel %>%
+  ggplot(aes(x = pop, y = accuracy, fill = pop)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_point(
+    aes(x = pop, y = accuracy),
+    shape = 16,
+    color = "black",
+    alpha = 0.3,
+    size = 1,
+    position = position_jitter(width = 0.08, height = 0)
+  ) +
+  facet_wrap(
+    ~ trait,
+    ncol = 3,
+    labeller = labeller(trait = traitnames) 
+  ) +
+  labs(x = "Population", y = "Accuracy") +
+  theme_minimal() +
+  theme(
+    strip.background = element_rect(fill = "grey95", colour = NA),
+    legend.position = "none"
+  )
+
+grid
+
+plot <- grid %>% 
+  ggsave2(filename = "manuscript/Figure-04.jpg"
+         , width = 25
+         , height = 30
+         , units = "cm"
+         )
+```
+
+```{r}
+knitr::knit_exit()
+```
+
+# European Variation Archive (EVA)
+
+> https://www.ebi.ac.uk/eva/
+
+Si tienes Windows puedes utilizar WSL2 (Windows Subsystem for Linux).
+
+```{bash}
+<!-- wsl --install -->
+wsl
+sudo apt update && sudo apt upgrade -y
+<!-- curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -->
+<!-- ./Miniconda3-latest-Linux-x86_64.sh -->
+<!-- source ~/.bashrc -->
+conda --version
+
+conda install -c bioconda plink2
+conda install -c bioconda bcftools
+conda install -c bioconda vcf-validator
+
+plink2 --version
+bcftools --version
+
+cd EVA
+```
+
+## Validate files
+
+> https://github.com/ebivariation/vcf-validator
+
+> https://ebivariation.github.io/eva-sub-cli/input_file_overview.html
+
+### VCF file
+
+```{bash}
+<!-- plink2 --vcf quinoa_pops.vcf.gz --export vcf --out quinoa_pops -->
+
+vcf_validator -i quinoa_pops.vcf
+
+nano quinoa_pops.vcf
+```
+
+## eva-sub-cli tool
+
+> https://ebivariation.github.io/eva-sub-cli/
+
+```{bash}
+wsl
+<!-- conda install -c bioconda eva-sub-cli -->
+conda activate eva
+```
+
+1. VCF files
+2. FASTA (https://genomevolution.org/coge/SearchResults.pl?s=quinoa&p=genome)
+3. Submission Template (https://embl-ebi.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=9284869a-9f57-43c6-8222-b3aa0158941e)
+
+### Validation
+
+```{bash}
+wsl
+conda activate eva
+
+export NXF_VER=23.10.1
+nextflow -version
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
+java -version
+
+cd EVA
+
+<!-- NXF_VER=23.10.1 -->
+
+eva-sub-cli.py \
+  --metadata_xlsx "/mnt/c/Users/LENOVO/git/quinoa-genetics/EVA/submission_info.xlsx" \
+  --submission_dir "/mnt/c/Users/LENOVO/git/quinoa-genetics/EVA/" \
+  --tasks VALIDATE
+```
+
+### Submission
+
+```{bash}
+eva-sub-cli.py --metadata_xlsx <metadata file> --submission_dir <submission directory> --tasks SUBMIT --username <webin username> --password <webin password>
+```
+
+

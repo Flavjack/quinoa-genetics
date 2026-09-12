@@ -10,9 +10,9 @@ Options in effect:
 
 Hostname: DESKTOP-KMQ612S
 Working directory: C:\Users\LENOVO\git\quinoa-genetics
-Start time: Thu Sep 10 22:47:02 2026
+Start time: Fri Sep 11 18:50:20 2026
 
-Random number seed: 1789098422
+Random number seed: 1789170620
 32440 MiB RAM detected; reserving 16220 MiB for main workspace.
 Using up to 32 threads (change this with --threads).
 59 samples (0 females, 0 males, 59 ambiguous; 59 founders) loaded from
@@ -27,4 +27,4 @@ Running --r2-unphased with the following filters:
   --ld-window-r2: 0
 --r2-unphased: Results written to genetics/pops/KAN_LD.vcor .
 
-End time: Thu Sep 10 22:47:02 2026
+End time: Fri Sep 11 18:50:20 2026
