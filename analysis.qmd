@@ -155,12 +155,11 @@ cd /work/workspaces/flavio/quinoagenetics/
 
 # -e stands for "exclude." It removes variants that meet the specified condition.
 # F_MISSING refers to the fraction of missing data at a variant site.
-# > 0.8 means any variants where more than 50% of the data are missing will be excluded (filtered out).
 
-bcftools filter -e 'F_MISSING > 0.8' -O z xclude/quinoa_run1_all.bcf > xclude/quinoa_0.8.vcf.gz
+bcftools filter -e 'F_MISSING > 0.4' -O z xclude/quinoa_run1_all.bcf > xclude/quinoa_cr80.vcf.gz
 
 # export names to rename
-bcftools query -l xclude/quinoa_0.8.vcf.gz > xclude/genotype_names.txt
+bcftools query -l xclude/quinoa_cr60.vcf.gz > xclude/genotype_names.txt
 ```
 
 ## Genotypes names to rename vcf file
@@ -204,28 +203,262 @@ vcf.rename %>% write_tsv("genetics/vcf.rename.txt")
 ```{bash}
 #| eval: false
 
-bcftools reheader -s genetics/vcf.rename.txt xclude/quinoa_0.8.vcf.gz > xclude/quinoa_0.8_rhd.vcf.gz
+bcftools reheader -s genetics/vcf.rename.txt xclude/quinoa_cr80.vcf.gz > xclude/quinoa_NAM.vcf.gz
 
 # check rename
-bcftools query -l xclude/quinoa_0.8_rhd.vcf.gz
+bcftools query -l xclude/quinoa_NAM.vcf.gz
 ```
 
-## Filter by Population
+# Call rate
 
 ```{bash}
 #| eval: false
 
-bcftools query -l xclude/quinoa_0.8_rhd.vcf.gz > genetics/genotype_renamed.txt
-cat genetics/genotype_renamed.txt
+mkdir -p xclude/missingness_curve
+mkdir -p genetics/missingness_curve
 
-# Filter NAM populations for SAL and KAN
+# Tabla de resultados
+echo "F_MISSING,call_rate,n_individuals,n_SNPs" \
+  > genetics/missingness_curve/bcftools_counts.csv
 
-grep -E "SALx|xKAN" genetics/genotype_renamed.txt > genetics/populations.txt
-cat populations.txt
+for t in 0.2 0.3 0.4 0.5 0.6 0.7 0.8
+do
 
-# SNPs for all populations
+  # Traducir F_MISSING a tasa de genotipado
+  call=$(awk -v x="$t" \
+    'BEGIN {printf "%d", (1-x)*100}')
 
-bcftools view -S genetics/populations.txt xclude/quinoa_0.8_rhd.vcf.gz > xclude/quinoa_pops.vcf.gz
+  # Conservar tus nombres de archivo
+  raw="xclude/quinoa_cr${call}.vcf.gz"
+  renamed="xclude/quinoa_cr${call}_rhd.vcf.gz"
+  nam="xclude/quinoa_cr${call}_NAM.vcf.gz"
+
+  echo "Procesando F_MISSING = $t; call rate = ${call}%"
+
+  # 1. Filtrar SNP bialélicos según F_MISSING
+  bcftools view \
+    -v snps -m2 -M2 -Ou \
+    xclude/quinoa_run1_all.bcf |
+  bcftools filter \
+    -e "F_MISSING > ${t}" \
+    -Oz -o "$raw"
+
+  bcftools index -t "$raw"
+
+  # 2. Renombrar muestras usando tu archivo original
+  bcftools reheader \
+    -s genetics/vcf.rename.txt \
+    -o "$renamed" \
+    "$raw"
+
+  # 3. Para el primer umbral, crear la lista de individuos NAM
+  if [ "$call" = "80" ]; then
+
+    bcftools query -l "$renamed" \
+      > genetics/genotype_renamed.txt
+
+    grep -E 'SALx|xKAN' genetics/genotype_renamed.txt \
+      > genetics/populations.txt
+
+  fi
+
+  # 4. Seleccionar las seis familias NAM
+  bcftools view \
+    -S genetics/populations.txt \
+    -Oz -o "$nam" \
+    "$renamed"
+
+  bcftools index -t "$nam"
+
+  # 5. Contar SNP bialélicos e individuos
+  n_snps=$(bcftools view -H "$nam" | wc -l)
+  n_ind=$(bcftools query -l "$nam" | wc -l)
+
+  echo "${t},${call},${n_ind},${n_snps}" \
+    >> genetics/missingness_curve/bcftools_counts.csv
+
+done
+```
+
+
+```{r}
+#| eval: false
+
+# Directorio y nombres de los VCF
+vcf_files <- list.files(
+  "xclude/missingness_curve",
+  pattern = "^quinoa_cr[0-9]+_NAM\\.vcf\\.gz$",
+  full.names = TRUE
+)
+
+stopifnot(length(vcf_files) > 0)
+
+# Procesar cada umbral de forma independiente
+results_snpR <- map_dfr(vcf_files, function(f) {
+
+  # Extraer call rate del nombre del archivo
+  call_rate <- as.numeric(
+    str_match(basename(f), "quinoa_cr([0-9]+)_NAM")[, 2]
+  )
+
+  f_missing <- 1 - call_rate / 100
+
+  message("Procesando call rate: ", call_rate, "%")
+
+  # Leer matriz de genotipos
+  snpdt <- snpR::read_vcf(file = f)
+
+  n_snps_before <- nrow(snp.meta(snpdt))
+  n_ind_before  <- nrow(sample.meta(snpdt))
+
+  # Anotar las seis familias NAM según el código original
+  sample_meta <- names(snpdt) %>%
+    gsub("_.*", "", .) %>%
+    enframe(value = "cross") %>%
+    mutate(
+      pop = case_when(
+        str_detect(cross, "xKAN") ~ "KAN",
+        str_detect(cross, "KAN")  ~ "KAN",
+        str_detect(cross, "SALx") ~ "SAL",
+        str_detect(cross, "SAL")  ~ "SAL",
+        TRUE ~ NA_character_
+      )
+    )
+
+  sample.meta(snpdt)$cross <- factor(
+    sample_meta$cross,
+    levels = c(
+      "HUAxKAN", "NCOxKAN", "PASxKAN",
+      "SALxHUA", "SALxNCO", "SALxPAN"
+    )
+  )
+
+  sample.meta(snpdt)$pop <- sample_meta$pop
+
+  # Aplicar los filtros del análisis original
+  snpdt_filt <- snpR::filter_snps(
+    x = snpdt,
+    maf = 0.05,
+    min_ind = 0.50,
+    min_loci = 0.50,
+    maf_facets = "cross"
+  )
+
+  # Contabilizar el conjunto final
+  n_snps_after <- nrow(snp.meta(snpdt_filt))
+  n_ind_after  <- nrow(sample.meta(snpdt_filt))
+
+  result <- tibble(
+    F_MISSING = f_missing,
+    call_rate = call_rate,
+    n_individuals_before_snpR = n_ind_before,
+    n_SNPs_before_snpR = n_snps_before,
+    n_individuals_after_snpR = n_ind_after,
+    n_SNPs_after_snpR = n_snps_after
+  )
+
+  rm(snpdt, snpdt_filt)
+  gc()
+
+  result
+})
+
+# Incorporar los recuentos de BCFtools
+counts_bcftools <- read_csv(
+  "genetics/missingness_curve/bcftools_counts.csv",
+  show_col_types = FALSE
+)
+
+results_final <- results_snpR %>%
+  left_join(
+    counts_bcftools %>%
+      select(
+        call_rate,
+        n_individuals_bcftools = n_individuals,
+        n_SNPs_bcftools = n_SNPs
+      ),
+    by = "call_rate"
+  ) %>%
+  arrange(desc(call_rate))
+
+# Mostrar y guardar los resultados
+print(results_final)
+
+write_csv(
+  results_final,
+  "genetics/missingness_curve/missingness_curve_results.csv"
+)
+```
+
+
+```{r}
+curve_long <- results_final %>%
+  dplyr::mutate(
+    call_rate = 1 - F_MISSING
+  ) %>%
+  dplyr::select(
+    call_rate,
+    n_SNPs_after_snpR,
+    n_individuals_after_snpR
+  ) %>%
+  tidyr::pivot_longer(
+    cols = -call_rate,
+    names_to = "metric",
+    values_to = "count"
+  ) %>%
+  dplyr::mutate(
+    metric = dplyr::recode(
+      metric,
+      n_SNPs_after_snpR = "SNPs retained",
+      n_individuals_after_snpR = "Individuals retained"
+    )
+  )
+
+p <- ggplot(
+  curve_long,
+  aes(x = call_rate, y = count)
+) +
+  geom_line(linewidth = 0.8) +
+  geom_point(size = 2.5) +
+  geom_text(
+    aes(label = scales::comma(count)),
+    vjust = -0.7,
+    size = 3.2
+  ) +
+  facet_wrap(
+    ~ metric,
+    scales = "free_y",
+    ncol = 1
+  ) +
+  scale_x_continuous(
+    breaks = seq(0, 0.8, by = 0.1),
+    labels = scales::label_percent(accuracy = 1),
+    expand = expansion(mult = c(0.03, 0.08))
+  ) +
+  scale_y_continuous(
+    expand = expansion(mult = c(0.05, 0.18))
+  ) +
+  labs(
+    x = "Genotype call rate threshold (%)",
+    y = "Number retained",
+    title = "Effect of genotype call rate thresholds on SNP and individual retention"
+  ) +
+  theme_bw() +
+  theme(
+    strip.text = element_text(face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+
+p
+
+ggsave(
+  "genetics/missingness_curve/missingness_curve.png",
+  p,
+  width = 20,
+  height = 15,
+  dpi = 300
+  , units = "cm"
+)
 ```
 
 # snpR
@@ -236,7 +469,7 @@ bcftools view -S genetics/populations.txt xclude/quinoa_0.8_rhd.vcf.gz > xclude/
 ```{r}
 # vcffile <- choose.files()
 
-vcfile <- "xclude/quinoa_pops.vcf.gz"
+vcfile <- "xclude/missingness_curve/quinoa_cr60_NAM.vcf.gz"
 
 snpdt <- snpR::read_vcf(file = vcfile)
 snpdt
